@@ -13,5 +13,6 @@
 
 	<modules>
 		<module>arccore-common</module>
+		<module>arccore-mail</module>
 	</modules>
 </project>
