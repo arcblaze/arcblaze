@@ -93,8 +93,8 @@ public class MailSender {
 	 */
 	public void send(final String msg, final String subject,
 			final Set<User> users) throws MessagingException {
-		notNull(msg, "Invalid null message");
-		notNull(subject, "Invalid null subject");
+		notEmpty(msg, "Invalid null message");
+		notEmpty(subject, "Invalid null subject");
 		notEmpty(users, "Invalid empty users");
 
 		final Properties props = getMailConfiguration();

@@ -1,5 +1,7 @@
 package com.arcblaze.arccore.common.model;
 
+import static org.apache.commons.lang.Validate.notEmpty;
+
 import java.security.Principal;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -68,8 +70,7 @@ public class Role implements Comparable<Role>, Principal {
 	 *             if the provided name value is invalid
 	 */
 	public Role setName(String name) {
-		if (StringUtils.isBlank(name))
-			throw new IllegalArgumentException("Invalid blank name");
+		notEmpty(name, "Invalid blank name");
 
 		this.name = StringUtils.trim(name);
 		return this;

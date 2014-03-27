@@ -1,5 +1,8 @@
 package com.arcblaze.arccore.common.config;
 
+import static org.apache.commons.lang.Validate.notEmpty;
+import static org.apache.commons.lang.Validate.notNull;
+
 import java.io.File;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -24,12 +27,16 @@ public class Config {
 	 *            the path to the configuration file from which configuration
 	 *            properties will be loaded
 	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided configuration file is invalid
 	 * @throws ConfigurationException
 	 *             if there is a problem loading the configuration information
 	 *             from the specified file
 	 */
 	private Config(final String configurationFile)
 			throws ConfigurationException {
+		notEmpty(configurationFile);
+
 		final File configFile = new File(configurationFile);
 		if (configFile.exists()) {
 			log.info("Loading configuration from "
@@ -60,12 +67,11 @@ public class Config {
 	 * @param value
 	 *            the new value to use for this configuration property
 	 * 
-	 * @throws NullPointerException
+	 * @throws IllegalArgumentException
 	 *             if the provided property object is {@code null}
 	 */
 	public void set(final Property property, final String value) {
-		if (property == null)
-			throw new NullPointerException("Invalid null property");
+		notNull(property, "Invalid null property");
 
 		if (value == null)
 			this.config.clearProperty(property.getKey());
@@ -81,12 +87,11 @@ public class Config {
 	 * @return the value for this property as a string, potentially the default
 	 *         value if no specific value was configured
 	 * 
-	 * @throws NullPointerException
+	 * @throws IllegalArgumentException
 	 *             if the provided property object is {@code null}
 	 */
 	public String getString(final Property property) {
-		if (property == null)
-			throw new NullPointerException("Invalid null property");
+		notNull(property, "Invalid null property");
 
 		return this.config.getString(property.getKey(),
 				property.getDefaultValue());
@@ -100,15 +105,14 @@ public class Config {
 	 * @return the value for this property as an int, potentially the default
 	 *         value if no specific value was configured
 	 * 
-	 * @throws NullPointerException
+	 * @throws IllegalArgumentException
 	 *             if the provided property object is {@code null}
 	 * @throws ConversionException
 	 *             if the configured value or the default value for the property
 	 *             is not an integer
 	 */
 	public int getInt(final Property property) {
-		if (property == null)
-			throw new NullPointerException("Invalid null property");
+		notNull(property, "Invalid null property");
 
 		try {
 			return this.config.getInt(property.getKey(),
@@ -126,15 +130,14 @@ public class Config {
 	 * @return the value for this property as a long, potentially the default
 	 *         value if no specific value was configured
 	 * 
-	 * @throws NullPointerException
+	 * @throws IllegalArgumentException
 	 *             if the provided property object is {@code null}
 	 * @throws ConversionException
 	 *             if the configured value or the default value for the property
 	 *             is not a long
 	 */
 	public long getLong(final Property property) {
-		if (property == null)
-			throw new NullPointerException("Invalid null property");
+		notNull(property, "Invalid null property");
 
 		try {
 			return this.config.getLong(property.getKey(),
@@ -152,15 +155,14 @@ public class Config {
 	 * @return the value for this property as a boolean, potentially the default
 	 *         value if no specific value was configured
 	 * 
-	 * @throws NullPointerException
+	 * @throws IllegalArgumentException
 	 *             if the provided property object is {@code null}
 	 * @throws ConversionException
 	 *             if the configured value or the default value for the property
 	 *             is not a boolean
 	 */
 	public boolean getBoolean(final Property property) {
-		if (property == null)
-			throw new NullPointerException("Invalid null property");
+		notNull(property, "Invalid null property");
 
 		return this.config.getBoolean(property.getKey(),
 				Boolean.parseBoolean(property.getDefaultValue()));

@@ -1,5 +1,8 @@
 package com.arcblaze.arccore.common.model;
 
+import static org.apache.commons.lang.Validate.notEmpty;
+import static org.apache.commons.lang.Validate.notNull;
+
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collection;
@@ -157,8 +160,7 @@ public class User implements Comparable<User>, Principal {
 	 *             if the provided login value is invalid
 	 */
 	public User setLogin(final String login) {
-		if (StringUtils.isBlank(login))
-			throw new IllegalArgumentException("Invalid blank login");
+		notEmpty(login, "Invalid blank login");
 
 		this.login = StringUtils.trim(login);
 		return this;
@@ -182,8 +184,7 @@ public class User implements Comparable<User>, Principal {
 	 *             if the provided hashed password value is invalid
 	 */
 	public User setHashedPass(final String hashedPass) {
-		if (StringUtils.isBlank(hashedPass))
-			throw new IllegalArgumentException("Invalid blank hashed password");
+		notEmpty(hashedPass, "Invalid blank hashed password");
 
 		this.hashedPass = StringUtils.trim(hashedPass);
 		return this;
@@ -208,8 +209,7 @@ public class User implements Comparable<User>, Principal {
 	 *             if the provided password salt value is invalid
 	 */
 	public User setSalt(final String salt) {
-		if (StringUtils.isBlank(salt))
-			throw new IllegalArgumentException("Invalid blank salt");
+		notEmpty(salt, "Invalid blank salt");
 
 		this.salt = StringUtils.trim(salt);
 		return this;
@@ -233,8 +233,7 @@ public class User implements Comparable<User>, Principal {
 	 *             if the provided email value is invalid
 	 */
 	public User setEmail(final String email) {
-		if (StringUtils.isBlank(email))
-			throw new IllegalArgumentException("Invalid blank email");
+		notEmpty(email, "Invalid blank email");
 
 		this.email = StringUtils.trim(email);
 		return this;
@@ -258,8 +257,7 @@ public class User implements Comparable<User>, Principal {
 	 *             if the provided first name value is invalid
 	 */
 	public User setFirstName(final String firstName) {
-		if (StringUtils.isBlank(firstName))
-			throw new IllegalArgumentException("Invalid blank first name");
+		notEmpty(firstName, "Invalid blank first name");
 
 		this.firstName = StringUtils.trim(firstName);
 		return this;
@@ -283,8 +281,7 @@ public class User implements Comparable<User>, Principal {
 	 *             if the provided last name value is invalid
 	 */
 	public User setLastName(final String lastName) {
-		if (StringUtils.isBlank(lastName))
-			throw new IllegalArgumentException("Invalid blank last name");
+		notEmpty(lastName, "Invalid blank last name");
 
 		this.lastName = StringUtils.trim(lastName);
 		return this;
@@ -321,8 +318,7 @@ public class User implements Comparable<User>, Principal {
 	 *             if the provided active value is invalid
 	 */
 	public User setActive(final Boolean active) {
-		if (active == null)
-			throw new IllegalArgumentException("Invalid null active value");
+		notNull(active, "Invalid null active value");
 
 		this.active = active;
 		return this;
@@ -358,8 +354,7 @@ public class User implements Comparable<User>, Principal {
 	 *             if the provided roles value is invalid
 	 */
 	public User setRoles(final Role... newRoles) {
-		if (newRoles == null)
-			throw new IllegalArgumentException("Invalid null roles");
+		notNull(newRoles, "Invalid null roles");
 
 		return this.setRoles(Arrays.asList(newRoles));
 	}
@@ -376,7 +371,7 @@ public class User implements Comparable<User>, Principal {
 			if (this.roles != newRoles)
 				this.roles.clear();
 			if (newRoles != null) {
-				for (Role role : newRoles)
+				for (final Role role : newRoles)
 					if (role != null)
 						this.roles.add(new Role(role)); // Defensive copy
 			}
@@ -394,8 +389,7 @@ public class User implements Comparable<User>, Principal {
 	 *             if the provided roles value is invalid
 	 */
 	public User addRoles(final Role... newRoles) {
-		if (newRoles == null)
-			throw new IllegalArgumentException("Invalid null roles");
+		notNull(newRoles, "Invalid null roles");
 
 		return this.addRoles(Arrays.asList(newRoles));
 	}
@@ -409,7 +403,7 @@ public class User implements Comparable<User>, Principal {
 	public User addRoles(final Collection<Role> newRoles) {
 		synchronized (this.roles) {
 			if (newRoles != null) {
-				for (Role role : newRoles)
+				for (final Role role : newRoles)
 					if (role != null)
 						this.roles.add(new Role(role)); // Defensive copy
 			}
