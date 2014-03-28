@@ -15,6 +15,7 @@
 		<module>arccore-common</module>
 		<module>arccore-mail</module>
 		<module>arccore-db</module>
+		<module>arccore-rest</module>
 		<module>arccore-server</module>
 	</modules>
 </project>
