@@ -23,6 +23,14 @@ public class Config {
 	private final PropertiesConfiguration config;
 
 	/**
+	 * Default constructor creates an empty configuration, where the default
+	 * properties values will be used.
+	 */
+	public Config() {
+		this.config = new PropertiesConfiguration();
+	}
+
+	/**
 	 * @param configurationFile
 	 *            the path to the configuration file from which configuration
 	 *            properties will be loaded
@@ -33,8 +41,7 @@ public class Config {
 	 *             if there is a problem loading the configuration information
 	 *             from the specified file
 	 */
-	private Config(final String configurationFile)
-			throws ConfigurationException {
+	public Config(final String configurationFile) throws ConfigurationException {
 		notEmpty(configurationFile);
 
 		final File configFile = new File(configurationFile);
@@ -55,7 +62,6 @@ public class Config {
 			throw new ConfigurationException(
 					"Failed to load configuration from non-existent file: "
 							+ configFile.getAbsolutePath());
-
 	}
 
 	/**
