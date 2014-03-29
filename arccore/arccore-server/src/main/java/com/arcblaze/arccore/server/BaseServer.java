@@ -85,8 +85,12 @@ public abstract class BaseServer {
 
 		this.daoFactory = new DaoFactory(this.config);
 
+		String baseDir = ".";
+		if (this.config.getBoolean(ServerProperty.SERVER_DEVELOPMENT_MODE))
+			baseDir = "target";
+
 		this.tomcat = new Tomcat();
-		this.tomcat.setBaseDir(".");
+		this.tomcat.setBaseDir(baseDir);
 		this.tomcat.getHost().setAppBase(".");
 
 		final Service service = this.tomcat.getService();
