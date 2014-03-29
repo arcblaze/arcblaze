@@ -7,7 +7,7 @@ import com.arcblaze.arccore.common.config.Property;
  */
 public enum ServerProperty implements Property {
 	/** The location of the system configuration properties file. */
-	SERVER_CONFIG_FILE("conf/server.properties"),
+	SERVER_CONFIG_FILE("conf/system.properties"),
 	/** Whether the server should run in development mode. */
 	SERVER_DEVELOPMENT_MODE("false"),
 	/** Whether the server should run in insecure mode (HTTP) or not. */

@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.Role;
 import com.arcblaze.arccore.db.DaoFactory;
+import com.arcblaze.arccore.rest.BaseApplication;
 import com.arcblaze.arccore.server.security.SecurityRealm;
 import com.arcblaze.arccore.server.tasks.BackgroundTask;
 import com.arcblaze.arccore.server.tasks.MemoryUsageLoggingTask;
@@ -109,8 +110,11 @@ public abstract class BaseServer {
 		addServletWrappers(this.config, context);
 		addMetricFilter(this.config, context);
 
-		for (final Role role : getSystemRoles(this.config))
-			context.addSecurityRole(role.getName());
+		final Set<Role> roles = getSystemRoles(this.config);
+		if (roles != null) {
+			for (final Role role : getSystemRoles(this.config))
+				context.addSecurityRole(role.getName());
+		}
 		for (final SecurityConstraint constraint : getSecurityConstraints(this.config))
 			context.addConstraint(constraint);
 
@@ -325,7 +329,7 @@ public abstract class BaseServer {
 	 * @return a {@link Class} representing the jersey {@link ResourceConfig}
 	 *         used to manage the web application resources
 	 */
-	public abstract Class<? extends ResourceConfig> getApplicationClass(
+	public abstract Class<? extends BaseApplication> getApplicationClass(
 			final Config config);
 
 	/**
@@ -455,6 +459,8 @@ public abstract class BaseServer {
 		final List<SecurityConstraint> constraints = new ArrayList<>();
 
 		final Map<String, List<Role>> map = getEndpointRoleMap(config);
+		if (map == null)
+			return constraints;
 
 		String userConstraint = "NONE";
 		if (!config.getBoolean(ServerProperty.SERVER_DEVELOPMENT_MODE))
@@ -523,9 +529,12 @@ public abstract class BaseServer {
 		final BackgroundTask memoryUsage = new MemoryUsageLoggingTask(
 				this.metricRegistry, this.healthCheckRegistry);
 
+		final Collection<BackgroundTask> childTasks = getBackgroundTasks(
+				config, metricRegistry, healthCheckRegistry);
+
 		final List<BackgroundTask> tasks = new LinkedList<>();
-		tasks.addAll(getBackgroundTasks(config, metricRegistry,
-				healthCheckRegistry));
+		if (childTasks != null)
+			tasks.addAll(childTasks);
 		tasks.add(systemHealth);
 		tasks.add(memoryUsage);
 

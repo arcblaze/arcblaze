@@ -10,3 +10,5 @@ target
 # Vim
 *.swp
 
+# Running one of the systems
+logs

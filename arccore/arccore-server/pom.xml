@@ -20,6 +20,10 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>arccore-db</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>arccore-rest</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>com.codahale.metrics</groupId>
