@@ -43,7 +43,7 @@ public class Password {
 		final char[] hex = "0123456789abcdef".toCharArray();
 		final StringBuilder sb = new StringBuilder(bytes.length << 1);
 
-		for (byte b : bytes)
+		for (final byte b : bytes)
 			sb.append(hex[(b & 0xf0) >> 4]).append(hex[(b & 0x0f)]);
 
 		return sb.toString();

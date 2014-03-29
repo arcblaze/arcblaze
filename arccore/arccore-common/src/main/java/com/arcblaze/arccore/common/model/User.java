@@ -1,5 +1,6 @@
 package com.arcblaze.arccore.common.model;
 
+import static org.apache.commons.lang.Validate.isTrue;
 import static org.apache.commons.lang.Validate.notEmpty;
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -85,8 +86,12 @@ public class User implements Comparable<User>, Principal {
 	/**
 	 * @param other
 	 *            the user to copy
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided name value is invalid
 	 */
 	public User(final User other) {
+		notNull(other, "Invalid null user");
 		if (other.getId() != null)
 			setId(other.getId());
 		if (StringUtils.isNotBlank(other.getLogin()))
@@ -124,10 +129,8 @@ public class User implements Comparable<User>, Principal {
 	 *             if the provided id value is invalid
 	 */
 	public User setId(final Integer id) {
-		if (id == null)
-			throw new IllegalArgumentException("Invalid null id");
-		if (id < 0)
-			throw new IllegalArgumentException("Invalid negative id");
+		notNull(id, "Invalid null id");
+		isTrue(id >= 0, "Invalid negative id");
 
 		this.id = id;
 		return this;
@@ -366,15 +369,13 @@ public class User implements Comparable<User>, Principal {
 	 * @return {@code this}
 	 */
 	public User setRoles(final Collection<Role> newRoles) {
-		synchronized (this.roles) {
-			// Prevent clearing the provided collection.
-			if (this.roles != newRoles)
-				this.roles.clear();
-			if (newRoles != null) {
-				for (final Role role : newRoles)
-					if (role != null)
-						this.roles.add(new Role(role)); // Defensive copy
-			}
+		// Prevent clearing the provided collection.
+		if (this.roles != newRoles)
+			this.roles.clear();
+		if (newRoles != null) {
+			for (final Role role : newRoles)
+				if (role != null)
+					this.roles.add(new Role(role)); // Defensive copy
 		}
 		return this;
 	}
@@ -401,12 +402,10 @@ public class User implements Comparable<User>, Principal {
 	 * @return {@code this}
 	 */
 	public User addRoles(final Collection<Role> newRoles) {
-		synchronized (this.roles) {
-			if (newRoles != null) {
-				for (final Role role : newRoles)
-					if (role != null)
-						this.roles.add(new Role(role)); // Defensive copy
-			}
+		if (newRoles != null) {
+			for (final Role role : newRoles)
+				if (role != null)
+					this.roles.add(new Role(role)); // Defensive copy
 		}
 		return this;
 	}

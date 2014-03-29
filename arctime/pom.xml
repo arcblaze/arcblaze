@@ -6,11 +6,12 @@
 		<artifactId>arcblaze</artifactId>
 		<version>0.0.0-SNAPSHOT</version>
 	</parent>
-	
+
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>arctime</artifactId>
 	<packaging>pom</packaging>
 
 	<modules>
+		<module>arctime-core</module>
 	</modules>
 </project>

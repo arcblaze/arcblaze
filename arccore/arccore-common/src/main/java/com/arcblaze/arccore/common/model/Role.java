@@ -1,6 +1,7 @@
 package com.arcblaze.arccore.common.model;
 
 import static org.apache.commons.lang.Validate.notEmpty;
+import static org.apache.commons.lang.Validate.notNull;
 
 import java.security.Principal;
 
@@ -37,6 +38,9 @@ public class Role implements Comparable<Role>, Principal {
 	/**
 	 * @param name
 	 *            the name of this role
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided name value is invalid
 	 */
 	public Role(final String name) {
 		setName(name);
@@ -45,9 +49,13 @@ public class Role implements Comparable<Role>, Principal {
 	/**
 	 * @param other
 	 *            the role to copy
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided role is invalid
 	 */
 	public Role(final Role other) {
-		if (StringUtils.isNotBlank(other.getName()))
+		notNull(other);
+		if (other.getName() != null)
 			setName(other.getName());
 	}
 
@@ -69,7 +77,7 @@ public class Role implements Comparable<Role>, Principal {
 	 * @throws IllegalArgumentException
 	 *             if the provided name value is invalid
 	 */
-	public Role setName(String name) {
+	public Role setName(final String name) {
 		notEmpty(name, "Invalid blank name");
 
 		this.name = StringUtils.trim(name);
