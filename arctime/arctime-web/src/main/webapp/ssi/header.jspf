@@ -1,0 +1,33 @@
+
+<div id="header-container">
+  <div id="header">
+    <div id="header-logo">
+      <a href="/user/">
+        <img src="/img/logo.png" border="0"
+             alt="ArcTime" title="ArcTime"/></a>
+    </div>
+
+    <div id="header-navigation">
+      <% if (request.getRemoteUser() != null) { %>
+        <% if (request.isUserInRole("ADMIN")) { %>
+          <li><a href="/admin/">Admin</a></li>
+        <% } %>
+        <% if (request.isUserInRole("PAYROLL")) { %>
+          <li><a href="/payroll/">Payroll</a></li>
+        <% } %>
+        <% if (request.isUserInRole("MANAGER")) { %>
+          <li><a href="/manager/">Manage</a></li>
+        <% } %>
+        <% if (request.isUserInRole("SUPERVISOR")) { %>
+          <li><a href="/supervisor/">Supervisor</a></li>
+        <% } %>
+        <li><a href="/user/">Timesheet</a></li>
+        <li><a href="/user/profile.jsp">Profile</a></li>
+        <li><a href="/rest/logout">Logout</a></li>
+      <% } else { %>
+        &nbsp;
+      <% } %>
+    </div>
+  </div>
+</div>
+

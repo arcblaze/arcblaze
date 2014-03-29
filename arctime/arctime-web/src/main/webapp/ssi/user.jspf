@@ -1,0 +1,21 @@
+<%@ page import="com.arcblaze.arccore.common.model.User" %>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+
+<script>
+	<% User user = (User) request.getUserPrincipal(); %>
+	<% if (user != null) { %>
+	// Create the user.
+	var user = {
+		id: <%= user.getId() %>,
+		firstName: '<%= StringEscapeUtils.escapeJavaScript(user.getFirstName()) %>',
+		lastName: '<%= StringEscapeUtils.escapeJavaScript(user.getLastName()) %>',
+		fullName: '<%= StringEscapeUtils.escapeJavaScript(user.getFullName()) %>',
+		login: '<%= StringEscapeUtils.escapeJavaScript(user.getLogin()) %>',
+		email: '<%= StringEscapeUtils.escapeJavaScript(user.getEmail()) %>'
+	};
+	<% } else { %>
+	// Not logged in.
+	var user = { };
+	<% } %>
+</script>
+

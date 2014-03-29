@@ -1,0 +1,171 @@
+
+.icon-unknown {
+	background-image:		url(/img/unknown.png) !important;
+}
+.icon-doc {
+	background-image:		url(/img/doc.png) !important;
+}
+.icon-docx {
+	background-image:		url(/img/docx.png) !important;
+}
+.icon-pdf {
+	background-image:		url(/img/pdf.png) !important;
+}
+.icon-ppt {
+	background-image:		url(/img/ppt.png) !important;
+}
+.icon-pptx {
+	background-image:		url(/img/pptx.png) !important;
+}
+.icon-xls {
+	background-image:		url(/img/xls.png) !important;
+}
+.icon-xlsx {
+	background-image:		url(/img/xlsx.png) !important;
+}
+
+.icon-search {
+	background-image:		url(/img/search.png) !important;
+}
+
+.icon-login {
+	background-image:		url(/img/login.png) !important;
+}
+.icon-reset-password {
+	background-image:		url(/img/resetpw.png) !important;
+}
+
+.icon-timesheet-save {
+	background-image:		url(/img/timesheet_save.png) !important;
+}
+.icon-timesheet-complete {
+	background-image:		url(/img/timesheet_complete.png) !important;
+}
+.icon-timesheet-fix {
+	background-image:		url(/img/timesheet_fix.png) !important;
+}
+.icon-timesheet-export {
+	background-image:		url(/img/timesheet_export.png) !important;
+}
+.icon-timesheet-approve {
+	background-image:		url(/img/timesheet_approve.png) !important;
+}
+.icon-timesheet-disapprove {
+	background-image:		url(/img/timesheet_disapprove.png) !important;
+}
+.icon-timesheet-verify {
+	background-image:		url(/img/timesheet_verify.png) !important;
+}
+.icon-timesheet-unverify {
+	background-image:		url(/img/timesheet_unverify.png) !important;
+}
+.icon-timesheet-view {
+	background-image:		url(/img/timesheet_view.png) !important;
+}
+.icon-timesheet-edit {
+	background-image:		url(/img/timesheet_edit.png) !important;
+}
+.icon-timesheet-auditlog {
+	background-image:		url(/img/timesheet_auditlog.png) !important;
+}
+
+.icon-users {
+	background-image:		url(/img/users.png) !important;
+}
+.icon-user-add {
+	background-image:		url(/img/user_add.png) !important;
+}
+.icon-user-delete {
+	background-image:		url(/img/user_delete.png) !important;
+}
+.icon-user-edit {
+	background-image:		url(/img/user_edit.png) !important;
+}
+.icon-user-go {
+	background-image:		url(/img/user_go.png) !important;
+}
+
+.icon-supervisor-add {
+	background-image:		url(/img/supervisor_add.png) !important;
+}
+.icon-supervisor-delete {
+	background-image:		url(/img/supervisor_delete.png) !important;
+}
+
+.icon-tasks {
+	background-image:		url(/img/tasks.png) !important;
+}
+.icon-task-add {
+	background-image:		url(/img/task_add.png) !important;
+}
+.icon-task-delete {
+	background-image:		url(/img/task_delete.png) !important;
+}
+.icon-task-edit {
+	background-image:		url(/img/task_edit.png) !important;
+}
+.icon-task-go {
+	background-image:		url(/img/task_go.png) !important;
+}
+
+.icon-assignments {
+	background-image:		url(/img/assignments.png) !important;
+}
+.icon-assignment-add {
+	background-image:		url(/img/assignment_add.png) !important;
+}
+.icon-assignment-delete {
+	background-image:		url(/img/assignment_delete.png) !important;
+}
+.icon-assignment-edit {
+	background-image:		url(/img/assignment_edit.png) !important;
+}
+.icon-assignment-go {
+	background-image:		url(/img/assignment_go.png) !important;
+}
+
+.icon-holidays {
+	background-image:		url(/img/holidays.png) !important;
+}
+.icon-holiday-add {
+	background-image:		url(/img/holiday_add.png) !important;
+}
+.icon-holiday-delete {
+	background-image:		url(/img/holiday_delete.png) !important;
+}
+.icon-holiday-go {
+	background-image:		url(/img/holiday_go.png) !important;
+}
+
+.icon-companies {
+	background-image:		url(/img/companies.png) !important;
+}
+.icon-company-add {
+	background-image:		url(/img/company_add.png) !important;
+}
+.icon-company-delete {
+	background-image:		url(/img/company_delete.png) !important;
+}
+.icon-company-edit {
+	background-image:		url(/img/company_edit.png) !important;
+}
+.icon-company-go {
+	background-image:		url(/img/company_go.png) !important;
+}
+
+.icon-transactions {
+	background-image:		url(/img/transactions.png) !important;
+}
+.icon-transaction-add {
+	background-image:		url(/img/transaction_add.png) !important;
+}
+.icon-transaction-delete {
+	background-image:		url(/img/transaction_delete.png) !important;
+}
+.icon-transaction-edit {
+	background-image:		url(/img/transaction_edit.png) !important;
+}
+.icon-transaction-go {
+	background-image:		url(/img/transaction_go.png) !important;
+}
+

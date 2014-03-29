@@ -1,0 +1,13 @@
+
+<div id="footer-container">
+  <div id="footer">
+    <div id="footer-copyright">
+      Copyright &copy; 2014 ArcBlaze, Inc. All rights reserved.
+    </div>
+    <div id="footer-legal">
+      <li><a href="/legal/">Privacy Policy and Terms of Service</a></li>
+      <li><a href="/feedback/">Provide Feedback</a></li>
+    </div>
+  </div>
+</div>
+

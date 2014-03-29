@@ -1,0 +1,360 @@
+
+html, body {
+ background-color:white;
+ color:#101010;
+ font-family:'Trebuchet MS', Verdana, sans-serif;
+ font-size:11pt;
+ margin:0px;
+ padding:0px;
+}
+
+#header-container {
+ background-color:#cbddf3;
+ border:1px solid #99bce8;
+ height:60px;
+ left:0px;
+ position:fixed;
+ top:0px;
+ width:100%;
+}
+
+#header-container #header {
+ line-height:60px;
+ text-align:left;
+ margin:0px auto;
+ width:940px;
+}
+
+#header-container #header #header-logo {
+ float:left;
+ line-height:60px;
+ margin:0px auto;
+ text-align:left;
+ width:300px;
+}
+
+#header-container #header #header-logo img {
+ height:60px;
+}
+
+#header-container #header #header-navigation {
+ float:right;
+ font-size:12pt;
+ line-height:60px;
+ margin:0px auto;
+ text-align:right;
+ width:640px;
+}
+
+#header-container #header #header-navigation li {
+ display:inline;
+ list-style-type:none;
+ padding-left:30px;
+}
+#header-container #header #header-navigation a {
+ color:blue;
+ text-decoration:none;
+}
+#header-container #header #header-navigation a:hover {
+ text-decoration:underline;
+}
+ 
+#container {
+ margin:0px auto;
+ overflow:auto;
+ padding:70px 0px 40px 0px;
+ width:100%;
+}
+
+#container-maxwidth {
+ margin:0px auto;
+ overflow:auto;
+ padding:70px 0px 40px 0px;
+ width:940px;
+}
+ 
+#footer-container {
+ background-color:#cbddf3;
+ border:1px solid #99bce8;
+ bottom:0px;
+ height:30px;
+ left:0px;
+ position:fixed;
+ width:100%;
+}
+
+#footer-container #footer {
+ font-size:12pt;
+ line-height:30px;
+ margin:0px auto;
+ width:940px;
+ text-align:left;
+}
+
+#footer-container #footer #footer-copyright {
+ float:left;
+ line-height:30px;
+ width:460px;
+ text-align:left;
+}
+
+#footer-container #footer #footer-legal {
+ float:right;
+ line-height:30px;
+ width:480px;
+ text-align:right;
+}
+
+#footer-container #footer #footer-legal li {
+ display:inline;
+ list-style-type:none;
+ padding-left:30px;
+}
+
+#footer-container #footer #footer-legal a {
+ color:blue;
+ text-decoration:none;
+}
+#footer-container #footer #footer-legal a:hover {
+ text-decoration:underline;
+}
+
+#login-table {
+ border-collapse:collapse;
+ margin:0px auto;
+}
+
+#profile-table {
+ border-collapse:collapse;
+ margin:0px auto;
+}
+
+/* System statistics table */
+
+#system-stats-table {
+ padding:0px;
+}
+
+#system-stats-table td.name {
+ padding:2px 10px 2px 10px;
+ text-align:left;
+ width:240px;
+}
+
+#system-stats-table td.value {
+ padding:2px 10px 2px 10px;
+ text-align:center;
+ width:80px;
+}
+
+
+/* Montly revenue chart */
+
+#monthly-revenue-chart .axis path,
+#monthly-revenue-chart .axis line {
+ fill:none;
+ stroke:#ccc3b9;
+ shape-rendering:crispEdges;
+}
+
+#monthly-revenue-chart .bar {
+ fill:#709e6b;
+}
+
+#monthly-revenue-chart .bar:hover {
+ fill:#90be8b;
+}
+
+.d3-tip-revenue-chart {
+ line-height:1;
+ font-weight:bold;
+ padding:12px;
+ background:rgba(0, 0, 0, 0.8);
+ color:#fff;
+ border-radius:2px;
+ z-index:1000;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip-revenue-chart:after {
+ box-sizing:border-box;
+ display:inline;
+ font-size:10px;
+ width:100%;
+ line-height:1;
+ color:rgba(0, 0, 0, 0.8);
+ content:"\25BC";
+ position:absolute;
+ text-align:center;
+ z-index:1000;
+}
+
+/* Style northward tooltips differently */
+.d3-tip-revenue-chart.n:after {
+ margin:-1px 0 0 0;
+ top:100%;
+ left:0;
+ z-index:1000;
+}
+
+/* Active user chart */
+
+#active-user-chart .axis path,
+#active-user-chart .axis line {
+ fill:none;
+ stroke:#ccc3b9;
+ shape-rendering:crispEdges;
+}
+
+#active-user-chart .bar {
+ fill:#709e6b;
+}
+
+#active-user-chart .bar:hover {
+ fill:#90be8b;
+}
+
+.d3-tip-active-user-chart {
+ line-height:1;
+ font-weight:bold;
+ padding:12px;
+ background:rgba(0, 0, 0, 0.8);
+ color:#fff;
+ border-radius:2px;
+ z-index:1000;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip-active-user-chart:after {
+ box-sizing:border-box;
+ display:inline;
+ font-size:10px;
+ width:100%;
+ line-height:1;
+ color:rgba(0, 0, 0, 0.8);
+ content:"\25BC";
+ position:absolute;
+ text-align:center;
+ z-index:1000;
+}
+
+/* Style northward tooltips differently */
+.d3-tip-active-user-chart.n:after {
+ margin:-1px 0 0 0;
+ top:100%;
+ left:0;
+ z-index:1000;
+}
+
+/* Active company chart */
+
+#active-company-chart .axis path,
+#active-company-chart .axis line {
+ fill:none;
+ stroke:#ccc3b9;
+ shape-rendering:crispEdges;
+}
+
+#active-company-chart .bar {
+ fill:#709e6b;
+}
+
+#active-company-chart .bar:hover {
+ fill:#90be8b;
+}
+
+.d3-tip-active-company-chart {
+ line-height:1;
+ font-weight:bold;
+ padding:12px;
+ background:rgba(0, 0, 0, 0.8);
+ color:#fff;
+ border-radius:2px;
+ z-index:1000;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip-active-company-chart:after {
+ box-sizing:border-box;
+ display:inline;
+ font-size:10px;
+ width:100%;
+ line-height:1;
+ color:rgba(0, 0, 0, 0.8);
+ content:"\25BC";
+ position:absolute;
+ text-align:center;
+ z-index:1000;
+}
+
+/* Style northward tooltips differently */
+.d3-tip-active-company-chart.n:after {
+ margin:-1px 0 0 0;
+ top:100%;
+ left:0;
+ z-index:1000;
+}
+
+/* The memory usage guage styles */
+
+#heap-memory-usage {
+ float:left;
+ margin:0px auto;
+ padding:10px;
+ text-align:center;
+ width:175px;
+}
+#nonheap-memory-usage {
+ float:right;
+ margin:0px auto;
+ padding:10px;
+ text-align:center;
+ width:175px;
+}
+#memory-details {
+ width:350px;
+}
+#memory-details #memory-details-table {
+ width:350px;
+}
+#memory-details #memory-details-table #heap-details {
+ width:175px;
+}
+#memory-details #memory-details-table #heap-details #heap-details-table {
+ width:175px;
+}
+#memory-details #memory-details-table #heap-details #heap-details-table .label {
+ text-align:right;
+ width:50%;
+}
+#memory-details #memory-details-table #heap-details #heap-details-table .value {
+ width:50%;
+}
+#memory-details #memory-details-table #nonheap-details {
+ width:175px;
+}
+#memory-details #memory-details-table #nonheap-details #nonheap-details-table {
+ width:175px;
+}
+#memory-details #memory-details-table #nonheap-details #nonheap-details-table .label {
+ text-align:right;
+ width:50%;
+}
+#memory-details #memory-details-table #nonheap-details #nonheap-details-table .value {
+ width:50%;
+}
+
+/* The status code chart */
+
+#status-code-chart {
+}
+#status-code-chart .status-code-chart .bar {
+ fill:#709e6b;
+}
+#status-code-chart .status-code-chart .bar:hover {
+ fill:#90be8b;
+}
+#status-code-chart .status-code-chart .bar-text {
+ color:cyan;
+}
+
