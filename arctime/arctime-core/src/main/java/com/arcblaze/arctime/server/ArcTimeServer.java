@@ -29,7 +29,7 @@ public class ArcTimeServer extends BaseServer {
 	 *             information
 	 */
 	public ArcTimeServer() throws ConfigurationException {
-		super();
+		// Nothing to do.
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class ArcTimeServer extends BaseServer {
 		map.put("/payroll/*", Arrays.asList(admin, payroll));
 		map.put("/supervisor/*", Arrays.asList(admin, supervisor));
 		map.put("/user/*", Arrays.asList(admin, user));
-		return null;
+		return map;
 	}
 
 	/**
