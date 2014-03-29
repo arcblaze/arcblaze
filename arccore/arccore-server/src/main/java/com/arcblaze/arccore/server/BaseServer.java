@@ -54,22 +54,13 @@ import com.codahale.metrics.servlets.ThreadDumpServlet;
  * The base class for application hosting servers.
  */
 public abstract class BaseServer {
-	/** This will be used to log messages. */
 	private final static Logger log = LoggerFactory.getLogger(BaseServer.class);
 
-	/** The system configuration properties. */
 	private final Config config;
-
-	/** The DAO factory used to communicate with the database. */
 	private final DaoFactory daoFactory;
-
-	/** The embedded application server. */
 	private final Tomcat tomcat;
 
-	/** Used to manage application metrics. */
 	private final MetricRegistry metricRegistry = new MetricRegistry();
-
-	/** Used to manage application health and status. */
 	private final HealthCheckRegistry healthCheckRegistry = new HealthCheckRegistry();
 
 	/**
@@ -84,6 +75,8 @@ public abstract class BaseServer {
 				ServerProperty.SERVER_CONFIG_FILE.getDefaultValue());
 
 		this.daoFactory = new DaoFactory(this.config);
+
+		configureTomcatLogging(this.config);
 
 		String baseDir = ".";
 		if (this.config.getBoolean(ServerProperty.SERVER_DEVELOPMENT_MODE))
@@ -170,6 +163,17 @@ public abstract class BaseServer {
 	 */
 	protected DaoFactory getDaoFactory() {
 		return this.daoFactory;
+	}
+
+	/**
+	 * @param config
+	 *            the system configuration information
+	 */
+	protected static void configureTomcatLogging(final Config config) {
+		String loggingConfig = "conf/logging.properties";
+		if (config.getBoolean(ServerProperty.SERVER_DEVELOPMENT_MODE))
+			loggingConfig = "src/main/resources/logging.properties";
+		System.setProperty("java.util.logging.config.file", loggingConfig);
 	}
 
 	/**
