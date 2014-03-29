@@ -10,6 +10,8 @@ public enum ServerProperty implements Property {
 	SERVER_CONFIG_FILE("conf/system.properties"),
 	/** Whether the server should run in development mode. */
 	SERVER_DEVELOPMENT_MODE("false"),
+	/** The location where web application files should be found. */
+	SERVER_WEBAPP_DIR("webapp"),
 	/** Whether the server should run in insecure mode (HTTP) or not. */
 	SERVER_INSECURE_MODE("false"),
 	/** The insecure (http) port on which the web server will listen. */

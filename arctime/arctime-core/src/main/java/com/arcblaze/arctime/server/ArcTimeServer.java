@@ -14,7 +14,6 @@ import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.Role;
 import com.arcblaze.arccore.rest.BaseApplication;
 import com.arcblaze.arccore.server.BaseServer;
-import com.arcblaze.arccore.server.ServerProperty;
 import com.arcblaze.arccore.server.tasks.BackgroundTask;
 import com.arcblaze.arctime.rest.ArcTimeApplication;
 import com.codahale.metrics.MetricRegistry;
@@ -43,16 +42,6 @@ public class ArcTimeServer extends BaseServer {
 	 */
 	public static void main(final String... args) throws ConfigurationException {
 		new ArcTimeServer().start();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getWebappDirectory(final Config config) {
-		if (config.getBoolean(ServerProperty.SERVER_DEVELOPMENT_MODE))
-			return "arctime-web/src/main/webapp";
-		return "webapp";
 	}
 
 	/**

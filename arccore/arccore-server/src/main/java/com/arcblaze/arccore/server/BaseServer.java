@@ -103,8 +103,9 @@ public abstract class BaseServer {
 				this.daoFactory);
 		this.tomcat.getEngine().setRealm(realm);
 
-		final Context context = this.tomcat.addContext("",
-				getWebappDirectory(this.config));
+		final String webappDir = this.config
+				.getString(ServerProperty.SERVER_WEBAPP_DIR);
+		final Context context = this.tomcat.addContext("", webappDir);
 		context.addWelcomeFile("/index.jsp");
 
 		addServletWrappers(this.config, context);
@@ -229,14 +230,6 @@ public abstract class BaseServer {
 						"application/xml"), ","));
 		connector.setAttribute("useSendfile", "false");
 	}
-
-	/**
-	 * @param config
-	 *            the system configuration properties
-	 * 
-	 * @return the path to the web application directory
-	 */
-	public abstract String getWebappDirectory(final Config config);
 
 	/**
 	 * @param config
