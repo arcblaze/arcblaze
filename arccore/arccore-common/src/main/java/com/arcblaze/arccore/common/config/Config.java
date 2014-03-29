@@ -4,6 +4,7 @@ import static org.apache.commons.lang.Validate.notEmpty;
 import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.File;
+import java.net.URL;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.ConversionException;
@@ -58,10 +59,21 @@ public class Config {
 						"Failed to load system configuration from "
 								+ configFile.getAbsolutePath(), badConfig);
 			}
-		} else
-			throw new ConfigurationException(
-					"Failed to load configuration from non-existent file: "
-							+ configFile.getAbsolutePath());
+		} else {
+			final URL configUrl = this.getClass().getClassLoader()
+					.getResource(configurationFile);
+			if (configUrl != null) {
+				this.config = new PropertiesConfiguration(configUrl);
+				this.config.setDelimiterParsingDisabled(true);
+				this.config
+						.setReloadingStrategy(new FileChangedReloadingStrategy());
+			} else {
+				log.warn("Configuration file {} does not exist, and neither "
+						+ "does the classpath resource {}, so using defaults.",
+						configFile.getAbsolutePath(), configurationFile);
+				this.config = new PropertiesConfiguration();
+			}
+		}
 	}
 
 	/**
