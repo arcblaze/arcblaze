@@ -1,5 +1,6 @@
 package com.arcblaze.arccore.server;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -56,6 +57,10 @@ import com.codahale.metrics.servlets.ThreadDumpServlet;
 public abstract class BaseServer {
 	private final static Logger log = LoggerFactory.getLogger(BaseServer.class);
 
+	static {
+		configureTomcatLogging();
+	}
+
 	private final Config config;
 	private final DaoFactory daoFactory;
 	private final Tomcat tomcat;
@@ -75,8 +80,6 @@ public abstract class BaseServer {
 				ServerProperty.SERVER_CONFIG_FILE.getDefaultValue());
 
 		this.daoFactory = new DaoFactory(this.config);
-
-		configureTomcatLogging(this.config);
 
 		String baseDir = ".";
 		if (this.config.getBoolean(ServerProperty.SERVER_DEVELOPMENT_MODE))
@@ -166,14 +169,17 @@ public abstract class BaseServer {
 	}
 
 	/**
-	 * @param config
-	 *            the system configuration information
+	 * Configure logging within Tomcat.
 	 */
-	protected static void configureTomcatLogging(final Config config) {
-		String loggingConfig = "conf/logging.properties";
-		if (config.getBoolean(ServerProperty.SERVER_DEVELOPMENT_MODE))
-			loggingConfig = "src/main/resources/logging.properties";
-		System.setProperty("java.util.logging.config.file", loggingConfig);
+	protected static void configureTomcatLogging() {
+		final File prodFile = new File("conf/logging.properties");
+		final File devFile = new File("src/main/resources/logging.properties");
+		if (prodFile.exists())
+			System.setProperty("java.util.logging.config.file",
+					prodFile.getAbsolutePath());
+		else if (devFile.exists())
+			System.setProperty("java.util.logging.config.file",
+					devFile.getAbsolutePath());
 	}
 
 	/**
