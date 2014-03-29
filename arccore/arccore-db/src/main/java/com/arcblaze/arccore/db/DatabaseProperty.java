@@ -11,7 +11,7 @@ public enum DatabaseProperty implements Property {
 	/** The driver class name to use when creating connections. */
 	DB_DRIVER("com.mysql.jdbc.Driver"),
 	/** The JDBC connection URL to use when accessing the database. */
-	DB_URL("jdbc:mysql://localhost/db"),
+	DB_URL(""),
 	/** The name of the user to use when authenticating with the database. */
 	DB_USERNAME(""),
 	/** The password to use when authenticating with the database. */
