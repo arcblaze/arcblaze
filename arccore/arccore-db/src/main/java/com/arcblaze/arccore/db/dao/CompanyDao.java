@@ -12,6 +12,17 @@ import com.arcblaze.arccore.db.DatabaseUniqueConstraintException;
  */
 public interface CompanyDao {
 	/**
+	 * @param includeInactive
+	 *            whether inactive companies should be included in the count
+	 * 
+	 * @return the total number of companies in the system
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	int count(final boolean includeInactive) throws DatabaseException;
+
+	/**
 	 * @param companyId
 	 *            the unique id of the company to retrieve
 	 * 

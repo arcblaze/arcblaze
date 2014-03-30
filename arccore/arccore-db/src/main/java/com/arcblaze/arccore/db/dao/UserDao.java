@@ -12,6 +12,17 @@ import com.arcblaze.arccore.db.DatabaseUniqueConstraintException;
  */
 public interface UserDao {
 	/**
+	 * @param includeInactive
+	 *            whether inactive user accounts should be included in the count
+	 * 
+	 * @return the total number of user accounts in the system
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	int count(final boolean includeInactive) throws DatabaseException;
+
+	/**
 	 * @param login
 	 *            the login value provided by the user
 	 * 

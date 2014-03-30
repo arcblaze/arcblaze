@@ -46,6 +46,8 @@ public class JdbcUserDaoTest {
 			assertNotNull(users);
 			assertEquals(0, users.size());
 
+			assertEquals(0, userDao.count(true));
+
 			final User user = new User();
 			user.setCompanyId(company.getId());
 			user.setLogin("user");
@@ -86,6 +88,8 @@ public class JdbcUserDaoTest {
 				// Expected
 			}
 
+			assertEquals(1, userDao.count(true));
+
 			users = userDao.getAll();
 			assertNotNull(users);
 			assertEquals(1, users.size());
@@ -120,6 +124,14 @@ public class JdbcUserDaoTest {
 			getUser = userDao.get(user.getId());
 			assertEquals(user, getUser);
 
+			user.setActive(false);
+			userDao.update(user);
+			getUser = userDao.get(user.getId());
+			assertEquals(user, getUser);
+
+			assertEquals(1, userDao.count(true));
+			assertEquals(0, userDao.count(false));
+
 			userDao.delete(user.getId());
 			getUser = userDao.get(user.getId());
 			assertNull(getUser);
@@ -127,6 +139,7 @@ public class JdbcUserDaoTest {
 			users = userDao.getAll();
 			assertNotNull(users);
 			assertEquals(0, users.size());
+			assertEquals(0, userDao.count(true));
 		}
 	}
 }
