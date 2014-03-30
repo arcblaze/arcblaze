@@ -39,6 +39,7 @@ public class JdbcUserDao implements UserDao {
 			throws SQLException {
 		final User user = new User();
 		user.setId(rs.getInt("id"));
+		user.setCompanyId(rs.getInt("company_id"));
 		user.setLogin(rs.getString("login"));
 		if (includePass) {
 			user.setHashedPass(rs.getString("hashed_pass"));
@@ -105,16 +106,41 @@ public class JdbcUserDao implements UserDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Set<User> getForCompany(final Integer companyId)
+			throws DatabaseException {
+		notNull(companyId, "Invalid null company id");
+
+		final String sql = "SELECT * FROM users WHERE company_id = ?";
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, companyId);
+
+			final Set<User> users = new TreeSet<>();
+			try (final ResultSet rs = ps.executeQuery();) {
+				if (rs.next())
+					users.add(fromResultSet(rs, false));
+			}
+
+			return users;
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Set<User> getAll() throws DatabaseException {
 		final String sql = "SELECT * FROM users";
 
 		final Set<User> users = new TreeSet<>();
 		try (final Connection conn = this.connectionManager.getConnection();
-				final PreparedStatement ps = conn.prepareStatement(sql)) {
-			try (final ResultSet rs = ps.executeQuery()) {
-				while (rs.next())
-					users.add(fromResultSet(rs, false));
-			}
+				final PreparedStatement ps = conn.prepareStatement(sql);
+				final ResultSet rs = ps.executeQuery()) {
+			while (rs.next())
+				users.add(fromResultSet(rs, false));
 
 			return users;
 		} catch (final SQLException sqlException) {
@@ -140,15 +166,16 @@ public class JdbcUserDao implements UserDao {
 		if (users == null || users.isEmpty())
 			return;
 
-		final String sql = "INSERT INTO users (login, hashed_pass, salt, "
-				+ "email, first_name, last_name, active) VALUES "
-				+ "(?, ?, ?, ?, ?, ?, ?)";
+		final String sql = "INSERT INTO users (company_id, login, hashed_pass, "
+				+ "salt, email, first_name, last_name, active) VALUES "
+				+ "(?, ?, ?, ?, ?, ?, ?, ?)";
 
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql,
 						Statement.RETURN_GENERATED_KEYS)) {
 			for (final User user : users) {
 				int index = 1;
+				ps.setInt(index++, user.getCompanyId());
 				ps.setString(index++, user.getLogin());
 				ps.setString(index++, user.getHashedPass());
 				ps.setString(index++, user.getSalt());
@@ -190,13 +217,15 @@ public class JdbcUserDao implements UserDao {
 
 		// NOTE: the hashed_pass and salt values are not updated.
 
-		final String sql = "UPDATE users SET login = ?, email = ?, "
-				+ "first_name = ?, last_name = ?, active = ? WHERE id = ?";
+		final String sql = "UPDATE users SET company_id = ?, login = ?, "
+				+ "email = ?, first_name = ?, last_name = ?, active = ? "
+				+ "WHERE id = ?";
 
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final User user : users) {
 				int index = 1;
+				ps.setInt(index++, user.getCompanyId());
 				ps.setString(index++, user.getLogin());
 				ps.setString(index++, user.getEmail());
 				ps.setString(index++, user.getFirstName());

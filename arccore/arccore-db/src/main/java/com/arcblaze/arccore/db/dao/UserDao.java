@@ -38,6 +38,19 @@ public interface UserDao {
 	User get(final Integer userId) throws DatabaseException;
 
 	/**
+	 * @param companyId
+	 *            the unique id of the company for which users will be retrieved
+	 * 
+	 * @return the requested users, possibly empty but never {@code null}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	Set<User> getForCompany(final Integer companyId) throws DatabaseException;
+
+	/**
 	 * @return all available users, possibly empty but never {@code null}
 	 * 
 	 * @throws DatabaseException

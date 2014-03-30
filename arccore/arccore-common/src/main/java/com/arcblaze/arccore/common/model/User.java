@@ -37,6 +37,11 @@ public class User implements Comparable<User>, Principal {
 	private Integer id;
 
 	/**
+	 * The unique id of the company for which this user account was created.
+	 */
+	private Integer companyId;
+
+	/**
 	 * The login name for the user.
 	 */
 	private String login;
@@ -94,17 +99,19 @@ public class User implements Comparable<User>, Principal {
 		notNull(other, "Invalid null user");
 		if (other.getId() != null)
 			setId(other.getId());
-		if (StringUtils.isNotBlank(other.getLogin()))
+		if (other.getCompanyId() != null)
+			setCompanyId(other.getCompanyId());
+		if (other.getLogin() != null)
 			setLogin(other.getLogin());
-		if (StringUtils.isNotBlank(other.getHashedPass()))
+		if (other.getHashedPass() != null)
 			setHashedPass(other.getHashedPass());
-		if (StringUtils.isNotBlank(other.getSalt()))
+		if (other.getSalt() != null)
 			setSalt(other.getSalt());
-		if (StringUtils.isNotBlank(other.getEmail()))
+		if (other.getEmail() != null)
 			setEmail(other.getEmail());
-		if (StringUtils.isNotBlank(other.getFirstName()))
+		if (other.getFirstName() != null)
 			setFirstName(other.getFirstName());
-		if (StringUtils.isNotBlank(other.getLastName()))
+		if (other.getLastName() != null)
 			setLastName(other.getLastName());
 		if (other.isActive() != null)
 			setActive(other.isActive());
@@ -133,6 +140,32 @@ public class User implements Comparable<User>, Principal {
 		isTrue(id >= 0, "Invalid negative id");
 
 		this.id = id;
+		return this;
+	}
+
+	/**
+	 * @return the unique id of the company for which this user was created
+	 */
+	@XmlElement
+	public Integer getCompanyId() {
+		return this.companyId;
+	}
+
+	/**
+	 * @param companyId
+	 *            the new unique id of the company for which this user was
+	 *            created
+	 * 
+	 * @return {@code this}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id value is invalid
+	 */
+	public User setCompanyId(final Integer companyId) {
+		notNull(companyId, "Invalid null company id");
+		isTrue(companyId >= 0, "Invalid negative company id");
+
+		this.companyId = companyId;
 		return this;
 	}
 
@@ -426,6 +459,7 @@ public class User implements Comparable<User>, Principal {
 		final ToStringBuilder builder = new ToStringBuilder(this,
 				ToStringStyle.SHORT_PREFIX_STYLE);
 		builder.append("id", getId());
+		builder.append("companyId", getCompanyId());
 		builder.append("login", getLogin());
 		builder.append("hashedPass", getHashedPass());
 		builder.append("salt", getSalt());
@@ -446,6 +480,7 @@ public class User implements Comparable<User>, Principal {
 			final User other = (User) obj;
 			final EqualsBuilder builder = new EqualsBuilder();
 			builder.append(getId(), other.getId());
+			builder.append(getCompanyId(), other.getCompanyId());
 			builder.append(getLogin(), other.getLogin());
 			// HashedPass and Salt specifically left out.
 			builder.append(getEmail(), other.getEmail());
@@ -465,6 +500,7 @@ public class User implements Comparable<User>, Principal {
 	public int hashCode() {
 		final HashCodeBuilder builder = new HashCodeBuilder();
 		builder.append(getId());
+		builder.append(getCompanyId());
 		builder.append(getLogin());
 		// HashedPass and Salt specifically left out.
 		builder.append(getEmail());
@@ -480,6 +516,7 @@ public class User implements Comparable<User>, Principal {
 	@Override
 	public int compareTo(final User other) {
 		final CompareToBuilder builder = new CompareToBuilder();
+		builder.append(getCompanyId(), other.getCompanyId());
 		builder.append(other.isActive(), isActive());
 		builder.append(getLastName(), other.getLastName());
 		builder.append(getFirstName(), other.getFirstName());

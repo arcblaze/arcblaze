@@ -8,9 +8,11 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import com.arcblaze.arccore.common.model.Company;
 import com.arcblaze.arccore.common.model.Role;
 import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.DatabaseException;
+import com.arcblaze.arccore.db.dao.CompanyDao;
 import com.arcblaze.arccore.db.dao.RoleDao;
 import com.arcblaze.arccore.db.dao.UserDao;
 import com.arcblaze.arccore.db.util.TestDatabase;
@@ -28,12 +30,21 @@ public class JdbcRoleDaoTest {
 		try (final TestDatabase database = new TestDatabase()) {
 			database.load("hsqldb/db.sql");
 
+			final CompanyDao companyDao = new JdbcCompanyDao(
+					database.getConnectionManager());
 			final UserDao userDao = new JdbcUserDao(
 					database.getConnectionManager());
 			final RoleDao roleDao = new JdbcRoleDao(
 					database.getConnectionManager());
 
+			final Company company = new Company();
+			company.setName("Test Company");
+			company.setActive(true);
+			companyDao.add(company);
+			assertNotNull(company.getId());
+
 			final User user = new User();
+			user.setCompanyId(company.getId());
 			user.setLogin("user");
 			user.setHashedPass("hashed");
 			user.setSalt("salt");

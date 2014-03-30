@@ -10,9 +10,11 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import com.arcblaze.arccore.common.model.Company;
 import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.DatabaseException;
 import com.arcblaze.arccore.db.DatabaseUniqueConstraintException;
+import com.arcblaze.arccore.db.dao.CompanyDao;
 import com.arcblaze.arccore.db.dao.UserDao;
 import com.arcblaze.arccore.db.util.TestDatabase;
 
@@ -29,14 +31,23 @@ public class JdbcUserDaoTest {
 		try (final TestDatabase database = new TestDatabase()) {
 			database.load("hsqldb/db.sql");
 
+			final CompanyDao companyDao = new JdbcCompanyDao(
+					database.getConnectionManager());
 			final UserDao userDao = new JdbcUserDao(
 					database.getConnectionManager());
+
+			final Company company = new Company();
+			company.setName("Test Company");
+			company.setActive(true);
+			companyDao.add(company);
+			assertNotNull(company.getId());
 
 			Set<User> users = userDao.getAll();
 			assertNotNull(users);
 			assertEquals(0, users.size());
 
 			final User user = new User();
+			user.setCompanyId(company.getId());
 			user.setLogin("user");
 			user.setHashedPass("hashed");
 			user.setSalt("salt");
@@ -49,6 +60,7 @@ public class JdbcUserDaoTest {
 
 			try {
 				final User bad = new User();
+				bad.setCompanyId(company.getId());
 				bad.setLogin("user"); // same as other user
 				bad.setHashedPass("hashed");
 				bad.setEmail("email2");
@@ -62,6 +74,7 @@ public class JdbcUserDaoTest {
 
 			try {
 				final User bad = new User();
+				bad.setCompanyId(company.getId());
 				bad.setLogin("user2");
 				bad.setHashedPass("hashed");
 				bad.setEmail("EMAIL"); // same as other user
@@ -74,6 +87,11 @@ public class JdbcUserDaoTest {
 			}
 
 			users = userDao.getAll();
+			assertNotNull(users);
+			assertEquals(1, users.size());
+			assertTrue(users.contains(user));
+
+			users = userDao.getForCompany(company.getId());
 			assertNotNull(users);
 			assertEquals(1, users.size());
 			assertTrue(users.contains(user));
