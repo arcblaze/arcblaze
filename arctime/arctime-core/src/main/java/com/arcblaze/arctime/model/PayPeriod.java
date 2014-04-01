@@ -203,6 +203,9 @@ public class PayPeriod implements Comparable<PayPeriod> {
 			// Use the original end date to calculate the previous begin date.
 			b = DateUtils.addMonths(DateUtils.addDays(getEnd(), 1), -1);
 			break;
+		case CUSTOM:
+			// No way to determine the previous pay period.
+			return null;
 		}
 
 		payPeriod.setBegin(b);
@@ -267,6 +270,9 @@ public class PayPeriod implements Comparable<PayPeriod> {
 			} else
 				e = DateUtils.addMonths(prevEnd, 1);
 			break;
+		case CUSTOM:
+			// No way to determine the next pay period.
+			return null;
 		}
 
 		payPeriod.setBegin(b);

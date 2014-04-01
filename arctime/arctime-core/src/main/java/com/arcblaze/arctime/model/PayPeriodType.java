@@ -14,6 +14,8 @@ public enum PayPeriodType {
 	BI_WEEKLY,
 	/** One pay period every week. */
 	WEEKLY,
+	/** Some other custom pay period. */
+	CUSTOM,
 
 	;
 

@@ -11,7 +11,10 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import com.arcblaze.arccore.common.model.User;
@@ -145,6 +148,34 @@ public class JdbcUserDao implements UserDao {
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<Integer, User> get(final Set<Integer> ids)
+			throws DatabaseException {
+		if (ids == null || ids.isEmpty())
+			return Collections.emptyMap();
+
+		final String sql = "SELECT * FROM users WHERE id = ?";
+
+		final Map<Integer, User> userMap = new TreeMap<>();
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql)) {
+			for (final Integer id : ids) {
+				ps.setInt(1, id);
+				try (final ResultSet rs = ps.executeQuery()) {
+					while (rs.next())
+						userMap.put(id, fromResultSet(rs, false));
+				}
+			}
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+
+		return userMap;
 	}
 
 	/**

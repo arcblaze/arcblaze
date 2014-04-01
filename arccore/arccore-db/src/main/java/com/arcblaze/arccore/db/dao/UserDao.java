@@ -1,6 +1,7 @@
 package com.arcblaze.arccore.db.dao;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 import com.arcblaze.arccore.common.model.User;
@@ -60,6 +61,19 @@ public interface UserDao {
 	 *             if there is a problem communicating with the database
 	 */
 	Set<User> getForCompany(final Integer companyId) throws DatabaseException;
+
+	/**
+	 * @param ids
+	 *            the unique ids of the user objects to retrieve
+	 * 
+	 * @return a map of user id to user, possibly empty but never {@code null}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided parameter is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	Map<Integer, User> get(final Set<Integer> ids) throws DatabaseException;
 
 	/**
 	 * @return all available users, possibly empty but never {@code null}

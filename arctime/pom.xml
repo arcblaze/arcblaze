@@ -13,6 +13,7 @@
 
 	<modules>
 		<module>arctime-core</module>
+		<module>arctime-db</module>
 		<module>arctime-web</module>
 		<module>arctime-dist</module>
 	</modules>

@@ -193,7 +193,7 @@ public class Transaction implements Comparable<Transaction> {
 	public Transaction setTimestamp(final Date timestamp) {
 		notNull(timestamp, "Invalid null timestamp value");
 
-		this.timestamp = new Date(this.timestamp.getTime());
+		this.timestamp = new Date(timestamp.getTime());
 		return this;
 	}
 
