@@ -1,18 +1,11 @@
 package com.arcblaze.arccore.mail;
 
-import static org.apache.commons.lang.Validate.notEmpty;
 import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
 
-import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
-import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -20,115 +13,102 @@ import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.User;
 
 /**
- * Responsible for sending emails.
+ * The base class for mail-sending implementations.
  */
-public class MailSender {
-	/** Holds the configuration information for making mail connections. */
+public abstract class MailSender {
+	private final Mailer mailer;
 	private final Config config;
 
 	/**
 	 * @param config
-	 *            the object from which configuration information will be
-	 *            retrieved
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided configuration is {@code null}
+	 *            the system configuration information
 	 */
 	public MailSender(final Config config) {
-		notNull(config, "Invalid null config");
-
+		this.mailer = new Mailer(config);
 		this.config = config;
 	}
 
-	Properties getMailConfiguration() {
-		final Properties props = System.getProperties();
-		props.setProperty("mail.smtp.host",
-				this.config.getString(MailProperty.SMTP_MAIL_SERVER));
-		props.setProperty("mail.smtp.port", String.valueOf(this.config
-				.getInt(MailProperty.SMTP_MAIL_SERVER_PORT)));
-
-		if (this.config.getBoolean(MailProperty.SMTP_MAIL_USE_SSL)) {
-			props.setProperty("mail.smtp.ssl.enable", "true");
-			props.setProperty("mail.smtp.starttls.enable", "true");
-			props.setProperty("mail.smtp.ssl.protocols", "SSLv3 TLSv1");
-		}
-
-		if (this.config.getBoolean(MailProperty.SMTP_MAIL_AUTHENTICATE))
-			props.setProperty("mail.smtp.auth", "true");
-
-		return props;
+	/**
+	 * @return the system configuration information
+	 */
+	protected Config getConfig() {
+		return this.config;
 	}
 
 	/**
-	 * @param msg
-	 *            the content within the body of the email
-	 * @param subject
-	 *            the subject to include in the email
-	 * @param users
-	 *            the users to which the message will be sent
+	 * @return an {@link InternetAddress} representing the administrator email
 	 * 
-	 * @throws MessagingException
-	 *             if there is a problem sending the messages
-	 * @throws IllegalArgumentException
-	 *             if the parameters are invalid
+	 * @throws UnsupportedEncodingException
+	 *             if there is an encoding issue
 	 */
-	public void send(final String msg, final String subject,
-			final User... users) throws MessagingException {
-		notEmpty(users, "Invalid empty users");
-		send(msg, subject, new HashSet<>(Arrays.asList(users)));
+	protected InternetAddress getAdminAddress()
+			throws UnsupportedEncodingException {
+		final String email = this.config.getString(MailProperty.ADMIN_EMAIL);
+		final String name = this.config.getString(MailProperty.ADMIN_NAME);
+		return new InternetAddress(email, name);
 	}
 
 	/**
-	 * @param msg
-	 *            the content within the body of the email
-	 * @param subject
-	 *            the subject to include in the email
-	 * @param users
-	 *            the users to which the message will be sent
+	 * @return an {@link InternetAddress} representing the generic system email
+	 *         sending account
+	 * 
+	 * @throws UnsupportedEncodingException
+	 *             if there is an encoding issue
+	 */
+	protected InternetAddress getSenderAddress()
+			throws UnsupportedEncodingException {
+		final String email = this.config.getString(MailProperty.SENDER_EMAIL);
+		final String name = this.config.getString(MailProperty.SENDER_NAME);
+		return new InternetAddress(email, name);
+	}
+
+	/**
+	 * @param user
+	 *            the {@link User} for which the corresponding internet address
+	 *            will be created
+	 * 
+	 * @return the {@link InternetAddress} associated with the user account
+	 * 
+	 * @throws UnsupportedEncodingException
+	 *             if there is an encoding issue
+	 */
+	protected InternetAddress getAddress(final User user)
+			throws UnsupportedEncodingException {
+		notNull(user.getEmail(), "Invalid null email address");
+
+		// The full name can be null.
+		return new InternetAddress(user.getEmail(), user.getFullName());
+	}
+
+	/**
+	 * Used to fully populate a {@link MimeMessage} in preparation for being
+	 * sent.
+	 * 
+	 * @param message
+	 *            the {@link MimeMessage} to be populated with from, to,
+	 *            subject, and message information
 	 * 
 	 * @throws MessagingException
-	 *             if there is a problem sending the messages
-	 * @throws IllegalArgumentException
-	 *             if the parameters are invalid
+	 *             if there is a problem sending the email
+	 * @throws UnsupportedEncodingException
+	 *             if there is an encoding issue
 	 */
-	public void send(final String msg, final String subject,
-			final Set<User> users) throws MessagingException {
-		notEmpty(msg, "Invalid null message");
-		notEmpty(subject, "Invalid null subject");
-		notEmpty(users, "Invalid empty users");
+	public abstract void populate(final MimeMessage message)
+			throws MessagingException, UnsupportedEncodingException;
 
-		final Properties props = getMailConfiguration();
-
-		final Session session = Session.getDefaultInstance(props, null);
+	/**
+	 * @throws MessagingException
+	 *             if there is a problem sending the message
+	 * @throws UnsupportedEncodingException
+	 *             if there is an encoding issue
+	 */
+	public void send() throws MessagingException, UnsupportedEncodingException {
+		final Session session = this.mailer.getSession();
 		final MimeMessage message = new MimeMessage(session);
-		try {
-			message.setFrom(new InternetAddress(this.config
-					.getString(MailProperty.SENDER_EMAIL), this.config
-					.getString(MailProperty.SENDER_NAME)));
-			for (final User user : users)
-				message.addRecipient(
-						Message.RecipientType.TO,
-						new InternetAddress(user.getEmail(), user.getFullName()));
-			message.setSubject(subject);
-			message.setText(msg);
-			message.saveChanges();
-		} catch (final UnsupportedEncodingException badEncoding) {
-			throw new MessagingException(
-					"Invalid encoding when sending message.", badEncoding);
-		}
 
-		if (this.config.getBoolean(MailProperty.SMTP_MAIL_AUTHENTICATE)) {
-			final String server = this.config
-					.getString(MailProperty.SMTP_MAIL_SERVER);
-			final String user = this.config
-					.getString(MailProperty.SMTP_MAIL_AUTHENTICATE_USER);
-			final String password = this.config
-					.getString(MailProperty.SMTP_MAIL_AUTHENTICATE_PASSWORD);
-			final Transport transport = session.getTransport("smtp");
-			transport.connect(server, user, password);
-			transport.sendMessage(message, message.getAllRecipients());
-			transport.close();
-		} else
-			Transport.send(message);
+		// Child classes have to populate the message.
+		populate(message);
+
+		this.mailer.send(session, message);
 	}
 }

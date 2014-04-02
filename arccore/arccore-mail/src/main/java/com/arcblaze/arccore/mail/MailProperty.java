@@ -22,6 +22,10 @@ public enum MailProperty implements Property {
 	SENDER_EMAIL(""),
 	/** The display name of the user to use when sending SMTP emails. */
 	SENDER_NAME("admin"),
+	/** The email address of the system administrator. */
+	ADMIN_EMAIL(""),
+	/** The display name of the system administrator. */
+	ADMIN_NAME("admin"),
 
 	;
 
