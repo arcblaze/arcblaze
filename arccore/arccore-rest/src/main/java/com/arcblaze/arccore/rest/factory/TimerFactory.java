@@ -56,8 +56,10 @@ public class TimerFactory extends BaseFactory<Timer> {
 	 * @return a log message describing this web request
 	 */
 	protected String getRequestLog(final HttpServletRequest request) {
+		final String userLogin = StringUtils.defaultIfEmpty(
+				request.getRemoteUser(), "-");
 		final StringBuilder msg = new StringBuilder();
-		msg.append(StringUtils.rightPad(request.getRemoteUser(), 12));
+		msg.append(StringUtils.rightPad(userLogin, 12));
 		msg.append(" ");
 		msg.append(StringUtils.rightPad(request.getMethod(), 6));
 		msg.append(" ");
