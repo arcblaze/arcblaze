@@ -36,6 +36,13 @@ public class DaoFactory {
 	}
 
 	/**
+	 * @return the type of database configured with this system
+	 */
+	public DatabaseType getDatabaseType() {
+		return this.databaseType;
+	}
+
+	/**
 	 * @return the internal connection manager used to access the database
 	 */
 	public ConnectionManager getConnectionManager() {
@@ -43,7 +50,7 @@ public class DaoFactory {
 	}
 
 	/**
-	 * @return an {@link UserDao} based on the currently configured database
+	 * @return a {@link UserDao} based on the currently configured database
 	 */
 	public UserDao getUserDao() {
 		if (this.cachedUserDao == null) {
@@ -58,7 +65,7 @@ public class DaoFactory {
 	}
 
 	/**
-	 * @return an {@link RoleDao} based on the currently configured database
+	 * @return a {@link RoleDao} based on the currently configured database
 	 */
 	public RoleDao getRoleDao() {
 		if (this.cachedRoleDao == null) {
@@ -86,5 +93,7 @@ public class DaoFactory {
 				throw new DatabaseException(sqlException);
 			}
 		}
+		this.cachedUserDao = null;
+		this.cachedRoleDao = null;
 	}
 }
