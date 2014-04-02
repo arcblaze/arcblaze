@@ -43,7 +43,7 @@ public class ArcTimeDaoFactory extends DaoFactory {
 	}
 
 	/**
-	 * @return a {@link AssignmentDao} based on the currently configured
+	 * @return an {@link AssignmentDao} based on the currently configured
 	 *         database
 	 */
 	public AssignmentDao getAssignmentDao() {
@@ -60,7 +60,7 @@ public class ArcTimeDaoFactory extends DaoFactory {
 	}
 
 	/**
-	 * @return a {@link AuditLogDao} based on the currently configured database
+	 * @return an {@link AuditLogDao} based on the currently configured database
 	 */
 	public AuditLogDao getAuditLogDao() {
 		if (this.cachedAuditLogDao == null) {
