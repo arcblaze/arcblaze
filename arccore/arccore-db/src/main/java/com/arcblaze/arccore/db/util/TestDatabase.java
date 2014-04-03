@@ -16,6 +16,7 @@ import org.hsqldb.jdbc.JDBCDriver;
 
 import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.db.ConnectionManager;
+import com.arcblaze.arccore.db.DaoFactory;
 import com.arcblaze.arccore.db.DatabaseException;
 import com.arcblaze.arccore.db.DatabaseProperty;
 
@@ -37,6 +38,13 @@ public class TestDatabase implements Closeable {
 		config.set(DatabaseProperty.DB_PASSWORD, "");
 
 		this.connectionManager = new ConnectionManager(config);
+	}
+
+	/**
+	 * @return a {@link DaoFactory} connected to this test database
+	 */
+	public DaoFactory getDaoFactory() {
+		return new DaoFactory(this.connectionManager);
 	}
 
 	/**

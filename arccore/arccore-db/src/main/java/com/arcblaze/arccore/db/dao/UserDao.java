@@ -24,6 +24,19 @@ public interface UserDao {
 	int count(final boolean includeInactive) throws DatabaseException;
 
 	/**
+	 * @param includeInactive
+	 *            whether inactive user accounts should be included
+	 * 
+	 * @return a map specifying the total number of user accounts in the system
+	 *         per company
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	Map<Integer, Integer> countPerCompany(final boolean includeInactive)
+			throws DatabaseException;
+
+	/**
 	 * @param login
 	 *            the login value provided by the user
 	 * 

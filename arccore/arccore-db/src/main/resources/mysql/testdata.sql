@@ -7,3 +7,6 @@ INSERT INTO `users` (`id`, `company_id`, `login`, `hashed_pass`, `salt`, `email`
 INSERT INTO `roles` (`name`, `user_id`) VALUES
 ('ADMIN', 1);
 
+
+INSERT INTO transactions (`company_id`, `user_id`, `timestamp`, `type`, `description`, `amount`, `notes`) VALUES
+(1, 1, '2013-12-24 01:02:03', 'PAYMENT', 'Purchased 40 user months.', '20.00', NULL);

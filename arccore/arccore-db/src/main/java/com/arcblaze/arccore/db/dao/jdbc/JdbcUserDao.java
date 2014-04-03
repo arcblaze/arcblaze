@@ -12,6 +12,7 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -69,6 +70,28 @@ public class JdbcUserDao implements UserDao {
 			if (rs.next())
 				return rs.getInt(1);
 			return 0;
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<Integer, Integer> countPerCompany(final boolean includeInactive)
+			throws DatabaseException {
+		final String sql = "SELECT company_id, COUNT(*) AS count FROM users"
+				+ (includeInactive ? "" : " WHERE active = TRUE")
+				+ " GROUP BY company_id";
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql);
+				final ResultSet rs = ps.executeQuery()) {
+			final Map<Integer, Integer> counts = new HashMap<>();
+			while (rs.next())
+				counts.put(rs.getInt(1), rs.getInt(2));
+			return counts;
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
