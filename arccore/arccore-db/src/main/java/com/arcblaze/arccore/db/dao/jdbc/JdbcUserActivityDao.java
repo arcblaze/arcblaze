@@ -97,9 +97,10 @@ public class JdbcUserActivityDao implements UserActivityDao {
 		notNull(begin, "Invalid null begin");
 		notNull(end, "Invalid null end");
 
-		final String sql = "SELECT YEAR(day) AS year, MONTH(day) AS month, "
-				+ "MAX(active) AS active FROM active_user_counts "
-				+ "WHERE day >= ? AND day < ? GROUP BY year, month";
+		final String sql = "SELECT company_id, YEAR(day) AS year, "
+				+ "MONTH(day) AS month, MAX(active) AS active "
+				+ "FROM active_user_counts WHERE day >= ? AND day < ? "
+				+ "GROUP BY company_id, year, month";
 
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -116,7 +117,7 @@ public class JdbcUserActivityDao implements UserActivityDao {
 					final Date date = fmt.parse(String.format("%d-%d-01", year,
 							month));
 					final Integer num = map.get(date);
-					map.put(date, num == null ? active : Math.max(num, active));
+					map.put(date, num == null ? active : num + active);
 				}
 			}
 
