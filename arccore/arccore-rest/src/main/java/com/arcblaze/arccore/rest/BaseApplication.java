@@ -11,8 +11,10 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.arcblaze.arccore.rest.factory.DaoFactoryFactory;
 import com.arcblaze.arccore.rest.factory.HealthCheckRegistryFactory;
 import com.arcblaze.arccore.rest.factory.MetricRegistryFactory;
+import com.arcblaze.arccore.rest.factory.PasswordFactory;
 import com.arcblaze.arccore.rest.factory.TimerFactory;
 import com.google.common.reflect.ClassPath;
 import com.google.common.reflect.ClassPath.ClassInfo;
@@ -36,9 +38,11 @@ public abstract class BaseApplication extends ResourceConfig {
 		// finding the resources when Tomcat is run as an embedded app.
 		registerPackage(BaseApplication.class.getPackage().getName());
 
+		register(DaoFactoryFactory.getBinder());
 		register(MetricRegistryFactory.getBinder());
 		register(HealthCheckRegistryFactory.getBinder());
 		register(TimerFactory.getBinder());
+		register(PasswordFactory.getBinder());
 
 		register(JacksonJaxbJsonProvider.class);
 	}

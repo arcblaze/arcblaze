@@ -38,6 +38,7 @@ import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.Role;
 import com.arcblaze.arccore.db.DaoFactory;
 import com.arcblaze.arccore.rest.BaseApplication;
+import com.arcblaze.arccore.rest.factory.DaoFactoryFactory;
 import com.arcblaze.arccore.server.security.SecurityRealm;
 import com.arcblaze.arccore.server.tasks.BackgroundTask;
 import com.arcblaze.arccore.server.tasks.MemoryUsageLoggingTask;
@@ -62,7 +63,6 @@ public abstract class BaseServer {
 	}
 
 	private final Config config;
-	private final DaoFactory daoFactory;
 	private final Tomcat tomcat;
 
 	private final MetricRegistry metricRegistry = new MetricRegistry();
@@ -79,7 +79,7 @@ public abstract class BaseServer {
 		this.config = new Config(
 				ServerProperty.SERVER_CONFIG_FILE.getDefaultValue());
 
-		this.daoFactory = new DaoFactory(this.config);
+		final DaoFactory daoFactory = getDaoFactory(this.config);
 
 		String baseDir = ".";
 		if (this.config.getBoolean(ServerProperty.SERVER_DEVELOPMENT_MODE))
@@ -99,8 +99,7 @@ public abstract class BaseServer {
 					.getInt(ServerProperty.SERVER_PORT_INSECURE));
 		}
 
-		final SecurityRealm realm = new SecurityRealm("security",
-				this.daoFactory);
+		final SecurityRealm realm = new SecurityRealm("security", daoFactory);
 		this.tomcat.getEngine().setRealm(realm);
 
 		final String webappDir = this.config
@@ -127,6 +126,8 @@ public abstract class BaseServer {
 		context.setLoginConfig(loginConfig);
 		context.getPipeline().addValve(new FormAuthenticator());
 
+		context.getServletContext().setAttribute(
+				DaoFactoryFactory.DAO_FACTORY_CONFIG, daoFactory);
 		context.getServletContext().setAttribute(
 				InstrumentedFilter.REGISTRY_ATTRIBUTE, this.metricRegistry);
 		context.getServletContext().setAttribute(
@@ -162,11 +163,12 @@ public abstract class BaseServer {
 	}
 
 	/**
+	 * @param config
+	 *            the system configuration properties
+	 * 
 	 * @return the system {@link DaoFactory} instance used to hit the database
 	 */
-	protected DaoFactory getDaoFactory() {
-		return this.daoFactory;
-	}
+	public abstract DaoFactory getDaoFactory(final Config config);
 
 	/**
 	 * Configure logging within Tomcat.

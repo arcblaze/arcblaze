@@ -28,14 +28,13 @@ public class LoginResource extends BaseResource {
 	private final static Logger log = LoggerFactory
 			.getLogger(LoginResource.class);
 
-	@Context
-	private Timer timer;
-	@Context
-	private HttpServletRequest request;
-	@Context
-	private UriInfo uriInfo;
-
 	/**
+	 * @param request
+	 *            the web request from the client
+	 * @param uriInfo
+	 *            the URI information contained in the request
+	 * @param timer
+	 *            tracks performance metrics on this REST end-point
 	 * @param login
 	 *            the user login name to use when logging in
 	 * @param password
@@ -50,27 +49,36 @@ public class LoginResource extends BaseResource {
 	 *             if there is a problem with the created URI
 	 */
 	@POST
-	public Response login(final @FormParam("login") String login,
-			final @FormParam("password") String password,
-			final @FormParam("redirectUri") String redirectUri)
+	public Response login(@Context final HttpServletRequest request,
+			@Context final UriInfo uriInfo, @Context final Timer timer,
+			@FormParam("login") final String login,
+			@FormParam("password") final String password,
+			@FormParam("redirectUri") final String redirectUri)
 			throws URISyntaxException {
 		log.debug("User login request: {}", login);
-		try (Timer.Context timerContext = this.timer.time()) {
-			final String remoteUser = this.request.getRemoteUser();
+		try (final Timer.Context timerContext = timer.time()) {
+			if (StringUtils.isBlank(login))
+				throw badRequest("Invalid blank user login");
+			if (StringUtils.isBlank(password))
+				throw badRequest("Invalid blank user password");
+
+			final String remoteUser = request.getRemoteUser();
 			if (StringUtils.isNotBlank(remoteUser)) {
 				if (!remoteUser.equals(login)) {
-					this.request.logout();
-					this.request.login(login, password);
+					request.logout();
+					request.login(login, password);
 				} else
 					log.debug("Already logged in.");
 			} else
-				this.request.login(login, password);
+				request.login(login, password);
 
-			String baseUri = this.uriInfo.getBaseUri().toString();
-			baseUri = baseUri.substring(0, baseUri.indexOf("/rest"));
-			return Response.seeOther(new URI(baseUri + redirectUri)).build();
+			final String baseUri = StringUtils.substringBefore(uriInfo
+					.getBaseUri().toString(), "/rest");
+			final URI uri = redirectUri == null ? new URI(baseUri + "/")
+					: new URI(baseUri + redirectUri);
+			return Response.seeOther(uri).build();
 		} catch (final ServletException loginFailed) {
-			log.error("User login failed.", loginFailed);
+			log.error("User login failed: {}", loginFailed.getMessage());
 			throw new NotAuthorizedException("Login failed.", loginFailed);
 		}
 	}
