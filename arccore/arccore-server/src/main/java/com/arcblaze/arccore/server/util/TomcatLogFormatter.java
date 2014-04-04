@@ -6,6 +6,7 @@ import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 /**
  * Performs formatting of log messages from the embedded tomcat.
@@ -25,13 +26,18 @@ public class TomcatLogFormatter extends Formatter {
 		final StringBuilder log = new StringBuilder();
 		log.append(this.fmt.format(this.date));
 		log.append(" ");
-		log.append(StringUtils.rightPad(record.getLevel().getName(), 5));
+		log.append(StringUtils.rightPad(record.getLevel().getName(), 7));
 		log.append(" ");
 		log.append(StringUtils.rightPad(StringUtils.substringAfterLast(
 				record.getSourceClassName(), "."), 30));
 		log.append(" -    "); // line number not available.
 		log.append(record.getMessage());
 		log.append(this.lineEnding);
+		final Throwable throwable = record.getThrown();
+		if (throwable != null) {
+			log.append(ExceptionUtils.getFullStackTrace(throwable));
+			log.append(this.lineEnding);
+		}
 		return log.toString();
 	}
 }
