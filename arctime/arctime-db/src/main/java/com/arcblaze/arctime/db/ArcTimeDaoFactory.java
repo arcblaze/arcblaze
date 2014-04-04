@@ -1,6 +1,7 @@
 package com.arcblaze.arctime.db;
 
 import com.arcblaze.arccore.common.config.Config;
+import com.arcblaze.arccore.db.ConnectionManager;
 import com.arcblaze.arccore.db.DaoFactory;
 import com.arcblaze.arccore.db.DatabaseException;
 import com.arcblaze.arccore.db.DatabaseType;
@@ -11,7 +12,6 @@ import com.arcblaze.arctime.db.dao.HolidayDao;
 import com.arcblaze.arctime.db.dao.PayPeriodDao;
 import com.arcblaze.arctime.db.dao.TaskDao;
 import com.arcblaze.arctime.db.dao.TimesheetDao;
-import com.arcblaze.arctime.db.dao.TransactionDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcAssignmentDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcAuditLogDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcBillDao;
@@ -19,7 +19,6 @@ import com.arcblaze.arctime.db.dao.jdbc.JdbcHolidayDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcPayPeriodDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcTaskDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcTimesheetDao;
-import com.arcblaze.arctime.db.dao.jdbc.JdbcTransactionDao;
 
 /**
  * Used to retrieve DAO instances to work with the configured back-end database.
@@ -32,7 +31,6 @@ public class ArcTimeDaoFactory extends DaoFactory {
 	private PayPeriodDao cachedPayPeriodDao = null;
 	private TaskDao cachedTaskDao = null;
 	private TimesheetDao cachedTimesheetDao = null;
-	private TransactionDao cachedTransactionDao = null;
 
 	/**
 	 * @param config
@@ -40,6 +38,14 @@ public class ArcTimeDaoFactory extends DaoFactory {
 	 */
 	public ArcTimeDaoFactory(final Config config) {
 		super(config);
+	}
+
+	/**
+	 * @param connectionManager
+	 *            a preconfigured connection manager
+	 */
+	public ArcTimeDaoFactory(final ConnectionManager connectionManager) {
+		super(connectionManager);
 	}
 
 	/**
@@ -154,23 +160,6 @@ public class ArcTimeDaoFactory extends DaoFactory {
 	}
 
 	/**
-	 * @return a {@link TransactionDao} based on the currently configured
-	 *         database
-	 */
-	public TransactionDao getTransactionDao() {
-		if (this.cachedTransactionDao == null) {
-			if (DatabaseType.JDBC.equals(getDatabaseType()))
-				this.cachedTransactionDao = new JdbcTransactionDao(
-						getConnectionManager());
-			else
-				throw new RuntimeException("Invalid database type: "
-						+ getDatabaseType());
-		}
-
-		return this.cachedTransactionDao;
-	}
-
-	/**
 	 * Close any resources associated with the internal DAOs.
 	 * 
 	 * @throws DatabaseException
@@ -185,6 +174,5 @@ public class ArcTimeDaoFactory extends DaoFactory {
 		this.cachedHolidayDao = null;
 		this.cachedTaskDao = null;
 		this.cachedTimesheetDao = null;
-		this.cachedTransactionDao = null;
 	}
 }

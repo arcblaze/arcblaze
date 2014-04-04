@@ -26,16 +26,16 @@ import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.ConnectionManager;
 import com.arcblaze.arccore.db.DatabaseException;
 import com.arcblaze.arccore.db.dao.jdbc.JdbcUserDao;
+import com.arcblaze.arctime.common.model.Assignment;
+import com.arcblaze.arctime.common.model.AuditLog;
+import com.arcblaze.arctime.common.model.Bill;
+import com.arcblaze.arctime.common.model.Enrichment;
+import com.arcblaze.arctime.common.model.Holiday;
+import com.arcblaze.arctime.common.model.PayPeriod;
+import com.arcblaze.arctime.common.model.Task;
+import com.arcblaze.arctime.common.model.Timesheet;
+import com.arcblaze.arctime.common.model.util.HolidayConfigurationException;
 import com.arcblaze.arctime.db.dao.TimesheetDao;
-import com.arcblaze.arctime.model.Assignment;
-import com.arcblaze.arctime.model.AuditLog;
-import com.arcblaze.arctime.model.Bill;
-import com.arcblaze.arctime.model.Enrichment;
-import com.arcblaze.arctime.model.Holiday;
-import com.arcblaze.arctime.model.PayPeriod;
-import com.arcblaze.arctime.model.Task;
-import com.arcblaze.arctime.model.Timesheet;
-import com.arcblaze.arctime.model.util.HolidayConfigurationException;
 
 /**
  * Manages timesheets within the back-end database.
@@ -232,7 +232,7 @@ public class JdbcTimesheetDao implements TimesheetDao {
 				+ "JOIN bills b ON (b.day >= p.begin AND b.day <= p.end "
 				+ "AND b.user_id = t.user_id) WHERE t.user_id = ? "
 				+ "GROUP BY t.id ORDER BY completed, pp_begin DESC LIMIT 1) "
-				+ "UNION (SELECT * FROM timesheets WHERE AND user_id = ? "
+				+ "UNION (SELECT * FROM timesheets WHERE user_id = ? "
 				+ "ORDER BY completed, pp_begin DESC LIMIT 1)";
 
 		try (final Connection conn = this.connectionManager.getConnection();

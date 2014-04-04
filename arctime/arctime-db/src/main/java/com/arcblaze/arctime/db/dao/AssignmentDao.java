@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.Set;
 
 import com.arcblaze.arccore.db.DatabaseException;
-import com.arcblaze.arctime.model.Assignment;
+import com.arcblaze.arctime.common.model.Assignment;
 
 /**
  * Performs operations on assignments in the system.

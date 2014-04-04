@@ -4,15 +4,18 @@ import java.util.Collection;
 import java.util.Set;
 
 import com.arcblaze.arccore.db.DatabaseException;
-import com.arcblaze.arctime.model.Holiday;
-import com.arcblaze.arctime.model.PayPeriod;
-import com.arcblaze.arctime.model.util.HolidayConfigurationException;
+import com.arcblaze.arctime.common.model.Holiday;
+import com.arcblaze.arctime.common.model.PayPeriod;
+import com.arcblaze.arctime.common.model.util.HolidayConfigurationException;
 
 /**
  * Performs operations on holidays in the system.
  */
 public interface HolidayDao {
 	/**
+	 * @param companyId
+	 *            the unique id of the company for which the holiday should be
+	 *            retrieved
 	 * @param id
 	 *            the unique id of the holiday to be retrieved
 	 * 
@@ -26,8 +29,8 @@ public interface HolidayDao {
 	 *             if there is a problem parsing the holiday configuration
 	 *             information
 	 */
-	Holiday get(final Integer id) throws DatabaseException,
-			HolidayConfigurationException;
+	Holiday get(final Integer companyId, final Integer id)
+			throws DatabaseException, HolidayConfigurationException;
 
 	/**
 	 * @param companyId
@@ -115,6 +118,9 @@ public interface HolidayDao {
 	void update(final Collection<Holiday> holidays) throws DatabaseException;
 
 	/**
+	 * @param companyId
+	 *            the unique id of the company for which the holidays should be
+	 *            deleted
 	 * @param holidayIds
 	 *            the unique ids of the holidays to be deleted
 	 * 
@@ -123,9 +129,13 @@ public interface HolidayDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Integer... holidayIds) throws DatabaseException;
+	void delete(final Integer companyId, final Integer... holidayIds)
+			throws DatabaseException;
 
 	/**
+	 * @param companyId
+	 *            the unique id of the company for which the holidays should be
+	 *            deleted
 	 * @param holidayIds
 	 *            the unique ids of the holidays to be deleted
 	 * 
@@ -134,5 +144,6 @@ public interface HolidayDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Collection<Integer> holidayIds) throws DatabaseException;
+	void delete(final Integer companyId, final Collection<Integer> holidayIds)
+			throws DatabaseException;
 }

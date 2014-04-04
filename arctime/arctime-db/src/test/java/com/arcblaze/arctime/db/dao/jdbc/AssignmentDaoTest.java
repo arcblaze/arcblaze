@@ -20,10 +20,10 @@ import com.arcblaze.arccore.db.dao.UserDao;
 import com.arcblaze.arccore.db.dao.jdbc.JdbcCompanyDao;
 import com.arcblaze.arccore.db.dao.jdbc.JdbcUserDao;
 import com.arcblaze.arccore.db.util.TestDatabase;
+import com.arcblaze.arctime.common.model.Assignment;
+import com.arcblaze.arctime.common.model.Task;
 import com.arcblaze.arctime.db.dao.AssignmentDao;
 import com.arcblaze.arctime.db.dao.TaskDao;
-import com.arcblaze.arctime.model.Assignment;
-import com.arcblaze.arctime.model.Task;
 
 /**
  * Perform database integration testing.
@@ -36,7 +36,7 @@ public class AssignmentDaoTest {
 	@Test
 	public void dbIntegrationTests() throws DatabaseException {
 		try (final TestDatabase database = new TestDatabase()) {
-			database.load("hsqldb/db.sql");
+			database.load("hsqldb/arctime-db.sql");
 
 			final CompanyDao companyDao = new JdbcCompanyDao(
 					database.getConnectionManager());

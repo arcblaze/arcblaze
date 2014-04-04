@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import com.arcblaze.arccore.db.DatabaseException;
-import com.arcblaze.arctime.model.PayPeriod;
+import com.arcblaze.arctime.common.model.PayPeriod;
 
 /**
  * Performs operations on pay periods in the system.

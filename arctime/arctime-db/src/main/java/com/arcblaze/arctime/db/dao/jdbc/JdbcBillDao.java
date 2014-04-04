@@ -21,8 +21,8 @@ import java.util.TreeSet;
 
 import com.arcblaze.arccore.db.ConnectionManager;
 import com.arcblaze.arccore.db.DatabaseException;
+import com.arcblaze.arctime.common.model.Bill;
 import com.arcblaze.arctime.db.dao.BillDao;
-import com.arcblaze.arctime.model.Bill;
 
 /**
  * Manages bills within the back-end database.

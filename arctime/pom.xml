@@ -12,9 +12,11 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>arctime-core</module>
+		<module>arctime-common</module>
 		<module>arctime-db</module>
+		<module>arctime-rest</module>
 		<module>arctime-web</module>
+		<module>arctime-server</module>
 		<module>arctime-dist</module>
 	</modules>
 </project>

@@ -17,9 +17,9 @@ import java.util.TreeSet;
 
 import com.arcblaze.arccore.db.ConnectionManager;
 import com.arcblaze.arccore.db.DatabaseException;
+import com.arcblaze.arctime.common.model.Assignment;
+import com.arcblaze.arctime.common.model.PayPeriod;
 import com.arcblaze.arctime.db.dao.AssignmentDao;
-import com.arcblaze.arctime.model.Assignment;
-import com.arcblaze.arctime.model.PayPeriod;
 
 /**
  * Manages assignments within the back-end database.

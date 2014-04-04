@@ -21,10 +21,10 @@ import com.arcblaze.arccore.db.dao.UserDao;
 import com.arcblaze.arccore.db.dao.jdbc.JdbcCompanyDao;
 import com.arcblaze.arccore.db.dao.jdbc.JdbcUserDao;
 import com.arcblaze.arccore.db.util.TestDatabase;
+import com.arcblaze.arctime.common.model.Assignment;
+import com.arcblaze.arctime.common.model.Task;
 import com.arcblaze.arctime.db.dao.AssignmentDao;
 import com.arcblaze.arctime.db.dao.TaskDao;
-import com.arcblaze.arctime.model.Assignment;
-import com.arcblaze.arctime.model.Task;
 
 /**
  * Perform database integration testing.
@@ -37,7 +37,7 @@ public class TaskDaoTest {
 	@Test
 	public void dbIntegrationTests() throws DatabaseException {
 		try (final TestDatabase database = new TestDatabase()) {
-			database.load("hsqldb/db.sql");
+			database.load("hsqldb/arctime-db.sql");
 
 			final CompanyDao companyDao = new JdbcCompanyDao(
 					database.getConnectionManager());
@@ -71,16 +71,16 @@ public class TaskDaoTest {
 			assertNotNull(getAllTasks);
 			assertEquals(1, getAllTasks.size());
 
-			Task getTask = taskDao.get(task.getId());
+			Task getTask = taskDao.get(company.getId(), task.getId());
 			assertEquals(task, getTask);
 
 			task.setDescription("New Description");
 			taskDao.update(task);
-			getTask = taskDao.get(task.getId());
+			getTask = taskDao.get(company.getId(), task.getId());
 			assertEquals(task, getTask);
 
 			taskDao.delete(company.getId(), task.getId());
-			getTask = taskDao.get(task.getId());
+			getTask = taskDao.get(company.getId(), task.getId());
 			assertNull(getTask);
 
 			getAllTasks = taskDao.getAll(company.getId());

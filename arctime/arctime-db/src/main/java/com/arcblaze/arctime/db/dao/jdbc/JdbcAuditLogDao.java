@@ -17,8 +17,8 @@ import java.util.TreeSet;
 
 import com.arcblaze.arccore.db.ConnectionManager;
 import com.arcblaze.arccore.db.DatabaseException;
+import com.arcblaze.arctime.common.model.AuditLog;
 import com.arcblaze.arctime.db.dao.AuditLogDao;
-import com.arcblaze.arctime.model.AuditLog;
 
 /**
  * Manages audit logs within the back-end database.

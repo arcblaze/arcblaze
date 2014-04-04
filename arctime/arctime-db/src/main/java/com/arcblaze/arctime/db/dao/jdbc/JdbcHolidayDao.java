@@ -14,10 +14,10 @@ import java.util.TreeSet;
 
 import com.arcblaze.arccore.db.ConnectionManager;
 import com.arcblaze.arccore.db.DatabaseException;
+import com.arcblaze.arctime.common.model.Holiday;
+import com.arcblaze.arctime.common.model.PayPeriod;
+import com.arcblaze.arctime.common.model.util.HolidayConfigurationException;
 import com.arcblaze.arctime.db.dao.HolidayDao;
-import com.arcblaze.arctime.model.Holiday;
-import com.arcblaze.arctime.model.PayPeriod;
-import com.arcblaze.arctime.model.util.HolidayConfigurationException;
 
 /**
  * Manages holidays within the back-end database.
@@ -48,15 +48,18 @@ public class JdbcHolidayDao implements HolidayDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Holiday get(final Integer id) throws DatabaseException,
-			HolidayConfigurationException {
+	public Holiday get(final Integer companyId, final Integer id)
+			throws DatabaseException, HolidayConfigurationException {
+		notNull(companyId, "Invalid null company id");
 		notNull(id, "Invalid null id");
 
-		final String sql = "SELECT * FROM holidays WHERE id = ?";
+		final String sql = "SELECT * FROM holidays "
+				+ "WHERE company_id = ? AND id = ?";
 
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
-			ps.setInt(1, id);
+			ps.setInt(1, companyId);
+			ps.setInt(2, id);
 			try (final ResultSet rs = ps.executeQuery();) {
 				if (rs.next())
 					return fromResultSet(rs);
@@ -190,24 +193,29 @@ public class JdbcHolidayDao implements HolidayDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Integer... ids) throws DatabaseException {
-		this.delete(ids == null ? null : Arrays.asList(ids));
+	public void delete(final Integer companyId, final Integer... ids)
+			throws DatabaseException {
+		this.delete(companyId, ids == null ? null : Arrays.asList(ids));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Collection<Integer> ids) throws DatabaseException {
+	public void delete(final Integer companyId, final Collection<Integer> ids)
+			throws DatabaseException {
 		if (ids == null || ids.isEmpty())
 			return;
+		notNull(companyId, "Invalid null company id");
 
-		final String sql = "DELETE FROM holidays WHERE id = ?";
+		final String sql = "DELETE FROM holidays "
+				+ "WHERE company_id = ? AND id = ?";
 
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Integer id : ids) {
-				ps.setInt(1, id);
+				ps.setInt(1, companyId);
+				ps.setInt(2, id);
 				ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {

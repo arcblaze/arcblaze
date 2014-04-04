@@ -5,14 +5,17 @@ import java.util.Date;
 import java.util.Set;
 
 import com.arcblaze.arccore.db.DatabaseException;
-import com.arcblaze.arctime.model.PayPeriod;
-import com.arcblaze.arctime.model.Task;
+import com.arcblaze.arctime.common.model.PayPeriod;
+import com.arcblaze.arctime.common.model.Task;
 
 /**
  * Performs operations on tasks in the system.
  */
 public interface TaskDao {
 	/**
+	 * @param companyId
+	 *            the unique id of the company for which the task will be
+	 *            retrieved
 	 * @param taskId
 	 *            the unique id of the task to retrieve
 	 * 
@@ -23,7 +26,8 @@ public interface TaskDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	Task get(final Integer taskId) throws DatabaseException;
+	Task get(final Integer companyId, final Integer taskId)
+			throws DatabaseException;
 
 	/**
 	 * @param userId
@@ -120,6 +124,9 @@ public interface TaskDao {
 	void update(final Collection<Task> tasks) throws DatabaseException;
 
 	/**
+	 * @param companyId
+	 *            the unique id of the company for which the task will be
+	 *            retrieved
 	 * @param taskIds
 	 *            the unique ids of the tasks to be deleted
 	 * 
@@ -128,9 +135,13 @@ public interface TaskDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Integer... taskIds) throws DatabaseException;
+	void delete(final Integer companyId, final Integer... taskIds)
+			throws DatabaseException;
 
 	/**
+	 * @param companyId
+	 *            the unique id of the company for which the task will be
+	 *            retrieved
 	 * @param taskIds
 	 *            the unique ids of the tasks to be deleted
 	 * 
@@ -139,5 +150,6 @@ public interface TaskDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Collection<Integer> taskIds) throws DatabaseException;
+	void delete(final Integer companyId, final Collection<Integer> taskIds)
+			throws DatabaseException;
 }

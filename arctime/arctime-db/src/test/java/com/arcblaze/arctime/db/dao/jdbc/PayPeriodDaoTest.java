@@ -17,10 +17,10 @@ import com.arcblaze.arccore.db.DatabaseException;
 import com.arcblaze.arccore.db.dao.CompanyDao;
 import com.arcblaze.arccore.db.dao.jdbc.JdbcCompanyDao;
 import com.arcblaze.arccore.db.util.TestDatabase;
+import com.arcblaze.arctime.common.model.PayPeriod;
+import com.arcblaze.arctime.common.model.PayPeriodType;
+import com.arcblaze.arctime.common.model.util.HolidayConfigurationException;
 import com.arcblaze.arctime.db.dao.PayPeriodDao;
-import com.arcblaze.arctime.model.PayPeriod;
-import com.arcblaze.arctime.model.PayPeriodType;
-import com.arcblaze.arctime.model.util.HolidayConfigurationException;
 
 /**
  * Perform database integration testing.
@@ -40,7 +40,7 @@ public class PayPeriodDaoTest {
 	public void dbIntegrationTests() throws DatabaseException,
 			HolidayConfigurationException, ParseException {
 		try (final TestDatabase database = new TestDatabase()) {
-			database.load("hsqldb/db.sql");
+			database.load("hsqldb/arctime-db.sql");
 
 			final CompanyDao companyDao = new JdbcCompanyDao(
 					database.getConnectionManager());

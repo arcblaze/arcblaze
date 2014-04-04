@@ -22,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>arctime-core</artifactId>
+			<artifactId>arctime-common</artifactId>
 		</dependency>
 
 		<dependency>

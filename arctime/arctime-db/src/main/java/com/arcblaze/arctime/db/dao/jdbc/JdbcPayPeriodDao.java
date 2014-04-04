@@ -21,9 +21,9 @@ import org.apache.commons.lang.time.DateUtils;
 
 import com.arcblaze.arccore.db.ConnectionManager;
 import com.arcblaze.arccore.db.DatabaseException;
+import com.arcblaze.arctime.common.model.PayPeriod;
+import com.arcblaze.arctime.common.model.PayPeriodType;
 import com.arcblaze.arctime.db.dao.PayPeriodDao;
-import com.arcblaze.arctime.model.PayPeriod;
-import com.arcblaze.arctime.model.PayPeriodType;
 
 /**
  * Performs operations on pay periods in the system.

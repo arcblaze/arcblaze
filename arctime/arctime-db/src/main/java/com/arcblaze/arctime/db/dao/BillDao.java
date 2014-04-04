@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import com.arcblaze.arccore.db.DatabaseException;
-import com.arcblaze.arctime.model.Bill;
+import com.arcblaze.arctime.common.model.Bill;
 
 /**
  * Performs operations on bills in the system.

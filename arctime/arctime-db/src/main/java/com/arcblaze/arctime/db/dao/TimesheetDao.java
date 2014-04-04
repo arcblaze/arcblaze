@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.Set;
 
 import com.arcblaze.arccore.db.DatabaseException;
-import com.arcblaze.arctime.model.Enrichment;
-import com.arcblaze.arctime.model.PayPeriod;
-import com.arcblaze.arctime.model.Timesheet;
-import com.arcblaze.arctime.model.util.HolidayConfigurationException;
+import com.arcblaze.arctime.common.model.Enrichment;
+import com.arcblaze.arctime.common.model.PayPeriod;
+import com.arcblaze.arctime.common.model.Timesheet;
+import com.arcblaze.arctime.common.model.util.HolidayConfigurationException;
 
 /**
  * Performs operations on timesheets in the system.

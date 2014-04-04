@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import com.arcblaze.arccore.db.DatabaseException;
-import com.arcblaze.arctime.model.AuditLog;
+import com.arcblaze.arctime.common.model.AuditLog;
 
 /**
  * Performs operations on audit logs in the system.

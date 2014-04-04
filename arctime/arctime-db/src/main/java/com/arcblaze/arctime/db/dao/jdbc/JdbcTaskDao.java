@@ -20,10 +20,10 @@ import java.util.TreeSet;
 
 import com.arcblaze.arccore.db.ConnectionManager;
 import com.arcblaze.arccore.db.DatabaseException;
+import com.arcblaze.arctime.common.model.Assignment;
+import com.arcblaze.arctime.common.model.PayPeriod;
+import com.arcblaze.arctime.common.model.Task;
 import com.arcblaze.arctime.db.dao.TaskDao;
-import com.arcblaze.arctime.model.Assignment;
-import com.arcblaze.arctime.model.PayPeriod;
-import com.arcblaze.arctime.model.Task;
 
 /**
  * Manages tasks within the back-end database.
@@ -55,14 +55,18 @@ public class JdbcTaskDao implements TaskDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Task get(final Integer taskId) throws DatabaseException {
+	public Task get(final Integer companyId, final Integer taskId)
+			throws DatabaseException {
+		notNull(companyId, "Invalid null company id");
 		notNull(taskId, "Invalid null task id");
 
-		final String sql = "SELECT * FROM tasks WHERE id = ?";
+		final String sql = "SELECT * FROM tasks "
+				+ "WHERE company_id = ? AND id = ?";
 
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
-			ps.setInt(1, taskId);
+			ps.setInt(1, companyId);
+			ps.setInt(2, taskId);
 			try (final ResultSet rs = ps.executeQuery();) {
 				if (rs.next())
 					return fromResultSet(rs);
@@ -310,24 +314,27 @@ public class JdbcTaskDao implements TaskDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Integer... ids) throws DatabaseException {
-		this.delete(ids == null ? null : Arrays.asList(ids));
+	public void delete(final Integer companyId, final Integer... ids)
+			throws DatabaseException {
+		this.delete(companyId, ids == null ? null : Arrays.asList(ids));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Collection<Integer> ids) throws DatabaseException {
+	public void delete(final Integer companyId, final Collection<Integer> ids)
+			throws DatabaseException {
 		if (ids == null || ids.isEmpty())
 			return;
 
-		final String sql = "DELETE FROM tasks WHERE id = ?";
+		final String sql = "DELETE FROM tasks WHERE company_id = ? AND id = ?";
 
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Integer id : ids) {
-				ps.setInt(1, id);
+				ps.setInt(1, companyId);
+				ps.setInt(2, id);
 				ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {

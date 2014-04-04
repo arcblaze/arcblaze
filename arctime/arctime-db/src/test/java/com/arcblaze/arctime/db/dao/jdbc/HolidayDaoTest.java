@@ -17,10 +17,10 @@ import com.arcblaze.arccore.db.DatabaseException;
 import com.arcblaze.arccore.db.dao.CompanyDao;
 import com.arcblaze.arccore.db.dao.jdbc.JdbcCompanyDao;
 import com.arcblaze.arccore.db.util.TestDatabase;
+import com.arcblaze.arctime.common.model.Holiday;
+import com.arcblaze.arctime.common.model.PayPeriod;
+import com.arcblaze.arctime.common.model.util.HolidayConfigurationException;
 import com.arcblaze.arctime.db.dao.HolidayDao;
-import com.arcblaze.arctime.model.Holiday;
-import com.arcblaze.arctime.model.PayPeriod;
-import com.arcblaze.arctime.model.util.HolidayConfigurationException;
 
 /**
  * Perform database integration testing.
@@ -57,7 +57,7 @@ public class HolidayDaoTest {
 	public void dbIntegrationTests() throws DatabaseException,
 			HolidayConfigurationException {
 		try (final TestDatabase database = new TestDatabase()) {
-			database.load("hsqldb/db.sql");
+			database.load("hsqldb/arctime-db.sql");
 
 			final CompanyDao companyDao = new JdbcCompanyDao(
 					database.getConnectionManager());
@@ -84,16 +84,16 @@ public class HolidayDaoTest {
 			assertEquals(holidays.size(), getAllHolidays.size());
 
 			final Holiday first = holidays.iterator().next();
-			Holiday getHoliday = holidayDao.get(first.getId());
+			Holiday getHoliday = holidayDao.get(company.getId(), first.getId());
 			assertEquals(first, getHoliday);
 
 			first.setDescription("New Description");
 			holidayDao.update(first);
-			getHoliday = holidayDao.get(first.getId());
+			getHoliday = holidayDao.get(company.getId(), first.getId());
 			assertEquals(first, getHoliday);
 
 			holidayDao.delete(company.getId(), first.getId());
-			getHoliday = holidayDao.get(first.getId());
+			getHoliday = holidayDao.get(company.getId(), first.getId());
 			assertNull(getHoliday);
 
 			getAllHolidays = holidayDao.getAll(company.getId());
