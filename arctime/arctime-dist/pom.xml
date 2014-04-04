@@ -95,7 +95,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>arctime-core</artifactId>
+			<artifactId>arctime-server</artifactId>
 		</dependency>
 	</dependencies>
 </project>
