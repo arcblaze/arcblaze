@@ -99,7 +99,7 @@ ui.panel.admin.stats.MemoryUsagePanel = Ext.extend(Ext.Panel, {
 					html += '        </tr>';
 					html += '        <tr>';
 					html += '          <td class="label">Used %:</td>';
-					html += '          <td class="value">' + data.heapPercentUsed + '%</td>';
+					html += '          <td class="value">' + data.heapPctUsed + '%</td>';
 					html += '        </tr>';
 					html += '      </table>';
 					html += '    </td>';
@@ -115,7 +115,7 @@ ui.panel.admin.stats.MemoryUsagePanel = Ext.extend(Ext.Panel, {
 					html += '        </tr>';
 					html += '        <tr>';
 					html += '          <td class="label">Used %:</td>';
-					html += '          <td class="value">' + data.nonHeapPercentUsed + '%</td>';
+					html += '          <td class="value">' + data.nonHeapPctUsed + '%</td>';
 					html += '        </tr>';
 					html += '      </table>';
 					html += '    </td>';
