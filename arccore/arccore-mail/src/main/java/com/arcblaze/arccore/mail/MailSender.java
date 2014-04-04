@@ -99,15 +99,17 @@ public abstract class MailSender {
 	/**
 	 * @throws MessagingException
 	 *             if there is a problem sending the message
-	 * @throws UnsupportedEncodingException
-	 *             if there is an encoding issue
 	 */
-	public void send() throws MessagingException, UnsupportedEncodingException {
+	public void send() throws MessagingException {
 		final Session session = this.mailer.getSession();
 		final MimeMessage message = new MimeMessage(session);
 
-		// Child classes have to populate the message.
-		populate(message);
+		try {
+			// Child classes have to populate the message.
+			populate(message);
+		} catch (final UnsupportedEncodingException badEncoding) {
+			throw new MessagingException("Bad encoding.", badEncoding);
+		}
 
 		this.mailer.send(session, message);
 	}
