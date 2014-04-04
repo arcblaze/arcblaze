@@ -260,12 +260,14 @@ public class JdbcPayPeriodDao implements PayPeriodDao {
 
 		final String sql = "SELECT p.* FROM timesheets t "
 				+ "JOIN pay_periods p ON (p.begin = t.pp_begin AND "
-				+ "p.company_id = t.company_id) WHERE p.company_id = ?";
+				+ "p.company_id = t.company_id) "
+				+ "WHERE p.company_id = ? AND t.id = ?";
 
 		try (final PreparedStatement ps = conn.prepareStatement(sql)) {
-			ps.setInt(1, companyId);
 			final Map<Integer, PayPeriod> timesheetMap = new TreeMap<>();
 			for (final Integer timesheetId : timesheetIds) {
+				ps.setInt(1, companyId);
+				ps.setInt(2, timesheetId);
 				try (final ResultSet rs = ps.executeQuery()) {
 					if (rs.next())
 						timesheetMap.put(timesheetId, fromResultSet(rs));

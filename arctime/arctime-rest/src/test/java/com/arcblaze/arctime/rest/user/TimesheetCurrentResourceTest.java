@@ -323,7 +323,7 @@ public class TimesheetCurrentResourceTest {
 			timesheet.setCompanyId(company.getId());
 			timesheet.setUserId(user.getId());
 			timesheet.setBegin(payPeriod.getBegin());
-			TimesheetDao dao = daoFactory.getTimesheetDao();
+			final TimesheetDao dao = daoFactory.getTimesheetDao();
 			dao.add(timesheet);
 
 			dao.complete(company.getId(), true, timesheet.getId());
