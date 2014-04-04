@@ -4,7 +4,6 @@ import static org.apache.commons.lang.Validate.notNull;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.lang.StringUtils;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -64,11 +63,6 @@ public class TimerFactory extends BaseFactory<Timer> {
 		msg.append(StringUtils.rightPad(request.getMethod(), 6));
 		msg.append(" ");
 		msg.append(request.getRequestURI());
-		final String accept = request.getHeader(HttpHeaders.ACCEPT);
-		if (StringUtils.isNotBlank(accept)) {
-			msg.append(" ");
-			msg.append(accept);
-		}
 		return msg.toString();
 	}
 
