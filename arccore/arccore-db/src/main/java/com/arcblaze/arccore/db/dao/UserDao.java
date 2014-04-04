@@ -64,16 +64,20 @@ public interface UserDao {
 
 	/**
 	 * @param companyId
-	 *            the unique id of the company for which users will be retrieved
+	 *            the unique id of the company for which a user will be
+	 *            retrieved
+	 * @param userId
+	 *            the unique id of the user to retrieve
 	 * 
-	 * @return the requested users, possibly empty but never {@code null}
+	 * @return the requested user, possibly {@code null} if not found
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided id is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	Set<User> getForCompany(final Integer companyId) throws DatabaseException;
+	User get(final Integer companyId, final Integer userId)
+			throws DatabaseException;
 
 	/**
 	 * @param ids
@@ -87,6 +91,17 @@ public interface UserDao {
 	 *             if there is a problem communicating with the database
 	 */
 	Map<Integer, User> get(final Set<Integer> ids) throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which users will be retrieved
+	 * 
+	 * @return all available users, possibly empty but never {@code null}
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	Set<User> getAll(final Integer companyId) throws DatabaseException;
 
 	/**
 	 * @return all available users, possibly empty but never {@code null}
@@ -204,4 +219,18 @@ public interface UserDao {
 	 *             if there is a problem communicating with the database
 	 */
 	void delete(final Collection<Integer> userIds) throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which users will be deleted
+	 * @param userIds
+	 *            the unique ids of the users to be deleted
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided parameter is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	void delete(final Integer companyId, final Collection<Integer> userIds)
+			throws DatabaseException;
 }

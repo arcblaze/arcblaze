@@ -95,7 +95,7 @@ public class JdbcUserDaoTest {
 			assertEquals(1, users.size());
 			assertTrue(users.contains(user));
 
-			users = userDao.getForCompany(company.getId());
+			users = userDao.getAll(company.getId());
 			assertNotNull(users);
 			assertEquals(1, users.size());
 			assertTrue(users.contains(user));

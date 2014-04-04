@@ -111,12 +111,10 @@ public class JdbcUserDao implements UserDao {
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setString(1, login);
 			ps.setString(2, login);
-
 			try (final ResultSet rs = ps.executeQuery();) {
 				if (rs.next())
 					return fromResultSet(rs, true);
 			}
-
 			return null;
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
@@ -135,12 +133,10 @@ public class JdbcUserDao implements UserDao {
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, userId);
-
 			try (final ResultSet rs = ps.executeQuery();) {
 				if (rs.next())
 					return fromResultSet(rs, false);
 			}
-
 			return null;
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
@@ -151,23 +147,23 @@ public class JdbcUserDao implements UserDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<User> getForCompany(final Integer companyId)
+	public User get(final Integer companyId, final Integer userId)
 			throws DatabaseException {
 		notNull(companyId, "Invalid null company id");
+		notNull(userId, "Invalid null user id");
 
-		final String sql = "SELECT * FROM users WHERE company_id = ?";
+		final String sql = "SELECT * FROM users "
+				+ "WHERE company_id = ? AND id = ?";
 
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, companyId);
-
-			final Set<User> users = new TreeSet<>();
-			try (final ResultSet rs = ps.executeQuery();) {
+			ps.setInt(2, userId);
+			try (final ResultSet rs = ps.executeQuery()) {
 				if (rs.next())
-					users.add(fromResultSet(rs, false));
+					return fromResultSet(rs, false);
 			}
-
-			return users;
+			return null;
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
@@ -205,16 +201,38 @@ public class JdbcUserDao implements UserDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Set<User> getAll(final Integer companyId) throws DatabaseException {
+		notNull(companyId, "Invalid null company id");
+
+		final String sql = "SELECT * FROM users WHERE company_id = ?";
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, companyId);
+			final Set<User> users = new TreeSet<>();
+			try (final ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					users.add(fromResultSet(rs, false));
+				return users;
+			}
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Set<User> getAll() throws DatabaseException {
 		final String sql = "SELECT * FROM users";
 
-		final Set<User> users = new TreeSet<>();
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql);
 				final ResultSet rs = ps.executeQuery()) {
+			final Set<User> users = new TreeSet<>();
 			while (rs.next())
 				users.add(fromResultSet(rs, false));
-
 			return users;
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
@@ -360,6 +378,29 @@ public class JdbcUserDao implements UserDao {
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Integer id : ids) {
 				ps.setInt(1, id);
+				ps.executeUpdate();
+			}
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void delete(final Integer companyId, final Collection<Integer> ids)
+			throws DatabaseException {
+		if (ids == null || ids.isEmpty())
+			return;
+
+		final String sql = "DELETE FROM users WHERE company_id = ? AND id = ?";
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql)) {
+			for (final Integer id : ids) {
+				ps.setInt(1, companyId);
+				ps.setInt(2, id);
 				ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
