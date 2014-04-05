@@ -57,6 +57,9 @@ public class TimesheetFixResource extends BaseResource {
 	public FixResponse fix(@Context final SecurityContext security,
 			@Context final ArcTimeDaoFactory daoFactory,
 			@Context final Timer timer, @PathParam("id") final Integer id) {
+		if (id == null)
+			throw badRequest("Missing id parameter");
+
 		log.debug("Timesheet fix request");
 		try (final Timer.Context timerContext = timer.time()) {
 			final User currentUser = (User) security.getUserPrincipal();
@@ -66,7 +69,7 @@ public class TimesheetFixResource extends BaseResource {
 			final Timesheet timesheet = dao.get(currentUser.getCompanyId(), id);
 
 			if (timesheet == null)
-				throw badRequest("The requested timesheet could not be found");
+				throw notFound("The requested timesheet could not be found");
 			if (timesheet.getUserId() != currentUser.getId())
 				throw forbidden(currentUser, "Unable to fix timesheet that "
 						+ "you do not own.");
