@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -42,9 +41,6 @@ import com.codahale.metrics.Timer;
 public class TimesheetCurrentResource extends BaseResource {
 	private final static Logger log = LoggerFactory
 			.getLogger(TimesheetCurrentResource.class);
-
-	@Context
-	private ServletContext servletContext;
 
 	@XmlRootElement
 	static class TimesheetResponse {

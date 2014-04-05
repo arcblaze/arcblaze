@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -43,9 +42,6 @@ import com.codahale.metrics.Timer;
 public class TimesheetCompleteResource extends BaseResource {
 	private final static Logger log = LoggerFactory
 			.getLogger(TimesheetCompleteResource.class);
-
-	@Context
-	private ServletContext servletContext;
 
 	@XmlRootElement
 	static class CompleteResponse {

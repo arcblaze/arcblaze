@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -49,9 +48,6 @@ public class TimesheetPreviousResource extends BaseResource {
 			.getLogger(TimesheetPreviousResource.class);
 
 	private final static String[] FMT = { "yyyyMMdd" };
-
-	@Context
-	private ServletContext servletContext;
 
 	@XmlRootElement
 	static class TimesheetResponse {

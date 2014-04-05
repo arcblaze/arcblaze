@@ -2,7 +2,6 @@ package com.arcblaze.arctime.rest.manager;
 
 import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -23,9 +22,6 @@ import com.codahale.metrics.Timer;
  */
 @Path("/manager/user")
 public class UserResource extends BaseResource {
-	@Context
-	private ServletContext servletContext;
-
 	/**
 	 * @param security
 	 *            the security information associated with the request

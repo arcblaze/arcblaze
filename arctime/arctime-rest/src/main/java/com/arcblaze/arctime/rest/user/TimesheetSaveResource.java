@@ -9,7 +9,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.servlet.ServletContext;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -48,9 +47,6 @@ import com.codahale.metrics.Timer;
 public class TimesheetSaveResource extends BaseResource {
 	private final static Logger log = LoggerFactory
 			.getLogger(TimesheetSaveResource.class);
-
-	@Context
-	private ServletContext servletContext;
 
 	@XmlRootElement
 	static class SaveResponse {

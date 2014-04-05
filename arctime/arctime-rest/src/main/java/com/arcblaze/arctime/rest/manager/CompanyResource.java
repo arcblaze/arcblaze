@@ -1,6 +1,5 @@
 package com.arcblaze.arctime.rest.manager;
 
-import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -21,9 +20,6 @@ import com.codahale.metrics.Timer;
  */
 @Path("/manager/company")
 public class CompanyResource extends BaseResource {
-	@Context
-	private ServletContext servletContext;
-
 	/**
 	 * @param security
 	 *            the security information associated with the request
