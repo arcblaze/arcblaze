@@ -34,14 +34,14 @@ import com.arcblaze.arctime.common.model.util.HolidayConfigurationException;
 import com.arcblaze.arctime.db.ArcTimeDaoFactory;
 import com.arcblaze.arctime.db.dao.TimesheetDao;
 import com.arcblaze.arctime.db.util.TestDatabase;
-import com.arcblaze.arctime.rest.user.TimesheetNextResource.TimesheetResponse;
+import com.arcblaze.arctime.rest.user.TimesheetPreviousResource.TimesheetResponse;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 
 /**
  * Perform testing of the current timesheet retrieval capabilities.
  */
-public class TimesheetNextResourceTest {
+public class TimesheetPreviousResourceTest {
 	private final static String[] FMT = { "yyyyMMdd HHmmss", "yyyyMMdd" };
 
 	/**
@@ -77,8 +77,8 @@ public class TimesheetNextResourceTest {
 					.mock(SecurityContext.class);
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
-			final TimesheetNextResource resource = new TimesheetNextResource();
-			resource.next(security, daoFactory, timer, "abcd");
+			final TimesheetPreviousResource resource = new TimesheetPreviousResource();
+			resource.previous(security, daoFactory, timer, "abcd");
 		}
 	}
 
@@ -115,8 +115,8 @@ public class TimesheetNextResourceTest {
 					.mock(SecurityContext.class);
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
-			final TimesheetNextResource resource = new TimesheetNextResource();
-			resource.next(security, daoFactory, timer, "20140101");
+			final TimesheetPreviousResource resource = new TimesheetPreviousResource();
+			resource.previous(security, daoFactory, timer, "20140101");
 		}
 	}
 
@@ -164,8 +164,8 @@ public class TimesheetNextResourceTest {
 					.mock(SecurityContext.class);
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
-			final TimesheetNextResource resource = new TimesheetNextResource();
-			final TimesheetResponse response = resource.next(security,
+			final TimesheetPreviousResource resource = new TimesheetPreviousResource();
+			final TimesheetResponse response = resource.previous(security,
 					daoFactory, timer, "20140101");
 
 			final Timesheet ts = response.timesheet;
@@ -174,9 +174,9 @@ public class TimesheetNextResourceTest {
 			assertEquals(user, ts.getUser());
 			assertEquals(user.getId(), ts.getUserId());
 			assertNotNull(ts.getPayPeriod());
-			assertEquals("20140108", DateFormatUtils.format(ts.getPayPeriod()
+			assertEquals("20131225", DateFormatUtils.format(ts.getPayPeriod()
 					.getBegin(), "yyyyMMdd"));
-			assertEquals("20140114", DateFormatUtils.format(ts.getPayPeriod()
+			assertEquals("20131231", DateFormatUtils.format(ts.getPayPeriod()
 					.getEnd(), "yyyyMMdd"));
 			assertNotNull(ts.getBegin());
 			assertEquals(ts.getBegin(), ts.getPayPeriod().getBegin());
@@ -250,12 +250,12 @@ public class TimesheetNextResourceTest {
 					.setDescription("holiday")
 					.setConfig(
 							DateFormatUtils.format(
-									DateUtils.addDays(payPeriod.getEnd(), 1),
+									DateUtils.addDays(payPeriod.getBegin(), -1),
 									"MMM d"));
 			daoFactory.getHolidayDao().add(holiday);
 
-			final TimesheetNextResource resource = new TimesheetNextResource();
-			final TimesheetResponse response = resource.next(security,
+			final TimesheetPreviousResource resource = new TimesheetPreviousResource();
+			final TimesheetResponse response = resource.previous(security,
 					daoFactory, timer, "20140101");
 
 			final Timesheet ts = response.timesheet;
@@ -265,9 +265,9 @@ public class TimesheetNextResourceTest {
 			assertEquals(user.getId(), ts.getUserId());
 			assertNotNull(ts.getPayPeriod());
 			assertNotNull(ts.getBegin());
-			assertEquals("20140108", DateFormatUtils.format(ts.getPayPeriod()
+			assertEquals("20131225", DateFormatUtils.format(ts.getPayPeriod()
 					.getBegin(), "yyyyMMdd"));
-			assertEquals("20140114", DateFormatUtils.format(ts.getPayPeriod()
+			assertEquals("20131231", DateFormatUtils.format(ts.getPayPeriod()
 					.getEnd(), "yyyyMMdd"));
 			assertFalse(ts.isCompleted());
 			assertFalse(ts.isApproved());
@@ -364,8 +364,7 @@ public class TimesheetNextResourceTest {
 					.setType(PayPeriodType.WEEKLY)
 					.setBegin(DateUtils.parseDate("20140101", FMT))
 					.setEnd(DateUtils.parseDate("20140107", FMT));
-			daoFactory.getPayPeriodDao()
-					.add(payPeriod, payPeriod.getPrevious());
+			daoFactory.getPayPeriodDao().add(payPeriod, payPeriod.getNext());
 
 			final Timesheet timesheet = new Timesheet();
 			timesheet.setCompanyId(company.getId());
@@ -382,10 +381,10 @@ public class TimesheetNextResourceTest {
 			dao.export(company.getId(), exporter.getId(), true,
 					timesheet.getId());
 
-			final TimesheetNextResource resource = new TimesheetNextResource();
-			final TimesheetResponse response = resource.next(security,
+			final TimesheetPreviousResource resource = new TimesheetPreviousResource();
+			final TimesheetResponse response = resource.previous(security,
 					daoFactory, timer, DateFormatUtils.format(payPeriod
-							.getPrevious().getBegin(), "yyyyMMdd"));
+							.getNext().getBegin(), "yyyyMMdd"));
 
 			final Timesheet ts = response.timesheet;
 			assertNotNull(ts);
@@ -461,8 +460,7 @@ public class TimesheetNextResourceTest {
 					.setType(PayPeriodType.WEEKLY)
 					.setBegin(DateUtils.parseDate("20140101", FMT))
 					.setEnd(DateUtils.parseDate("20140107", FMT));
-			daoFactory.getPayPeriodDao()
-					.add(payPeriod, payPeriod.getPrevious());
+			daoFactory.getPayPeriodDao().add(payPeriod, payPeriod.getNext());
 
 			final Timesheet timesheet = new Timesheet();
 			timesheet.setCompanyId(company.getId());
@@ -477,10 +475,10 @@ public class TimesheetNextResourceTest {
 					.setTimesheetId(timesheet.getId()).setLog("Log message 2");
 			daoFactory.getAuditLogDao().add(al1, al2);
 
-			final TimesheetNextResource resource = new TimesheetNextResource();
-			final TimesheetResponse response = resource.next(security,
+			final TimesheetPreviousResource resource = new TimesheetPreviousResource();
+			final TimesheetResponse response = resource.previous(security,
 					daoFactory, timer, DateFormatUtils.format(payPeriod
-							.getPrevious().getBegin(), "yyyyMMdd"));
+							.getNext().getBegin(), "yyyyMMdd"));
 
 			final Timesheet ts = response.timesheet;
 			assertNotNull(ts);
@@ -555,8 +553,7 @@ public class TimesheetNextResourceTest {
 					.setType(PayPeriodType.WEEKLY)
 					.setBegin(DateUtils.parseDate("20140101", FMT))
 					.setEnd(DateUtils.parseDate("20140107", FMT));
-			daoFactory.getPayPeriodDao()
-					.add(payPeriod, payPeriod.getPrevious());
+			daoFactory.getPayPeriodDao().add(payPeriod, payPeriod.getNext());
 
 			final Timesheet timesheet = new Timesheet();
 			timesheet.setCompanyId(company.getId());
@@ -672,10 +669,10 @@ public class TimesheetNextResourceTest {
 
 			daoFactory.getBillDao().add(b1, b2, b3, b4, b5, b6, b7);
 
-			final TimesheetNextResource resource = new TimesheetNextResource();
-			final TimesheetResponse response = resource.next(security,
+			final TimesheetPreviousResource resource = new TimesheetPreviousResource();
+			final TimesheetResponse response = resource.previous(security,
 					daoFactory, timer, DateFormatUtils.format(payPeriod
-							.getPrevious().getBegin(), "yyyyMMdd"));
+							.getNext().getBegin(), "yyyyMMdd"));
 
 			final Timesheet ts = response.timesheet;
 			assertNotNull(ts);
