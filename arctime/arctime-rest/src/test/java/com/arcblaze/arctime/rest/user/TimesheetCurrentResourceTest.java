@@ -33,7 +33,7 @@ import com.arcblaze.arctime.common.model.util.HolidayConfigurationException;
 import com.arcblaze.arctime.db.ArcTimeDaoFactory;
 import com.arcblaze.arctime.db.dao.TimesheetDao;
 import com.arcblaze.arctime.db.util.TestDatabase;
-import com.arcblaze.arctime.rest.user.TimesheetCurrentResource.TimesheetResponse;
+import com.arcblaze.arctime.rest.user.TimesheetCurrentResource.CurrentResponse;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 
@@ -126,7 +126,7 @@ public class TimesheetCurrentResourceTest {
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 			final TimesheetCurrentResource resource = new TimesheetCurrentResource();
-			final TimesheetResponse response = resource.current(security,
+			final CurrentResponse response = resource.current(security,
 					daoFactory, timer);
 
 			final Timesheet ts = response.timesheet;
@@ -211,7 +211,7 @@ public class TimesheetCurrentResourceTest {
 			daoFactory.getHolidayDao().add(holiday);
 
 			final TimesheetCurrentResource resource = new TimesheetCurrentResource();
-			final TimesheetResponse response = resource.current(security,
+			final CurrentResponse response = resource.current(security,
 					daoFactory, timer);
 
 			final Timesheet ts = response.timesheet;
@@ -335,7 +335,7 @@ public class TimesheetCurrentResourceTest {
 					timesheet.getId());
 
 			final TimesheetCurrentResource resource = new TimesheetCurrentResource();
-			final TimesheetResponse response = resource.current(security,
+			final CurrentResponse response = resource.current(security,
 					daoFactory, timer);
 
 			final Timesheet ts = response.timesheet;
@@ -422,7 +422,7 @@ public class TimesheetCurrentResourceTest {
 			daoFactory.getAuditLogDao().add(al1, al2);
 
 			final TimesheetCurrentResource resource = new TimesheetCurrentResource();
-			final TimesheetResponse response = resource.current(security,
+			final CurrentResponse response = resource.current(security,
 					daoFactory, timer);
 
 			final Timesheet ts = response.timesheet;
@@ -609,7 +609,7 @@ public class TimesheetCurrentResourceTest {
 			daoFactory.getBillDao().add(b1, b2, b3, b4, b5, b6, b7);
 
 			final TimesheetCurrentResource resource = new TimesheetCurrentResource();
-			final TimesheetResponse response = resource.current(security,
+			final CurrentResponse response = resource.current(security,
 					daoFactory, timer);
 
 			final Timesheet ts = response.timesheet;

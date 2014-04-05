@@ -34,7 +34,7 @@ import com.arcblaze.arctime.common.model.util.HolidayConfigurationException;
 import com.arcblaze.arctime.db.ArcTimeDaoFactory;
 import com.arcblaze.arctime.db.dao.TimesheetDao;
 import com.arcblaze.arctime.db.util.TestDatabase;
-import com.arcblaze.arctime.rest.user.TimesheetNextResource.TimesheetResponse;
+import com.arcblaze.arctime.rest.user.TimesheetNextResource.NextResponse;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 
@@ -165,7 +165,7 @@ public class TimesheetNextResourceTest {
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 			final TimesheetNextResource resource = new TimesheetNextResource();
-			final TimesheetResponse response = resource.next(security,
+			final NextResponse response = resource.next(security,
 					daoFactory, timer, "20140101");
 
 			final Timesheet ts = response.timesheet;
@@ -255,7 +255,7 @@ public class TimesheetNextResourceTest {
 			daoFactory.getHolidayDao().add(holiday);
 
 			final TimesheetNextResource resource = new TimesheetNextResource();
-			final TimesheetResponse response = resource.next(security,
+			final NextResponse response = resource.next(security,
 					daoFactory, timer, "20140101");
 
 			final Timesheet ts = response.timesheet;
@@ -383,7 +383,7 @@ public class TimesheetNextResourceTest {
 					timesheet.getId());
 
 			final TimesheetNextResource resource = new TimesheetNextResource();
-			final TimesheetResponse response = resource.next(security,
+			final NextResponse response = resource.next(security,
 					daoFactory, timer, DateFormatUtils.format(payPeriod
 							.getPrevious().getBegin(), "yyyyMMdd"));
 
@@ -478,7 +478,7 @@ public class TimesheetNextResourceTest {
 			daoFactory.getAuditLogDao().add(al1, al2);
 
 			final TimesheetNextResource resource = new TimesheetNextResource();
-			final TimesheetResponse response = resource.next(security,
+			final NextResponse response = resource.next(security,
 					daoFactory, timer, DateFormatUtils.format(payPeriod
 							.getPrevious().getBegin(), "yyyyMMdd"));
 
@@ -673,7 +673,7 @@ public class TimesheetNextResourceTest {
 			daoFactory.getBillDao().add(b1, b2, b3, b4, b5, b6, b7);
 
 			final TimesheetNextResource resource = new TimesheetNextResource();
-			final TimesheetResponse response = resource.next(security,
+			final NextResponse response = resource.next(security,
 					daoFactory, timer, DateFormatUtils.format(payPeriod
 							.getPrevious().getBegin(), "yyyyMMdd"));
 

@@ -43,7 +43,7 @@ public class TimesheetCurrentResource extends BaseResource {
 			.getLogger(TimesheetCurrentResource.class);
 
 	@XmlRootElement
-	static class TimesheetResponse {
+	static class CurrentResponse {
 		@XmlElement
 		public Timesheet timesheet = null;
 	}
@@ -60,7 +60,7 @@ public class TimesheetCurrentResource extends BaseResource {
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public TimesheetResponse current(@Context final SecurityContext security,
+	public CurrentResponse current(@Context final SecurityContext security,
 			@Context final ArcTimeDaoFactory daoFactory,
 			@Context final Timer timer) {
 		log.debug("Current timesheet request");
@@ -94,7 +94,7 @@ public class TimesheetCurrentResource extends BaseResource {
 						timesheetEnrichments);
 			}
 
-			final TimesheetResponse response = new TimesheetResponse();
+			final CurrentResponse response = new CurrentResponse();
 			response.timesheet = timesheet;
 			return response;
 		} catch (final DatabaseException dbException) {

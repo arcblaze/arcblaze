@@ -50,7 +50,7 @@ public class TimesheetPreviousResource extends BaseResource {
 	private final static String[] FMT = { "yyyyMMdd" };
 
 	@XmlRootElement
-	static class TimesheetResponse {
+	static class PreviousResponse {
 		@XmlElement
 		public Timesheet timesheet = null;
 	}
@@ -70,7 +70,7 @@ public class TimesheetPreviousResource extends BaseResource {
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public TimesheetResponse previous(@Context final SecurityContext security,
+	public PreviousResponse previous(@Context final SecurityContext security,
 			@Context final ArcTimeDaoFactory daoFactory,
 			@Context final Timer timer, @PathParam("date") final String date) {
 		log.debug("Previous timesheet request");
@@ -113,7 +113,7 @@ public class TimesheetPreviousResource extends BaseResource {
 						timesheetEnrichments);
 			}
 
-			final TimesheetResponse response = new TimesheetResponse();
+			final PreviousResponse response = new PreviousResponse();
 			response.timesheet = timesheet;
 			return response;
 		} catch (final DatabaseException dbException) {

@@ -51,7 +51,7 @@ public class TimesheetCustomResource extends BaseResource {
 	private final static String[] FMT = { "yyyyMMdd" };
 
 	@XmlRootElement
-	static class TimesheetResponse {
+	static class CustomResponse {
 		@XmlElement
 		public Timesheet timesheet = null;
 	}
@@ -70,7 +70,7 @@ public class TimesheetCustomResource extends BaseResource {
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public TimesheetResponse previous(@Context final SecurityContext security,
+	public CustomResponse custom(@Context final SecurityContext security,
 			@Context final ArcTimeDaoFactory daoFactory,
 			@Context final Timer timer, @PathParam("date") final String date) {
 		log.debug("Custom timesheet request");
@@ -99,7 +99,7 @@ public class TimesheetCustomResource extends BaseResource {
 			if (timesheet == null)
 				throw notFound("The requested timesheet was not found");
 
-			final TimesheetResponse response = new TimesheetResponse();
+			final CustomResponse response = new CustomResponse();
 			response.timesheet = timesheet;
 			return response;
 		} catch (final DatabaseException dbException) {
