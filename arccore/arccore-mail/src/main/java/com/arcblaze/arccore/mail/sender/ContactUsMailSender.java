@@ -6,6 +6,8 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.mail.MailSender;
 
@@ -52,12 +54,30 @@ public class ContactUsMailSender extends MailSender {
 	@Override
 	public void populate(final MimeMessage message) throws MessagingException,
 			UnsupportedEncodingException {
-		message.setText("\nNotice:\n\nThe " + this.system
-				+ " web site received a message from the contact-us page. "
-				+ "The contents of the message are shown below:\n\n"
-				+ "    Name:  " + this.name + "\n    Email: " + this.email
-				+ "\n    Type:  " + this.type + "\n    Message:\n\n"
-				+ this.message + "\n\n", "UTF-8", "html");
+		final String escaped = StringEscapeUtils.escapeHtml(this.message);
+
+		final StringBuilder msg = new StringBuilder();
+		msg.append("<b>Notice:</b><br/><br/>");
+		msg.append("<p>The <i>").append(this.system).append("</i> system ");
+		msg.append("received a message from the contact-us page:<br/><br/>");
+		msg.append("<table style=\"border-width:0px;\">");
+		msg.append("  <tr>");
+		msg.append("    <td style=\"padding-right:20px;\">Name</td>");
+		msg.append("    <td>").append(this.name).append("</td>");
+		msg.append("  </tr>");
+		msg.append("  <tr>");
+		msg.append("    <td style=\"padding-right:20px;\">Email</td>");
+		msg.append("    <td>").append(this.email).append("</td>");
+		msg.append("  </tr>");
+		msg.append("  <tr>");
+		msg.append("    <td style=\"padding-right:20px;\">Type</td>");
+		msg.append("    <td>").append(this.type).append("</td>");
+		msg.append("  </tr>");
+		msg.append("  <tr>");
+		msg.append("    <td colspan=\"2\">").append(escaped).append("</td>");
+		msg.append("  </tr>");
+		msg.append("</table><br/><br/>");
+		message.setText(msg.toString(), "UTF-8", "html");
 		message.setSubject(this.system + " Message: " + this.type, "UTF-8");
 
 		message.setFrom(getSenderAddress());
