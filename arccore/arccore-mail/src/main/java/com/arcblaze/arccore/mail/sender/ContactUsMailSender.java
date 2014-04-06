@@ -55,12 +55,12 @@ public class ContactUsMailSender extends MailSender {
 		message.setText("\nNotice:\n\nThe " + this.system
 				+ " web site received a message from the contact-us page. "
 				+ "The contents of the message are shown below:\n\n"
-				+ "    Name: " + this.name + "\n    Email: " + this.email
-				+ "    Type: " + this.type + "\n    Message:\n\n"
+				+ "    Name:  " + this.name + "\n    Email: " + this.email
+				+ "\n    Type:  " + this.type + "\n    Message:\n\n"
 				+ this.message + "\n\n", "UTF-8", "html");
 		message.setSubject(this.system + " Message: " + this.type, "UTF-8");
 
-		message.setFrom(getAdminAddress());
+		message.setFrom(getSenderAddress());
 		message.addRecipient(Message.RecipientType.TO, getAdminAddress());
 	}
 }
