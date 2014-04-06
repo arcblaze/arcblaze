@@ -31,6 +31,25 @@ ui.panel.contact.ContactUsPanel = Ext.extend(Ext.form.FormPanel, {
 					allowBlank: false,
 					width:      360
 				}, {
+					xtype:          'combobox',
+					fieldLabel:     'Message Type',
+					name:           'type',
+					displayField:   'display',
+					valueField:     'type',
+					hiddenName:     'type',
+					mode:           'local',
+					forceSelection: true,
+					triggerAction:  'all',
+					selectOnFocus:  true,
+					width:          300,
+					value:          'Support Request',
+					allowBlank:     false,
+					store: new Ext.data.SimpleStore({
+						fields: [ 'type', 'display' ],
+						data: [ [ 'Support Request',  'Support Request'   ],
+								[ 'General Feedback', 'General Feedback'  ] ]
+					})
+				}, {
 					xtype:      'textarea',
 					fieldLabel: 'Message',
 					name:       'message',
