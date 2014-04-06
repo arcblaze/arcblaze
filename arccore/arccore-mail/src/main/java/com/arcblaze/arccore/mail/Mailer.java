@@ -49,6 +49,9 @@ class Mailer {
 		if (this.config.getBoolean(MailProperty.SMTP_MAIL_AUTHENTICATE))
 			props.setProperty("mail.smtp.auth", "true");
 
+		if (this.config.getBoolean(MailProperty.SMTP_MAIL_DEBUG))
+			props.setProperty("mail.debug", "true");
+
 		return props;
 	}
 
@@ -56,7 +59,7 @@ class Mailer {
 	 * @return a session configured with the current mail configuration settings
 	 */
 	Session getSession() {
-		return Session.getDefaultInstance(getMailConfiguration(), null);
+		return Session.getInstance(getMailConfiguration(), null);
 	}
 
 	/**
@@ -73,12 +76,17 @@ class Mailer {
 		if (this.config.getBoolean(MailProperty.SMTP_MAIL_AUTHENTICATE)) {
 			final String server = this.config
 					.getString(MailProperty.SMTP_MAIL_SERVER);
+			final int port = this.config
+					.getInt(MailProperty.SMTP_MAIL_SERVER_PORT);
 			final String user = this.config
 					.getString(MailProperty.SMTP_MAIL_AUTHENTICATE_USER);
 			final String password = this.config
 					.getString(MailProperty.SMTP_MAIL_AUTHENTICATE_PASSWORD);
-			final Transport transport = session.getTransport("smtp");
-			transport.connect(server, user, password);
+			final String protocol = this.config
+					.getBoolean(MailProperty.SMTP_MAIL_USE_SSL) ? "smtps"
+					: "smtp";
+			final Transport transport = session.getTransport(protocol);
+			transport.connect(server, port, user, password);
 			transport.sendMessage(message, message.getAllRecipients());
 			transport.close();
 		} else

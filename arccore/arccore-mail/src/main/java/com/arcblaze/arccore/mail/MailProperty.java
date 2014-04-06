@@ -18,6 +18,8 @@ public enum MailProperty implements Property {
 	SMTP_MAIL_AUTHENTICATE_USER(""),
 	/** The password to use when authenticating SMTP emails. */
 	SMTP_MAIL_AUTHENTICATE_PASSWORD(""),
+	/** The password to use when authenticating SMTP emails. */
+	SMTP_MAIL_DEBUG("false"),
 	/** The email address to use as the sender when sending SMTP emails. */
 	SENDER_EMAIL(""),
 	/** The display name of the user to use when sending SMTP emails. */
