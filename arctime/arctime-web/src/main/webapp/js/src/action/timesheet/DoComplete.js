@@ -38,7 +38,8 @@ action.timesheet.DoComplete = function(timesheetId) {
 
 						// Invoked on a successful completion.
 						mysuccess: function(data) {
-							retrieveCurrentTimesheet('timesheet-div', user);
+							displayTimesheet('timesheet-div', user, data.next);
+							initCellManagement([data.next]);
 							resetTimer();
 						}
 					});

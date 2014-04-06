@@ -3,6 +3,7 @@ package com.arcblaze.arctime.rest.user;
 import static com.arcblaze.arctime.common.model.Enrichment.BILLS;
 import static com.arcblaze.arctime.common.model.Enrichment.PAY_PERIODS;
 import static com.arcblaze.arctime.common.model.Enrichment.TASKS;
+import static com.arcblaze.arctime.common.model.Enrichment.USERS;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -79,7 +80,7 @@ public class TimesheetCompleteResource extends BaseResource {
 		log.debug("Timesheet complete request");
 		try (final Timer.Context timerContext = timer.time()) {
 			final Set<Enrichment> timesheetEnrichments = new LinkedHashSet<>(
-					Arrays.asList(PAY_PERIODS, TASKS, BILLS));
+					Arrays.asList(USERS, PAY_PERIODS, TASKS, BILLS));
 
 			log.debug("Retrieving current timesheet");
 			final User currentUser = (User) security.getUserPrincipal();
