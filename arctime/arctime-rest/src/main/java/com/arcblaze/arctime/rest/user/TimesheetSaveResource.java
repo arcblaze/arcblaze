@@ -5,6 +5,7 @@ import static com.arcblaze.arctime.common.model.Enrichment.PAY_PERIODS;
 import static com.arcblaze.arctime.common.model.Enrichment.TASKS;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -80,6 +81,9 @@ public class TimesheetSaveResource extends BaseResource {
 			@FormParam("data") final String data) {
 		log.debug("Timesheet save request");
 		try (final Timer.Context timerContext = timer.time()) {
+			if (id == null)
+				throw badRequest("Invalid null id");
+
 			final Set<Enrichment> timesheetEnrichments = new LinkedHashSet<>(
 					Arrays.asList(PAY_PERIODS, TASKS, BILLS));
 
@@ -103,12 +107,15 @@ public class TimesheetSaveResource extends BaseResource {
 			throw dbError(dbException);
 		} catch (final HolidayConfigurationException badHoliday) {
 			throw serverError(badHoliday);
+		} catch (final IllegalArgumentException badData) {
+			throw badRequest("Invalid timesheet data: " + badData.getMessage());
 		}
 	}
 
 	protected static void saveTimesheet(final ArcTimeDaoFactory daoFactory,
 			final Timesheet timesheet, final String data)
 			throws DatabaseException {
+		final Date now = new Date();
 		final BillDao billDao = daoFactory.getBillDao();
 		final AuditLogDao auditLogDao = daoFactory.getAuditLogDao();
 
@@ -118,8 +125,13 @@ public class TimesheetSaveResource extends BaseResource {
 		final Set<Bill> bills = Bill.fromTimesheetData(data);
 		for (final Bill bill : bills) {
 			processed.add(bill.getUniqueId());
+			bill.setTimestamp(now);
 
 			final Task task = timesheet.getTask(bill.getTaskId());
+
+			if (task == null)
+				continue;
+
 			final Assignment assignment = bill.hasAssignmentId() ? task
 					.getAssignment(bill.getAssignmentId()) : null;
 			final Bill existing = assignment == null ? task.getBill(bill
@@ -183,7 +195,7 @@ public class TimesheetSaveResource extends BaseResource {
 	 * 
 	 * @return an appropriate log message describing the changes
 	 */
-	private static AuditLog getUpdatedLog(final Timesheet timesheet,
+	protected static AuditLog getUpdatedLog(final Timesheet timesheet,
 			final Task task, final Assignment assignment, final Bill existing,
 			final Bill updated) {
 		final StringBuilder log = new StringBuilder();
@@ -227,7 +239,7 @@ public class TimesheetSaveResource extends BaseResource {
 	 * 
 	 * @return an appropriate log message describing the changes
 	 */
-	private static AuditLog getAddedLog(final Timesheet timesheet,
+	protected static AuditLog getAddedLog(final Timesheet timesheet,
 			final Task task, final Assignment assignment, final Bill bill) {
 		final StringBuilder log = new StringBuilder();
 		log.append("Added ");
@@ -263,7 +275,7 @@ public class TimesheetSaveResource extends BaseResource {
 	 * 
 	 * @return an appropriate log message describing the changes
 	 */
-	private static AuditLog getDeletedLog(final Timesheet timesheet,
+	protected static AuditLog getDeletedLog(final Timesheet timesheet,
 			final Task task, final Assignment assignment, final Bill existing) {
 		final StringBuilder log = new StringBuilder();
 		log.append("Hours for task ");
