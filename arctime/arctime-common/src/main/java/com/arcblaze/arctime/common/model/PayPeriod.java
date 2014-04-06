@@ -390,7 +390,7 @@ public class PayPeriod implements Comparable<PayPeriod> {
 		builder.append("companyId", getCompanyId());
 		builder.append("type", getType());
 		builder.append("begin", getBegin());
-		builder.append("end", getBegin());
+		builder.append("end", getEnd());
 		return builder.toString();
 	}
 
