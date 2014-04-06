@@ -90,8 +90,8 @@ public class TimesheetCurrentResource extends BaseResource {
 				log.debug("Created timesheet: {}", timesheet);
 
 				// Retrieve an enriched version of the newly created timesheet.
-				timesheet = dao.getLatestForUser(currentUser.getId(),
-						timesheetEnrichments);
+				timesheet = dao.get(currentUser.getCompanyId(),
+						timesheet.getId(), timesheetEnrichments);
 			}
 
 			final CurrentResponse response = new CurrentResponse();

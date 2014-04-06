@@ -51,6 +51,9 @@ public class TimesheetCompleteResource extends BaseResource {
 		@XmlElement
 		public final String msg = "The timesheet was completed successfully. "
 				+ "Moved to the next pay period.";
+
+		@XmlElement
+		public Timesheet next = null;
 	}
 
 	/**
@@ -119,13 +122,21 @@ public class TimesheetCompleteResource extends BaseResource {
 				next.setBegin(nextPayPeriod.getBegin());
 				dao.add(next);
 				log.debug("Created next timesheet: {}", next);
+
+				// Retrieve an enriched version of the newly created timesheet.
+				next = dao.get(currentUser.getCompanyId(), next.getId(),
+						timesheetEnrichments);
 			}
 
-			return new CompleteResponse();
+			final CompleteResponse response = new CompleteResponse();
+			response.next = next;
+			return response;
 		} catch (final DatabaseException dbException) {
 			throw dbError(dbException);
 		} catch (final HolidayConfigurationException badHoliday) {
 			throw serverError(badHoliday);
+		} catch (final IllegalArgumentException badData) {
+			throw badRequest("Invalid timesheet data: " + badData.getMessage());
 		}
 	}
 }

@@ -141,7 +141,7 @@ public class ProfileUpdateResourceTest {
 	@Test
 	public void testValidBlankPassword() throws DatabaseException {
 		try (final TestDatabase testDatabase = new TestDatabase()) {
-			testDatabase.load("hsqldb/db.sql");
+			testDatabase.load("hsqldb/arctime-db.sql");
 			final SecurityContext securityContext = Mockito
 					.mock(SecurityContext.class);
 			final DaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -192,7 +192,7 @@ public class ProfileUpdateResourceTest {
 	@Test
 	public void testValidWithPassword() throws DatabaseException {
 		try (final TestDatabase testDatabase = new TestDatabase()) {
-			testDatabase.load("hsqldb/db.sql");
+			testDatabase.load("hsqldb/arctime-db.sql");
 			final SecurityContext securityContext = Mockito
 					.mock(SecurityContext.class);
 			final DaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -250,7 +250,7 @@ public class ProfileUpdateResourceTest {
 	@Test(expected = BadRequestException.class)
 	public void testLoginAlreadyExists() throws DatabaseException {
 		try (final TestDatabase testDatabase = new TestDatabase()) {
-			testDatabase.load("hsqldb/db.sql");
+			testDatabase.load("hsqldb/arctime-db.sql");
 			final SecurityContext securityContext = Mockito
 					.mock(SecurityContext.class);
 			final DaoFactory daoFactory = testDatabase.getDaoFactory();

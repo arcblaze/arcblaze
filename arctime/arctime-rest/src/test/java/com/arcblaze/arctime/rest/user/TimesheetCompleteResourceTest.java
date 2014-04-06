@@ -37,13 +37,14 @@ import com.arcblaze.arctime.common.model.util.HolidayConfigurationException;
 import com.arcblaze.arctime.db.ArcTimeDaoFactory;
 import com.arcblaze.arctime.db.dao.TimesheetDao;
 import com.arcblaze.arctime.db.util.TestDatabase;
+import com.arcblaze.arctime.rest.user.TimesheetCompleteResource.CompleteResponse;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 
 /**
  * Perform testing of the current timesheet retrieval capabilities.
  */
-public class TimesheetSaveResourceTest {
+public class TimesheetCompleteResourceTest {
 	/**
 	 * Test how the resource responds with no pay periods available.
 	 * 
@@ -77,8 +78,8 @@ public class TimesheetSaveResourceTest {
 					.mock(SecurityContext.class);
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
-			final TimesheetSaveResource resource = new TimesheetSaveResource();
-			resource.save(security, daoFactory, timer, null, "");
+			final TimesheetCompleteResource resource = new TimesheetCompleteResource();
+			resource.complete(security, daoFactory, timer, null, "");
 		}
 	}
 
@@ -127,8 +128,8 @@ public class TimesheetSaveResourceTest {
 					.mock(SecurityContext.class);
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
-			final TimesheetSaveResource resource = new TimesheetSaveResource();
-			resource.save(security, daoFactory, timer, timesheet.getId(),
+			final TimesheetCompleteResource resource = new TimesheetCompleteResource();
+			resource.complete(security, daoFactory, timer, timesheet.getId(),
 					"data");
 		}
 	}
@@ -182,8 +183,35 @@ public class TimesheetSaveResourceTest {
 					.mock(SecurityContext.class);
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
-			final TimesheetSaveResource resource = new TimesheetSaveResource();
-			resource.save(security, daoFactory, timer, timesheet.getId(), "");
+			final TimesheetCompleteResource resource = new TimesheetCompleteResource();
+			final CompleteResponse response = resource.complete(security,
+					daoFactory, timer, timesheet.getId(), "");
+
+			final Timesheet next = response.next;
+			assertNotNull(next);
+			assertEquals(company.getId(), next.getCompanyId());
+			assertEquals(user.getId(), next.getUserId());
+			assertNotNull(next.getPayPeriod());
+			assertTrue(next.getPayPeriod().contains(
+					DateUtils.addDays(payPeriod.getEnd(), 2)));
+			assertNotNull(next.getBegin());
+			assertEquals(next.getBegin(), next.getPayPeriod().getBegin());
+			assertFalse(next.isCompleted());
+			assertFalse(next.isApproved());
+			assertFalse(next.isVerified());
+			assertFalse(next.isExported());
+			assertNull(next.getApprover());
+			assertNull(next.getApproverId());
+			assertNull(next.getVerifier());
+			assertNull(next.getVerifierId());
+			assertNull(next.getExporter());
+			assertNull(next.getExporterId());
+			assertNotNull(next.getAuditLogs());
+			assertTrue(next.getAuditLogs().isEmpty());
+			assertNotNull(next.getHolidays());
+			assertTrue(next.getHolidays().isEmpty());
+			assertNotNull(next.getTasks());
+			assertTrue(next.getTasks().isEmpty());
 
 			final Timesheet ts = dao.get(company.getId(), timesheet.getId(),
 					AUDIT_LOGS, BILLS, HOLIDAYS, PAY_PERIODS, TASKS, USERS);
@@ -195,7 +223,7 @@ public class TimesheetSaveResourceTest {
 			assertTrue(ts.getPayPeriod().contains(new Date()));
 			assertNotNull(ts.getBegin());
 			assertEquals(ts.getBegin(), ts.getPayPeriod().getBegin());
-			assertFalse(ts.isCompleted());
+			assertTrue(ts.isCompleted());
 			assertFalse(ts.isApproved());
 			assertFalse(ts.isVerified());
 			assertFalse(ts.isExported());
@@ -206,7 +234,7 @@ public class TimesheetSaveResourceTest {
 			assertNull(ts.getExporter());
 			assertNull(ts.getExporterId());
 			assertNotNull(ts.getAuditLogs());
-			assertTrue(ts.getAuditLogs().isEmpty());
+			assertEquals(1, ts.getAuditLogs().size());
 			assertNotNull(ts.getHolidays());
 			assertTrue(ts.getHolidays().isEmpty());
 			assertNotNull(ts.getTasks());
@@ -370,8 +398,35 @@ public class TimesheetSaveResourceTest {
 					.mock(SecurityContext.class);
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
-			final TimesheetSaveResource resource = new TimesheetSaveResource();
-			resource.save(security, daoFactory, timer, timesheet.getId(), "");
+			final TimesheetCompleteResource resource = new TimesheetCompleteResource();
+			final CompleteResponse response = resource.complete(security,
+					daoFactory, timer, timesheet.getId(), "");
+
+			final Timesheet next = response.next;
+			assertNotNull(next);
+			assertEquals(company.getId(), next.getCompanyId());
+			assertEquals(user.getId(), next.getUserId());
+			assertNotNull(next.getPayPeriod());
+			assertTrue(next.getPayPeriod().contains(
+					DateUtils.addDays(payPeriod.getEnd(), 2)));
+			assertNotNull(next.getBegin());
+			assertEquals(next.getBegin(), next.getPayPeriod().getBegin());
+			assertFalse(next.isCompleted());
+			assertFalse(next.isApproved());
+			assertFalse(next.isVerified());
+			assertFalse(next.isExported());
+			assertNull(next.getApprover());
+			assertNull(next.getApproverId());
+			assertNull(next.getVerifier());
+			assertNull(next.getVerifierId());
+			assertNull(next.getExporter());
+			assertNull(next.getExporterId());
+			assertNotNull(next.getAuditLogs());
+			assertTrue(next.getAuditLogs().isEmpty());
+			assertNotNull(next.getHolidays());
+			assertTrue(next.getHolidays().isEmpty());
+			assertNotNull(next.getTasks());
+			assertEquals(3, next.getTasks().size());
 
 			final Timesheet ts = dao.get(company.getId(), timesheet.getId(),
 					AUDIT_LOGS, BILLS, HOLIDAYS, PAY_PERIODS, TASKS, USERS);
@@ -383,7 +438,7 @@ public class TimesheetSaveResourceTest {
 			assertTrue(ts.getPayPeriod().contains(new Date()));
 			assertNotNull(ts.getBegin());
 			assertEquals(ts.getBegin(), ts.getPayPeriod().getBegin());
-			assertFalse(ts.isCompleted());
+			assertTrue(ts.isCompleted());
 			assertFalse(ts.isApproved());
 			assertFalse(ts.isVerified());
 			assertFalse(ts.isExported());
@@ -394,7 +449,7 @@ public class TimesheetSaveResourceTest {
 			assertNull(ts.getExporter());
 			assertNull(ts.getExporterId());
 			assertNotNull(ts.getAuditLogs());
-			assertEquals(3, ts.getAuditLogs().size());
+			assertEquals(4, ts.getAuditLogs().size());
 			assertNotNull(ts.getHolidays());
 			assertTrue(ts.getHolidays().isEmpty());
 			assertNotNull(ts.getTasks());
@@ -435,7 +490,7 @@ public class TimesheetSaveResourceTest {
 	 *             if there is a holiday problem
 	 */
 	@Test
-	public void testSaveDataIntoTimesheet() throws DatabaseException,
+	public void testCompleteDataIntoTimesheet() throws DatabaseException,
 			HolidayConfigurationException {
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
@@ -583,9 +638,35 @@ public class TimesheetSaveResourceTest {
 					.mock(SecurityContext.class);
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
-			final TimesheetSaveResource resource = new TimesheetSaveResource();
-			resource.save(security, daoFactory, timer, timesheet.getId(),
-					timesheetData);
+			final TimesheetCompleteResource resource = new TimesheetCompleteResource();
+			final CompleteResponse response = resource.complete(security,
+					daoFactory, timer, timesheet.getId(), timesheetData);
+
+			final Timesheet next = response.next;
+			assertNotNull(next);
+			assertEquals(company.getId(), next.getCompanyId());
+			assertEquals(user.getId(), next.getUserId());
+			assertNotNull(next.getPayPeriod());
+			assertTrue(next.getPayPeriod().contains(
+					DateUtils.addDays(payPeriod.getEnd(), 2)));
+			assertNotNull(next.getBegin());
+			assertEquals(next.getBegin(), next.getPayPeriod().getBegin());
+			assertFalse(next.isCompleted());
+			assertFalse(next.isApproved());
+			assertFalse(next.isVerified());
+			assertFalse(next.isExported());
+			assertNull(next.getApprover());
+			assertNull(next.getApproverId());
+			assertNull(next.getVerifier());
+			assertNull(next.getVerifierId());
+			assertNull(next.getExporter());
+			assertNull(next.getExporterId());
+			assertNotNull(next.getAuditLogs());
+			assertTrue(next.getAuditLogs().isEmpty());
+			assertNotNull(next.getHolidays());
+			assertTrue(next.getHolidays().isEmpty());
+			assertNotNull(next.getTasks());
+			assertEquals(3, next.getTasks().size());
 
 			final Timesheet ts = dao.get(company.getId(), timesheet.getId(),
 					AUDIT_LOGS, BILLS, HOLIDAYS, PAY_PERIODS, TASKS, USERS);
@@ -597,7 +678,7 @@ public class TimesheetSaveResourceTest {
 			assertTrue(ts.getPayPeriod().contains(new Date()));
 			assertNotNull(ts.getBegin());
 			assertEquals(ts.getBegin(), ts.getPayPeriod().getBegin());
-			assertFalse(ts.isCompleted());
+			assertTrue(ts.isCompleted());
 			assertFalse(ts.isApproved());
 			assertFalse(ts.isVerified());
 			assertFalse(ts.isExported());
@@ -608,7 +689,7 @@ public class TimesheetSaveResourceTest {
 			assertNull(ts.getExporter());
 			assertNull(ts.getExporterId());
 			assertNotNull(ts.getAuditLogs());
-			assertEquals(4, ts.getAuditLogs().size());
+			assertEquals(5, ts.getAuditLogs().size());
 			assertNotNull(ts.getHolidays());
 			assertTrue(ts.getHolidays().isEmpty());
 			assertNotNull(ts.getTasks());
