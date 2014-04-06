@@ -10,6 +10,7 @@ import com.arcblaze.arctime.db.dao.AuditLogDao;
 import com.arcblaze.arctime.db.dao.BillDao;
 import com.arcblaze.arctime.db.dao.HolidayDao;
 import com.arcblaze.arctime.db.dao.PayPeriodDao;
+import com.arcblaze.arctime.db.dao.SupervisorDao;
 import com.arcblaze.arctime.db.dao.TaskDao;
 import com.arcblaze.arctime.db.dao.TimesheetDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcAssignmentDao;
@@ -17,6 +18,7 @@ import com.arcblaze.arctime.db.dao.jdbc.JdbcAuditLogDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcBillDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcHolidayDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcPayPeriodDao;
+import com.arcblaze.arctime.db.dao.jdbc.JdbcSupervisorDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcTaskDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcTimesheetDao;
 
@@ -31,6 +33,7 @@ public class ArcTimeDaoFactory extends DaoFactory {
 	private PayPeriodDao cachedPayPeriodDao = null;
 	private TaskDao cachedTaskDao = null;
 	private TimesheetDao cachedTimesheetDao = null;
+	private SupervisorDao cachedSupervisorDao = null;
 
 	/**
 	 * @param config
@@ -160,6 +163,23 @@ public class ArcTimeDaoFactory extends DaoFactory {
 	}
 
 	/**
+	 * @return a {@link SupervisorDao} based on the currently configured
+	 *         database
+	 */
+	public SupervisorDao getSupervisorDao() {
+		if (this.cachedSupervisorDao == null) {
+			if (DatabaseType.JDBC.equals(getDatabaseType()))
+				this.cachedSupervisorDao = new JdbcSupervisorDao(
+						getConnectionManager());
+			else
+				throw new RuntimeException("Invalid database type: "
+						+ getDatabaseType());
+		}
+
+		return this.cachedSupervisorDao;
+	}
+
+	/**
 	 * Close any resources associated with the internal DAOs.
 	 * 
 	 * @throws DatabaseException
@@ -174,5 +194,6 @@ public class ArcTimeDaoFactory extends DaoFactory {
 		this.cachedHolidayDao = null;
 		this.cachedTaskDao = null;
 		this.cachedTimesheetDao = null;
+		this.cachedSupervisorDao = null;
 	}
 }
