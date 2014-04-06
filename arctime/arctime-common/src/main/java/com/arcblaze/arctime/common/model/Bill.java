@@ -6,8 +6,11 @@ import static org.apache.commons.lang.Validate.notNull;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -375,6 +378,41 @@ public class Bill implements Comparable<Bill> {
 	}
 
 	/**
+	 * @return the encoded bill data as used when saving bills into a timesheet
+	 */
+	public String toTimesheetData() {
+		final StringBuilder str = new StringBuilder();
+		str.append(getTaskId());
+		str.append("_");
+		if (hasAssignmentId())
+			str.append(getAssignmentId());
+		str.append(":");
+		str.append(DateFormatUtils.format(getDay(), "yyyyMMdd"));
+		str.append(":");
+		str.append(getHours().toPlainString());
+		if (hasReason()) {
+			str.append(":");
+			str.append(getReason());
+		}
+		return str.toString();
+	}
+
+	/**
+	 * @param bills
+	 *            the bills to be encoded
+	 * 
+	 * @return the encoded bill data as used when saving bills into a timesheet
+	 */
+	public static String toTimesheetData(final Collection<Bill> bills) {
+		if (bills == null || bills.isEmpty())
+			return "";
+		final List<String> parts = new ArrayList<>(bills.size());
+		for (final Bill bill : bills)
+			parts.add(bill.toTimesheetData());
+		return StringUtils.join(parts, ";");
+	}
+
+	/**
 	 * @param data
 	 *            the raw encoded data sent from the time sheet user interface
 	 *            to be parsed into the individual bills
@@ -415,7 +453,6 @@ public class Bill implements Comparable<Bill> {
 				if (pieces.length == 4 && StringUtils.isNotBlank(pieces[3]))
 					bill.setReason(StringUtils.trim(pieces[3]));
 
-				bill.setTimestamp(new Date());
 				bills.add(bill);
 			} catch (final NumberFormatException badNumber) {
 				throw new IllegalArgumentException("Invalid numeric value.",
