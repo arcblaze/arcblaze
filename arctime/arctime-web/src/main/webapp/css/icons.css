@@ -28,6 +28,10 @@
 	background-image:		url(/img/search.png) !important;
 }
 
+.icon-send-message {
+	background-image:		url(/img/send_message.png) !important;
+}
+
 .icon-login {
 	background-image:		url(/img/login.png) !important;
 }

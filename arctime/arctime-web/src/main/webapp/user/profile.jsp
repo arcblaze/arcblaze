@@ -25,7 +25,6 @@
 
       <!-- Add the profile management scripts. -->
       <script src="/js/src/util/io/ServerIO.js"></script>
-      <script src="/js/src/data/model/User.js"></script>
       <script src="/js/src/data/model/Supervisor.js"></script>
       <script src="/js/src/data/store/SupervisorStore.js"></script>
       <script src="/js/src/action/user/DoProfileUpdate.js"></script>

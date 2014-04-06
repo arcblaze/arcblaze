@@ -119,6 +119,11 @@ html, body {
  text-decoration:underline;
 }
 
+#contact-table {
+ border-collapse:collapse;
+ margin:0px auto;
+}
+
 #login-table {
  border-collapse:collapse;
  margin:0px auto;
