@@ -38,6 +38,7 @@ import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.Role;
 import com.arcblaze.arccore.db.DaoFactory;
 import com.arcblaze.arccore.rest.BaseApplication;
+import com.arcblaze.arccore.rest.factory.ConfigFactory;
 import com.arcblaze.arccore.rest.factory.DaoFactoryFactory;
 import com.arcblaze.arccore.server.security.SecurityRealm;
 import com.arcblaze.arccore.server.tasks.BackgroundTask;
@@ -126,6 +127,8 @@ public abstract class BaseServer {
 		context.setLoginConfig(loginConfig);
 		context.getPipeline().addValve(new FormAuthenticator());
 
+		context.getServletContext().setAttribute(
+				ConfigFactory.CONFIG_FACTORY_CONFIG, this.config);
 		context.getServletContext().setAttribute(
 				DaoFactoryFactory.DAO_FACTORY_CONFIG, daoFactory);
 		context.getServletContext().setAttribute(
