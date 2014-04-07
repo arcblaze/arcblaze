@@ -8,6 +8,7 @@ import javax.mail.internet.MimeMessage;
 
 import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.User;
+import com.arcblaze.arccore.mail.MailProperty;
 import com.arcblaze.arccore.mail.MailSender;
 
 /**
@@ -40,19 +41,27 @@ public class ResetPasswordMailSender extends MailSender {
 	@Override
 	public void populate(final MimeMessage message) throws MessagingException,
 			UnsupportedEncodingException {
-		message.setText("\nNotice:\n\n"
-				+ "The ArcTime web site received a password change request "
-				+ "for your account.  If you have not requested a password "
-				+ "change from the ArcTime web site by indicating that you "
-				+ "forgot your password, please inform your security point of "
-				+ "contact about the possible security breach attempt.\n\n"
-				+ "Otherwise, here is your new password:\n    "
-				+ this.newPassword + "\n\n"
-				+ "If you have any problems or questions, contact your "
-				+ "supervisor or ArcTime support.\n\n", "UTF-8", "html");
-		message.setSubject("Password Change Notification", "UTF-8");
+		final String system = getConfig().getString(MailProperty.SYSTEM_NAME);
 
-		message.setFrom(getAdminAddress());
+		final StringBuilder msg = new StringBuilder();
+		msg.append("<b>Notice:</b><br/><br/>");
+		msg.append("<p>The <i>").append(system).append("</i> web site ");
+		msg.append("received a password change request from your account. ");
+		msg.append("If you have not requested a password change from the ");
+		msg.append(system).append(" web site by indicating that you ");
+		msg.append("forgot your password, please inform your security point ");
+		msg.append("of contact about the possible security breach attempt.");
+		msg.append("<br/><br/>");
+		msg.append("Otherwise, here is your new password:<br/><br/>");
+		msg.append("<span style=\"font-family:monospace;padding-left:20px;\">");
+		msg.append(this.newPassword).append("</span><br/><br/>");
+		msg.append("If you have any questions or problems, contact your ");
+		msg.append("company representative or submit a support request.");
+		msg.append("<br/><br/>").append(system).append(" Support");
+		message.setText(msg.toString(), "UTF-8", "html");
+		message.setSubject(system + " Password Change", "UTF-8");
+
+		message.setFrom(getSenderAddress());
 		message.addRecipient(Message.RecipientType.TO, getAddress(this.user));
 	}
 }

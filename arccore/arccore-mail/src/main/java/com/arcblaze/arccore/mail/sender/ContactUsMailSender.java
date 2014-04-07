@@ -57,9 +57,9 @@ public class ContactUsMailSender extends MailSender {
 		final String escaped = StringEscapeUtils.escapeHtml(this.message);
 
 		final StringBuilder msg = new StringBuilder();
-		msg.append("<b>Notice:</b><br/><br/>");
+		msg.append("<b>Notice:</b><br/>");
 		msg.append("<p>The <i>").append(this.system).append("</i> system ");
-		msg.append("received a message from the contact-us page:<br/><br/>");
+		msg.append("received a message from the contact-us page:</p><br/>");
 		msg.append("<table style=\"border-width:0px;\">");
 		msg.append("  <tr>");
 		msg.append("    <td style=\"padding-right:20px;\">Name</td>");
