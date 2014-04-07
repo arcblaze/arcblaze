@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.arcblaze.arccore.common.config.Config;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 
@@ -19,15 +20,18 @@ public class MemoryUsageLoggingTask extends BackgroundTask {
 			.getLogger(MemoryUsageLoggingTask.class);
 
 	/**
+	 * @param config
+	 *            the system configuration information
 	 * @param metricRegistry
 	 *            the registry of metrics used to track system performance
 	 *            information
 	 * @param healthCheckRegistry
 	 *            the registry of system health and status information
 	 */
-	public MemoryUsageLoggingTask(final MetricRegistry metricRegistry,
+	public MemoryUsageLoggingTask(final Config config,
+			final MetricRegistry metricRegistry,
 			final HealthCheckRegistry healthCheckRegistry) {
-		super(metricRegistry, healthCheckRegistry);
+		super(config, metricRegistry, healthCheckRegistry);
 	}
 
 	/**

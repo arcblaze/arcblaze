@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.DatabaseException;
 import com.arcblaze.arccore.rest.BaseResource;
@@ -51,6 +52,8 @@ public class TimesheetCurrentResource extends BaseResource {
 	/**
 	 * @param security
 	 *            the security information associated with the request
+	 * @param config
+	 *            the system configuration properties
 	 * @param daoFactory
 	 *            used to communicate with the back-end database
 	 * @param timer
@@ -61,15 +64,16 @@ public class TimesheetCurrentResource extends BaseResource {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public CurrentResponse current(@Context final SecurityContext security,
+			@Context final Config config,
 			@Context final ArcTimeDaoFactory daoFactory,
 			@Context final Timer timer) {
 		log.debug("Current timesheet request");
+		final User currentUser = (User) security.getUserPrincipal();
 		try (final Timer.Context timerContext = timer.time()) {
 			final Set<Enrichment> timesheetEnrichments = new LinkedHashSet<>(
 					Arrays.asList(PAY_PERIODS, AUDIT_LOGS, HOLIDAYS, USERS,
 							TASKS, BILLS));
 
-			final User currentUser = (User) security.getUserPrincipal();
 			final TimesheetDao dao = daoFactory.getTimesheetDao();
 			Timesheet timesheet = dao.getLatestForUser(currentUser.getId(),
 					timesheetEnrichments);
@@ -98,9 +102,9 @@ public class TimesheetCurrentResource extends BaseResource {
 			response.timesheet = timesheet;
 			return response;
 		} catch (final DatabaseException dbException) {
-			throw dbError(dbException);
+			throw dbError(config, currentUser, dbException);
 		} catch (final HolidayConfigurationException badHoliday) {
-			throw serverError(badHoliday);
+			throw serverError(config, currentUser, badHoliday);
 		}
 	}
 }

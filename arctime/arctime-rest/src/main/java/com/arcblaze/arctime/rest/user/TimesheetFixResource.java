@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.DatabaseException;
 import com.arcblaze.arccore.rest.BaseResource;
@@ -43,6 +44,8 @@ public class TimesheetFixResource extends BaseResource {
 	/**
 	 * @param security
 	 *            the security information associated with the request
+	 * @param config
+	 *            the system configuration properties
 	 * @param daoFactory
 	 *            used to communicate with the back-end database
 	 * @param timer
@@ -55,15 +58,15 @@ public class TimesheetFixResource extends BaseResource {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public FixResponse fix(@Context final SecurityContext security,
+			@Context final Config config,
 			@Context final ArcTimeDaoFactory daoFactory,
 			@Context final Timer timer, @PathParam("id") final Integer id) {
 		if (id == null)
 			throw badRequest("Missing id parameter");
 
 		log.debug("Timesheet fix request");
+		final User currentUser = (User) security.getUserPrincipal();
 		try (final Timer.Context timerContext = timer.time()) {
-			final User currentUser = (User) security.getUserPrincipal();
-
 			log.debug("Getting current timesheet");
 			final TimesheetDao dao = daoFactory.getTimesheetDao();
 			final Timesheet timesheet = dao.get(currentUser.getCompanyId(), id);
@@ -71,8 +74,8 @@ public class TimesheetFixResource extends BaseResource {
 			if (timesheet == null)
 				throw notFound("The requested timesheet could not be found");
 			if (timesheet.getUserId() != currentUser.getId())
-				throw forbidden(currentUser, "Unable to fix timesheet that "
-						+ "you do not own.");
+				throw forbidden(config, currentUser, "Unable to fix timesheet "
+						+ "that you do not own.");
 
 			log.debug("Reopening timesheet");
 			dao.complete(timesheet.getCompanyId(), false, timesheet.getId());
@@ -83,9 +86,9 @@ public class TimesheetFixResource extends BaseResource {
 
 			return new FixResponse();
 		} catch (final DatabaseException dbException) {
-			throw dbError(dbException);
+			throw dbError(config, currentUser, dbException);
 		} catch (final HolidayConfigurationException badHoliday) {
-			throw serverError(badHoliday);
+			throw serverError(config, currentUser, badHoliday);
 		}
 	}
 }

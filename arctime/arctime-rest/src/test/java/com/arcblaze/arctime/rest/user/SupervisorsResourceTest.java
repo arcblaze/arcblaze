@@ -9,6 +9,7 @@ import javax.ws.rs.core.SecurityContext;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.Company;
 import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.DatabaseException;
@@ -31,6 +32,7 @@ public class SupervisorsResourceTest {
 	 */
 	@Test
 	public void testNoSupervisors() throws DatabaseException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -57,8 +59,8 @@ public class SupervisorsResourceTest {
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 			final SupervisorsResource resource = new SupervisorsResource();
-			final Supervisors supervisors = resource.get(security, daoFactory,
-					timer);
+			final Supervisors supervisors = resource.get(security, config,
+					daoFactory, timer);
 
 			assertNotNull(supervisors);
 			assertNotNull(supervisors.supervisors);
@@ -74,6 +76,7 @@ public class SupervisorsResourceTest {
 	 */
 	@Test
 	public void testMultipleSupervisors() throws DatabaseException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -127,8 +130,8 @@ public class SupervisorsResourceTest {
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 			final SupervisorsResource resource = new SupervisorsResource();
-			final Supervisors response = resource.get(security, daoFactory,
-					timer);
+			final Supervisors response = resource.get(security, config,
+					daoFactory, timer);
 
 			assertNotNull(response);
 			assertNotNull(response.supervisors);

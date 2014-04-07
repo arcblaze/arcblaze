@@ -17,6 +17,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.Company;
 import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.DatabaseException;
@@ -43,6 +44,7 @@ public class TimesheetFixResourceTest {
 	 */
 	@Test(expected = BadRequestException.class)
 	public void testNullId() throws DatabaseException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -69,7 +71,7 @@ public class TimesheetFixResourceTest {
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 			final TimesheetFixResource resource = new TimesheetFixResource();
-			resource.fix(security, daoFactory, timer, null);
+			resource.fix(security, config, daoFactory, timer, null);
 		}
 	}
 
@@ -81,6 +83,7 @@ public class TimesheetFixResourceTest {
 	 */
 	@Test(expected = NotFoundException.class)
 	public void testNoTimesheetAvailable() throws DatabaseException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -107,7 +110,7 @@ public class TimesheetFixResourceTest {
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 			final TimesheetFixResource resource = new TimesheetFixResource();
-			resource.fix(security, daoFactory, timer, 1);
+			resource.fix(security, config, daoFactory, timer, 1);
 		}
 	}
 
@@ -124,6 +127,7 @@ public class TimesheetFixResourceTest {
 	@Test
 	public void testTimesheetNotCompleted() throws DatabaseException,
 			ParseException, HolidayConfigurationException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -163,8 +167,8 @@ public class TimesheetFixResourceTest {
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 			final TimesheetFixResource resource = new TimesheetFixResource();
-			final FixResponse response = resource.fix(security, daoFactory,
-					timer, timesheet.getId());
+			final FixResponse response = resource.fix(security, config,
+					daoFactory, timer, timesheet.getId());
 			assertNotNull(response);
 			assertTrue(response.success);
 
@@ -204,6 +208,7 @@ public class TimesheetFixResourceTest {
 	@Test
 	public void testTimesheetCompleted() throws DatabaseException,
 			ParseException, HolidayConfigurationException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -245,8 +250,8 @@ public class TimesheetFixResourceTest {
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 			final TimesheetFixResource resource = new TimesheetFixResource();
-			final FixResponse response = resource.fix(security, daoFactory,
-					timer, timesheet.getId());
+			final FixResponse response = resource.fix(security, config,
+					daoFactory, timer, timesheet.getId());
 			assertNotNull(response);
 			assertTrue(response.success);
 

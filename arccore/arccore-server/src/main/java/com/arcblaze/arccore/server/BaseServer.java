@@ -537,9 +537,9 @@ public abstract class BaseServer {
 				.newScheduledThreadPool(3);
 
 		final BackgroundTask systemHealth = new SystemHealthCheckTask(
-				this.metricRegistry, this.healthCheckRegistry);
+				this.config, this.metricRegistry, this.healthCheckRegistry);
 		final BackgroundTask memoryUsage = new MemoryUsageLoggingTask(
-				this.metricRegistry, this.healthCheckRegistry);
+				this.config, this.metricRegistry, this.healthCheckRegistry);
 
 		final Collection<BackgroundTask> childTasks = getBackgroundTasks(
 				config, metricRegistry, healthCheckRegistry);

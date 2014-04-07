@@ -6,8 +6,12 @@ import static org.junit.Assert.assertNotNull;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.junit.Test;
+import javax.ws.rs.core.SecurityContext;
 
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.Company;
 import com.arcblaze.arccore.common.model.Transaction;
 import com.arcblaze.arccore.common.model.TransactionType;
@@ -32,14 +36,22 @@ public class SystemStatsResourceTest {
 	 */
 	@Test
 	public void testNoData() throws DatabaseException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/db.sql");
 			final DaoFactory daoFactory = testDatabase.getDaoFactory();
 			final MetricRegistry metricRegistry = new MetricRegistry();
 			final Timer timer = metricRegistry.timer("test");
 
+			final User user = new User().setId(1).setCompanyId(1)
+					.setLogin("user");
+			final SecurityContext securityContext = Mockito
+					.mock(SecurityContext.class);
+			Mockito.when(securityContext.getUserPrincipal()).thenReturn(user);
+
 			final SystemStatsResource resource = new SystemStatsResource();
-			final Stats stats = resource.getStats(daoFactory, timer);
+			final Stats stats = resource.getStats(securityContext, config,
+					daoFactory, timer);
 
 			assertNotNull(stats);
 			assertEquals(4, stats.statList.size());
@@ -72,6 +84,7 @@ public class SystemStatsResourceTest {
 	 */
 	@Test
 	public void testStatsAvailable() throws DatabaseException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/db.sql");
 			final DaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -113,8 +126,13 @@ public class SystemStatsResourceTest {
 
 			daoFactory.getTransactionDao().add(tx1, tx2);
 
+			final SecurityContext securityContext = Mockito
+					.mock(SecurityContext.class);
+			Mockito.when(securityContext.getUserPrincipal()).thenReturn(user);
+
 			final SystemStatsResource resource = new SystemStatsResource();
-			final Stats stats = resource.getStats(daoFactory, timer);
+			final Stats stats = resource.getStats(securityContext, config,
+					daoFactory, timer);
 
 			assertNotNull(stats);
 			assertEquals(4, stats.statList.size());

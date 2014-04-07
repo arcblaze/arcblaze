@@ -101,7 +101,7 @@ public class ContactUsResource extends BaseResource {
 							"ArcTime", name, email, type, message);
 				this.mailSender.send();
 			} catch (final MessagingException mailException) {
-				throw mailError(mailException);
+				throw mailError(config, null, mailException);
 			}
 
 			return new MessageSent();

@@ -7,6 +7,7 @@ import javax.mail.MessagingException;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.SecurityContext;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -39,8 +40,15 @@ public class ResetPasswordResourceTest {
 			final MetricRegistry metricRegistry = new MetricRegistry();
 			final Timer timer = metricRegistry.timer("test");
 
+			final User user = new User().setId(1).setCompanyId(1)
+					.setLogin("user");
+			final SecurityContext securityContext = Mockito
+					.mock(SecurityContext.class);
+			Mockito.when(securityContext.getUserPrincipal()).thenReturn(user);
+
 			final ResetPasswordResource resource = new ResetPasswordResource();
-			resource.reset(config, daoFactory, password, timer, null);
+			resource.reset(securityContext, config, daoFactory, password,
+					timer, null);
 		}
 	}
 
@@ -56,8 +64,15 @@ public class ResetPasswordResourceTest {
 			final MetricRegistry metricRegistry = new MetricRegistry();
 			final Timer timer = metricRegistry.timer("test");
 
+			final User user = new User().setId(1).setCompanyId(1)
+					.setLogin("user");
+			final SecurityContext securityContext = Mockito
+					.mock(SecurityContext.class);
+			Mockito.when(securityContext.getUserPrincipal()).thenReturn(user);
+
 			final ResetPasswordResource resource = new ResetPasswordResource();
-			resource.reset(config, daoFactory, password, timer, "  ");
+			resource.reset(securityContext, config, daoFactory, password,
+					timer, "  ");
 		}
 	}
 
@@ -77,8 +92,15 @@ public class ResetPasswordResourceTest {
 			final MetricRegistry metricRegistry = new MetricRegistry();
 			final Timer timer = metricRegistry.timer("test");
 
+			final User user = new User().setId(1).setCompanyId(1)
+					.setLogin("user");
+			final SecurityContext securityContext = Mockito
+					.mock(SecurityContext.class);
+			Mockito.when(securityContext.getUserPrincipal()).thenReturn(user);
+
 			final ResetPasswordResource resource = new ResetPasswordResource();
-			resource.reset(config, daoFactory, password, timer, "non-existent");
+			resource.reset(securityContext, config, daoFactory, password,
+					timer, "non-existent");
 		}
 	}
 
@@ -126,10 +148,14 @@ public class ResetPasswordResourceTest {
 			Mockito.when(mockPassword.hash("new-password", "new-salt"))
 					.thenReturn("hashed-password");
 
+			final SecurityContext securityContext = Mockito
+					.mock(SecurityContext.class);
+			Mockito.when(securityContext.getUserPrincipal()).thenReturn(user);
+
 			final ResetPasswordResource resource = new ResetPasswordResource(
 					mockMailSender);
-			resource.reset(config, daoFactory, mockPassword, timer,
-					user.getLogin());
+			resource.reset(securityContext, config, daoFactory, mockPassword,
+					timer, user.getLogin());
 
 			// Make sure the password was updated.
 			final User updated = userDao.getLogin(user.getLogin());
@@ -180,10 +206,14 @@ public class ResetPasswordResourceTest {
 			Mockito.when(mockPassword.hash("new-password", "new-salt"))
 					.thenReturn("hashed-password");
 
+			final SecurityContext securityContext = Mockito
+					.mock(SecurityContext.class);
+			Mockito.when(securityContext.getUserPrincipal()).thenReturn(user);
+
 			ResetPasswordResource resource = new ResetPasswordResource(
 					mockMailSender);
-			resource.reset(config, daoFactory, mockPassword, timer,
-					user.getEmail());
+			resource.reset(securityContext, config, daoFactory, mockPassword,
+					timer, user.getEmail());
 
 			// Make sure the password was updated.
 			final User updated = userDao.getLogin(user.getLogin());
@@ -240,11 +270,15 @@ public class ResetPasswordResourceTest {
 			Mockito.when(mockPassword.hash("new-password", "new-salt"))
 					.thenReturn("hashed-password");
 
+			final SecurityContext securityContext = Mockito
+					.mock(SecurityContext.class);
+			Mockito.when(securityContext.getUserPrincipal()).thenReturn(user);
+
 			try {
 				final ResetPasswordResource resource = new ResetPasswordResource(
 						mockMailSender);
-				resource.reset(config, daoFactory, mockPassword, timer,
-						user.getLogin());
+				resource.reset(securityContext, config, daoFactory,
+						mockPassword, timer, user.getLogin());
 				fail("Expected an email-sending error");
 			} catch (final InternalServerErrorException expected) {
 				// This is expected.

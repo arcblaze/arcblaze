@@ -2,9 +2,13 @@ package com.arcblaze.arccore.server.tasks;
 
 import java.util.concurrent.ScheduledExecutorService;
 
+import javax.mail.MessagingException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.arcblaze.arccore.common.config.Config;
+import com.arcblaze.arccore.mail.sender.SystemErrorMailSender;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.codahale.metrics.health.HealthCheck;
@@ -17,6 +21,9 @@ public abstract class BackgroundTask extends HealthCheck implements Runnable {
 	private final static Logger log = LoggerFactory
 			.getLogger(BackgroundTask.class);
 
+	/** The system configuration information. */
+	private final Config config;
+
 	/** Used to manage application metrics. */
 	private final MetricRegistry metricRegistry;
 
@@ -27,14 +34,18 @@ public abstract class BackgroundTask extends HealthCheck implements Runnable {
 	private BackgroundTaskException failure;
 
 	/**
+	 * @param config
+	 *            the system configuration information
 	 * @param metricRegistry
 	 *            the registry of metrics used to track system performance
 	 *            information
 	 * @param healthCheckRegistry
 	 *            the registry of system health and status information
 	 */
-	public BackgroundTask(final MetricRegistry metricRegistry,
+	public BackgroundTask(final Config config,
+			final MetricRegistry metricRegistry,
 			final HealthCheckRegistry healthCheckRegistry) {
+		this.config = config;
 		this.metricRegistry = metricRegistry;
 		this.healthCheckRegistry = healthCheckRegistry;
 
@@ -92,6 +103,15 @@ public abstract class BackgroundTask extends HealthCheck implements Runnable {
 				this.failure = new BackgroundTaskException(
 						"Unexpected failure: " + somethingBad.getMessage(),
 						somethingBad);
+			}
+			if (this.failure != null) {
+				try {
+					new SystemErrorMailSender(this.config, null, this.failure)
+							.send();
+				} catch (final MessagingException mailFailure) {
+					log.error("Failed to send admin notification of failure.",
+							mailFailure);
+				}
 			}
 		}
 	}

@@ -11,8 +11,10 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.DatabaseException;
+import com.arcblaze.arccore.mail.sender.SystemErrorMailSender;
 import com.codahale.metrics.health.HealthCheck;
 
 /**
@@ -52,6 +54,8 @@ public class BaseResource extends HealthCheck {
 	}
 
 	/**
+	 * @param config
+	 *            the system configuration information
 	 * @param user
 	 *            the user account that performed the unauthorized action
 	 * @param message
@@ -60,47 +64,82 @@ public class BaseResource extends HealthCheck {
 	 * @return a {@link ForbiddenException} with a suitable status code and
 	 *         error message
 	 */
-	protected ForbiddenException forbidden(final User user, final String message) {
+	protected ForbiddenException forbidden(final Config config,
+			final User user, final String message) {
 		// This will cause the health check to fail.
 		this.failure = new Exception("User " + user
 				+ " attempted to perform an unauthorized action: " + message);
 
 		log.error("User attempted to perform an unauthorized action: " + user);
 		log.error(message);
-		return new ForbiddenException(Response.status(Status.FORBIDDEN)
-				.entity(message).build());
+		final ForbiddenException forbidden = new ForbiddenException(Response
+				.status(Status.FORBIDDEN).entity(message).build());
+
+		try {
+			new SystemErrorMailSender(config, user, forbidden).send();
+		} catch (final MessagingException mailFailure) {
+			log.error("Failed to send admin notification of forbidden action.",
+					mailFailure);
+		}
+
+		return forbidden;
 	}
 
 	/**
+	 * @param config
+	 *            the system configuration properties
+	 * @param user
+	 *            the user involved in the activity
 	 * @param exception
 	 *            the database exception
 	 * 
 	 * @return an {@link InternalServerErrorException} with a suitable status
 	 *         code and error message
 	 */
-	protected InternalServerErrorException dbError(
-			final DatabaseException exception) {
+	protected InternalServerErrorException dbError(final Config config,
+			final User user, final DatabaseException exception) {
 		// This will cause the health check to fail.
 		this.failure = exception;
 
 		log.error("Database error", exception);
+
+		try {
+			new SystemErrorMailSender(config, user, exception).send();
+		} catch (final MessagingException mailFailure) {
+			log.error("Failed to send admin notification of database error.",
+					mailFailure);
+		}
+
 		return new InternalServerErrorException(Response
 				.status(Status.INTERNAL_SERVER_ERROR)
 				.entity(exception.getMessage()).build());
 	}
 
 	/**
+	 * @param config
+	 *            the system configuration properties
+	 * @param user
+	 *            the user involved in the activity
 	 * @param exception
 	 *            the exception that occurred on the server
 	 * 
 	 * @return an {@link InternalServerErrorException} with a suitable status
 	 *         code and error message
 	 */
-	protected InternalServerErrorException serverError(final Exception exception) {
+	protected InternalServerErrorException serverError(final Config config,
+			final User user, final Exception exception) {
 		// This will cause the health check to fail.
 		this.failure = exception;
 
 		log.error("Server error", exception);
+
+		try {
+			new SystemErrorMailSender(config, user, exception).send();
+		} catch (final MessagingException mailFailure) {
+			log.error("Failed to send admin notification of database error.",
+					mailFailure);
+		}
+
 		return new InternalServerErrorException(Response
 				.status(Status.INTERNAL_SERVER_ERROR)
 				.entity(exception.getMessage()).build());
@@ -113,18 +152,25 @@ public class BaseResource extends HealthCheck {
 	 * @return a {@link InternalServerErrorException} with a suitable status
 	 *         code and error message
 	 */
-	protected InternalServerErrorException mailError(
-			final MessagingException exception) {
+	protected InternalServerErrorException mailError(final Config config,
+			final User user, final MessagingException exception) {
 		// This will cause the health check to fail.
 		this.failure = exception;
 
 		log.error("Mail error", exception);
+
+		try {
+			new SystemErrorMailSender(config, user, exception).send();
+		} catch (final MessagingException mailFailure) {
+			log.error("Failed to send admin notification of mail error.",
+					mailFailure);
+		}
+
 		String message = exception.getMessage();
 		if (message == null)
 			message = "Failed to send email.";
 		return new InternalServerErrorException(Response
-				.status(Status.INTERNAL_SERVER_ERROR)
-				.entity(exception.getMessage()).build());
+				.status(Status.INTERNAL_SERVER_ERROR).entity(message).build());
 	}
 
 	/**

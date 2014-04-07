@@ -25,6 +25,7 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.DatabaseException;
 import com.arcblaze.arccore.rest.BaseResource;
@@ -61,6 +62,8 @@ public class TimesheetSaveResource extends BaseResource {
 	/**
 	 * @param security
 	 *            the security information associated with the request
+	 * @param config
+	 *            the system configuration properties
 	 * @param daoFactory
 	 *            used to communicate with the back-end database
 	 * @param timer
@@ -76,10 +79,12 @@ public class TimesheetSaveResource extends BaseResource {
 	@POST
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public SaveResponse save(@Context final SecurityContext security,
+			@Context final Config config,
 			@Context final ArcTimeDaoFactory daoFactory,
 			@Context final Timer timer, @PathParam("id") final Integer id,
 			@FormParam("data") final String data) {
 		log.debug("Timesheet save request");
+		final User currentUser = (User) security.getUserPrincipal();
 		try (final Timer.Context timerContext = timer.time()) {
 			if (id == null)
 				throw badRequest("Invalid null id");
@@ -88,7 +93,6 @@ public class TimesheetSaveResource extends BaseResource {
 					Arrays.asList(PAY_PERIODS, TASKS, BILLS));
 
 			log.debug("Retrieving current timesheet");
-			final User currentUser = (User) security.getUserPrincipal();
 			final TimesheetDao dao = daoFactory.getTimesheetDao();
 			final Timesheet timesheet = dao.get(currentUser.getCompanyId(), id,
 					timesheetEnrichments);
@@ -96,17 +100,17 @@ public class TimesheetSaveResource extends BaseResource {
 			if (timesheet == null)
 				throw badRequest("The requested timesheet could not be found");
 			if (timesheet.getUserId() != currentUser.getId())
-				throw forbidden(currentUser, "Unable to save timesheet data "
-						+ "into a timesheet you do not own.");
+				throw forbidden(config, currentUser, "Unable to save "
+						+ "timesheet data into a timesheet you do not own.");
 
 			log.debug("Saving timesheet data");
 			saveTimesheet(daoFactory, timesheet, data);
 
 			return new SaveResponse();
 		} catch (final DatabaseException dbException) {
-			throw dbError(dbException);
+			throw dbError(config, currentUser, dbException);
 		} catch (final HolidayConfigurationException badHoliday) {
-			throw serverError(badHoliday);
+			throw serverError(config, currentUser, badHoliday);
 		} catch (final IllegalArgumentException badData) {
 			throw badRequest("Invalid timesheet data: " + badData.getMessage());
 		}

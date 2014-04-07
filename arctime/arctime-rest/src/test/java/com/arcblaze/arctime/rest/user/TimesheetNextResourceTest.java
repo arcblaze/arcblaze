@@ -19,6 +19,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.Company;
 import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.DatabaseException;
@@ -52,6 +53,7 @@ public class TimesheetNextResourceTest {
 	 */
 	@Test(expected = BadRequestException.class)
 	public void testInvalidDate() throws DatabaseException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -78,7 +80,7 @@ public class TimesheetNextResourceTest {
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 			final TimesheetNextResource resource = new TimesheetNextResource();
-			resource.next(security, daoFactory, timer, "abcd");
+			resource.next(security, config, daoFactory, timer, "abcd");
 		}
 	}
 
@@ -90,6 +92,7 @@ public class TimesheetNextResourceTest {
 	 */
 	@Test(expected = NotFoundException.class)
 	public void testNoPayPeriodsAvailable() throws DatabaseException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -116,7 +119,7 @@ public class TimesheetNextResourceTest {
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 			final TimesheetNextResource resource = new TimesheetNextResource();
-			resource.next(security, daoFactory, timer, "20140101");
+			resource.next(security, config, daoFactory, timer, "20140101");
 		}
 	}
 
@@ -132,6 +135,7 @@ public class TimesheetNextResourceTest {
 	@Test
 	public void testNoTimesheetsAvailable() throws DatabaseException,
 			ParseException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -165,7 +169,7 @@ public class TimesheetNextResourceTest {
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 			final TimesheetNextResource resource = new TimesheetNextResource();
-			final NextResponse response = resource.next(security,
+			final NextResponse response = resource.next(security, config,
 					daoFactory, timer, "20140101");
 
 			final Timesheet ts = response.timesheet;
@@ -213,6 +217,7 @@ public class TimesheetNextResourceTest {
 	@Test
 	public void testTimesheetWithHolidays() throws DatabaseException,
 			ParseException, HolidayConfigurationException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -255,7 +260,7 @@ public class TimesheetNextResourceTest {
 			daoFactory.getHolidayDao().add(holiday);
 
 			final TimesheetNextResource resource = new TimesheetNextResource();
-			final NextResponse response = resource.next(security,
+			final NextResponse response = resource.next(security, config,
 					daoFactory, timer, "20140101");
 
 			final Timesheet ts = response.timesheet;
@@ -303,6 +308,7 @@ public class TimesheetNextResourceTest {
 	@Test
 	public void testTimesheetWithUsers() throws DatabaseException,
 			ParseException, HolidayConfigurationException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -383,7 +389,7 @@ public class TimesheetNextResourceTest {
 					timesheet.getId());
 
 			final TimesheetNextResource resource = new TimesheetNextResource();
-			final NextResponse response = resource.next(security,
+			final NextResponse response = resource.next(security, config,
 					daoFactory, timer, DateFormatUtils.format(payPeriod
 							.getPrevious().getBegin(), "yyyyMMdd"));
 
@@ -431,6 +437,7 @@ public class TimesheetNextResourceTest {
 	@Test
 	public void testTimesheetWithAuditLogs() throws DatabaseException,
 			ParseException, HolidayConfigurationException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -478,7 +485,7 @@ public class TimesheetNextResourceTest {
 			daoFactory.getAuditLogDao().add(al1, al2);
 
 			final TimesheetNextResource resource = new TimesheetNextResource();
-			final NextResponse response = resource.next(security,
+			final NextResponse response = resource.next(security, config,
 					daoFactory, timer, DateFormatUtils.format(payPeriod
 							.getPrevious().getBegin(), "yyyyMMdd"));
 
@@ -525,6 +532,7 @@ public class TimesheetNextResourceTest {
 	@Test
 	public void testTimesheetWithTasks() throws DatabaseException,
 			ParseException, HolidayConfigurationException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -673,7 +681,7 @@ public class TimesheetNextResourceTest {
 			daoFactory.getBillDao().add(b1, b2, b3, b4, b5, b6, b7);
 
 			final TimesheetNextResource resource = new TimesheetNextResource();
-			final NextResponse response = resource.next(security,
+			final NextResponse response = resource.next(security, config,
 					daoFactory, timer, DateFormatUtils.format(payPeriod
 							.getPrevious().getBegin(), "yyyyMMdd"));
 

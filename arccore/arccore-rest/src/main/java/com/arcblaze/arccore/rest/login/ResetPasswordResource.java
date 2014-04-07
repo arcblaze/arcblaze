@@ -9,6 +9,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.SecurityContext;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -76,6 +77,8 @@ public class ResetPasswordResource extends BaseResource {
 	}
 
 	/**
+	 * @param security
+	 *            the security information associated with the request
 	 * @param config
 	 *            the system configuration information
 	 * @param daoFactory
@@ -91,11 +94,12 @@ public class ResetPasswordResource extends BaseResource {
 	 */
 	@POST
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public PasswordReset reset(@Context final Config config,
-			@Context final DaoFactory daoFactory,
+	public PasswordReset reset(@Context final SecurityContext security,
+			@Context final Config config, @Context final DaoFactory daoFactory,
 			@Context final Password password, @Context final Timer timer,
 			@FormParam("j_username") final String login) {
 		log.debug("Password reset request");
+		final User currentUser = (User) security.getUserPrincipal();
 		try (final Timer.Context timerContext = timer.time()) {
 			if (StringUtils.isBlank(login))
 				throw badRequest("The j_username parameter must be specified.");
@@ -125,12 +129,12 @@ public class ResetPasswordResource extends BaseResource {
 				log.debug("  Failed to send email, setting password back");
 				userDao.setPassword(user.getId(), user.getHashedPass(),
 						user.getSalt());
-				throw mailError(mailException);
+				throw mailError(config, currentUser, mailException);
 			}
 
 			return new PasswordReset(config);
 		} catch (final DatabaseException dbException) {
-			throw dbError(dbException);
+			throw dbError(config, currentUser, dbException);
 		}
 	}
 }

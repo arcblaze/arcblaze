@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.Password;
 import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.DaoFactory;
@@ -78,6 +79,8 @@ public class ProfileUpdateResource extends BaseResource {
 	/**
 	 * @param security
 	 *            the security information associated with the request
+	 * @param config
+	 *            the system configuration properties
 	 * @param daoFactory
 	 *            used to communicate with the back-end database
 	 * @param password
@@ -101,7 +104,7 @@ public class ProfileUpdateResource extends BaseResource {
 	@POST
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public ProfileUpdate update(@Context final SecurityContext security,
-			@Context final DaoFactory daoFactory,
+			@Context final Config config, @Context final DaoFactory daoFactory,
 			@Context final Password password, @Context final Timer timer,
 			@FormParam("firstName") final String firstName,
 			@FormParam("lastName") final String lastName,
@@ -109,10 +112,10 @@ public class ProfileUpdateResource extends BaseResource {
 			@FormParam("email") final String email,
 			@FormParam("password") final String pass) {
 		log.debug("Profile update request");
+		final User currentUser = (User) security.getUserPrincipal();
 		try (final Timer.Context timerContext = timer.time()) {
 			validateParams(firstName, lastName, login, email, pass);
 
-			final User currentUser = (User) security.getUserPrincipal();
 			final UserDao dao = daoFactory.getUserDao();
 			final User user = dao.get(currentUser.getId());
 			log.debug("Found user: {}", user);
@@ -141,7 +144,7 @@ public class ProfileUpdateResource extends BaseResource {
 		} catch (final DatabaseUniqueConstraintException alreadyExists) {
 			throw badRequest("The specified login or email already exists.");
 		} catch (final DatabaseException dbException) {
-			throw dbError(dbException);
+			throw dbError(config, currentUser, dbException);
 		}
 	}
 }

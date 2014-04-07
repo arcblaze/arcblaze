@@ -23,6 +23,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.Company;
 import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.DatabaseException;
@@ -52,6 +53,7 @@ public class TimesheetSaveResourceTest {
 	 */
 	@Test(expected = BadRequestException.class)
 	public void testNullId() throws DatabaseException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -78,7 +80,7 @@ public class TimesheetSaveResourceTest {
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 			final TimesheetSaveResource resource = new TimesheetSaveResource();
-			resource.save(security, daoFactory, timer, null, "");
+			resource.save(security, config, daoFactory, timer, null, "");
 		}
 	}
 
@@ -90,6 +92,7 @@ public class TimesheetSaveResourceTest {
 	 */
 	@Test(expected = BadRequestException.class)
 	public void testInvalidData() throws DatabaseException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -128,8 +131,8 @@ public class TimesheetSaveResourceTest {
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 			final TimesheetSaveResource resource = new TimesheetSaveResource();
-			resource.save(security, daoFactory, timer, timesheet.getId(),
-					"data");
+			resource.save(security, config, daoFactory, timer,
+					timesheet.getId(), "data");
 		}
 	}
 
@@ -144,6 +147,7 @@ public class TimesheetSaveResourceTest {
 	@Test
 	public void testEmptyData() throws DatabaseException,
 			HolidayConfigurationException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -183,7 +187,8 @@ public class TimesheetSaveResourceTest {
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 			final TimesheetSaveResource resource = new TimesheetSaveResource();
-			resource.save(security, daoFactory, timer, timesheet.getId(), "");
+			resource.save(security, config, daoFactory, timer,
+					timesheet.getId(), "");
 
 			final Timesheet ts = dao.get(company.getId(), timesheet.getId(),
 					AUDIT_LOGS, BILLS, HOLIDAYS, PAY_PERIODS, TASKS, USERS);
@@ -225,6 +230,7 @@ public class TimesheetSaveResourceTest {
 	@Test
 	public void testEmptyDataWithPopulatedTimesheet() throws DatabaseException,
 			HolidayConfigurationException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -371,7 +377,8 @@ public class TimesheetSaveResourceTest {
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 			final TimesheetSaveResource resource = new TimesheetSaveResource();
-			resource.save(security, daoFactory, timer, timesheet.getId(), "");
+			resource.save(security, config, daoFactory, timer,
+					timesheet.getId(), "");
 
 			final Timesheet ts = dao.get(company.getId(), timesheet.getId(),
 					AUDIT_LOGS, BILLS, HOLIDAYS, PAY_PERIODS, TASKS, USERS);
@@ -437,6 +444,7 @@ public class TimesheetSaveResourceTest {
 	@Test
 	public void testSaveDataIntoTimesheet() throws DatabaseException,
 			HolidayConfigurationException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
@@ -584,8 +592,8 @@ public class TimesheetSaveResourceTest {
 			Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 			final TimesheetSaveResource resource = new TimesheetSaveResource();
-			resource.save(security, daoFactory, timer, timesheet.getId(),
-					timesheetData);
+			resource.save(security, config, daoFactory, timer,
+					timesheet.getId(), timesheetData);
 
 			final Timesheet ts = dao.get(company.getId(), timesheet.getId(),
 					AUDIT_LOGS, BILLS, HOLIDAYS, PAY_PERIODS, TASKS, USERS);

@@ -8,6 +8,7 @@ import javax.ws.rs.core.SecurityContext;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.Company;
 import com.arcblaze.arccore.common.model.Password;
 import com.arcblaze.arccore.common.model.User;
@@ -27,6 +28,7 @@ public class ProfileUpdateResourceTest {
 	 */
 	@Test(expected = BadRequestException.class)
 	public void testInvalidParameters1() {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			final User user = new User().setId(1).setCompanyId(1)
 					.setLogin("user");
@@ -39,8 +41,8 @@ public class ProfileUpdateResourceTest {
 			final Timer timer = metricRegistry.timer("test");
 
 			final ProfileUpdateResource resource = new ProfileUpdateResource();
-			resource.update(securityContext, daoFactory, password, timer, "",
-					"a", "b", "c", "d");
+			resource.update(securityContext, config, daoFactory, password,
+					timer, "", "a", "b", "c", "d");
 		}
 	}
 
@@ -49,6 +51,7 @@ public class ProfileUpdateResourceTest {
 	 */
 	@Test(expected = BadRequestException.class)
 	public void testInvalidParameters2() {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			final User user = new User().setId(1).setCompanyId(1)
 					.setLogin("user");
@@ -61,8 +64,8 @@ public class ProfileUpdateResourceTest {
 			final Timer timer = metricRegistry.timer("test");
 
 			final ProfileUpdateResource resource = new ProfileUpdateResource();
-			resource.update(securityContext, daoFactory, password, timer, "a",
-					"", "b", "c", "d");
+			resource.update(securityContext, config, daoFactory, password,
+					timer, "a", "", "b", "c", "d");
 		}
 	}
 
@@ -71,6 +74,7 @@ public class ProfileUpdateResourceTest {
 	 */
 	@Test(expected = BadRequestException.class)
 	public void testInvalidParameters3() {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			final User user = new User().setId(1).setCompanyId(1)
 					.setLogin("user");
@@ -83,8 +87,8 @@ public class ProfileUpdateResourceTest {
 			final Timer timer = metricRegistry.timer("test");
 
 			final ProfileUpdateResource resource = new ProfileUpdateResource();
-			resource.update(securityContext, daoFactory, password, timer, "a",
-					"b", "", "c", "d");
+			resource.update(securityContext, config, daoFactory, password,
+					timer, "a", "b", "", "c", "d");
 		}
 	}
 
@@ -93,6 +97,7 @@ public class ProfileUpdateResourceTest {
 	 */
 	@Test(expected = BadRequestException.class)
 	public void testInvalidParameters4() {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			final User user = new User().setId(1).setCompanyId(1)
 					.setLogin("user");
@@ -105,8 +110,8 @@ public class ProfileUpdateResourceTest {
 			final Timer timer = metricRegistry.timer("test");
 
 			final ProfileUpdateResource resource = new ProfileUpdateResource();
-			resource.update(securityContext, daoFactory, password, timer, "a",
-					"b", "c", "", "d");
+			resource.update(securityContext, config, daoFactory, password,
+					timer, "a", "b", "c", "", "d");
 		}
 	}
 
@@ -115,6 +120,7 @@ public class ProfileUpdateResourceTest {
 	 */
 	@Test(expected = BadRequestException.class)
 	public void testInvalidParameters5() {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			final User user = new User().setId(1).setCompanyId(1)
 					.setLogin("user");
@@ -127,8 +133,8 @@ public class ProfileUpdateResourceTest {
 			final Timer timer = metricRegistry.timer("test");
 
 			final ProfileUpdateResource resource = new ProfileUpdateResource();
-			resource.update(securityContext, daoFactory, password, timer, "a",
-					"b", null, "c", null);
+			resource.update(securityContext, config, daoFactory, password,
+					timer, "a", "b", null, "c", null);
 		}
 	}
 
@@ -140,6 +146,7 @@ public class ProfileUpdateResourceTest {
 	 */
 	@Test
 	public void testValidBlankPassword() throws DatabaseException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final SecurityContext securityContext = Mockito
@@ -169,8 +176,8 @@ public class ProfileUpdateResourceTest {
 			Mockito.when(securityContext.getUserPrincipal()).thenReturn(user);
 
 			final ProfileUpdateResource resource = new ProfileUpdateResource();
-			resource.update(securityContext, daoFactory, password, timer, "a",
-					"b", "c", "d", null);
+			resource.update(securityContext, config, daoFactory, password,
+					timer, "a", "b", "c", "d", null);
 
 			final User updated = userDao.getLogin("d");
 			assertEquals(user.getId(), updated.getId());
@@ -191,6 +198,7 @@ public class ProfileUpdateResourceTest {
 	 */
 	@Test
 	public void testValidWithPassword() throws DatabaseException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final SecurityContext securityContext = Mockito
@@ -224,8 +232,8 @@ public class ProfileUpdateResourceTest {
 					"hashed-password");
 
 			final ProfileUpdateResource resource = new ProfileUpdateResource();
-			resource.update(securityContext, daoFactory, mockPassword, timer,
-					"a", "b", "c", "d", "password");
+			resource.update(securityContext, config, daoFactory, mockPassword,
+					timer, "a", "b", "c", "d", "password");
 
 			final User updated = userDao.getLogin("c");
 			assertEquals(user.getId(), updated.getId());
@@ -249,6 +257,7 @@ public class ProfileUpdateResourceTest {
 	 */
 	@Test(expected = BadRequestException.class)
 	public void testLoginAlreadyExists() throws DatabaseException {
+		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/arctime-db.sql");
 			final SecurityContext securityContext = Mockito
@@ -287,8 +296,8 @@ public class ProfileUpdateResourceTest {
 			Mockito.when(securityContext.getUserPrincipal()).thenReturn(user);
 
 			final ProfileUpdateResource resource = new ProfileUpdateResource();
-			resource.update(securityContext, daoFactory, password, timer, "a",
-					"b", "existing", "e", "password");
+			resource.update(securityContext, config, daoFactory, password,
+					timer, "a", "b", "existing", "e", "password");
 		}
 	}
 }

@@ -14,11 +14,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.SecurityContext;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.arcblaze.arccore.common.config.Config;
+import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.DaoFactory;
 import com.arcblaze.arccore.db.DatabaseException;
 import com.arcblaze.arccore.db.dao.TransactionDao;
@@ -47,6 +50,10 @@ public class SystemStatsResource extends BaseResource {
 	}
 
 	/**
+	 * @param security
+	 *            the security information associated with the request
+	 * @param config
+	 *            the system configuration properties
 	 * @param daoFactory
 	 *            used to communicate with the back-end database
 	 * @param timer
@@ -59,7 +66,8 @@ public class SystemStatsResource extends BaseResource {
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Stats getStats(@Context final DaoFactory daoFactory,
+	public Stats getStats(@Context final SecurityContext security,
+			@Context final Config config, @Context final DaoFactory daoFactory,
 			@Context final Timer timer) throws DatabaseException {
 		try (final Timer.Context timerContext = timer.time()) {
 			final List<FutureTask<SystemStat>> tasks = Arrays.asList(
@@ -77,7 +85,7 @@ public class SystemStatsResource extends BaseResource {
 			stats.statList = statList;
 			return stats;
 		} catch (final InterruptedException | ExecutionException error) {
-			throw serverError(error);
+			throw serverError(config, (User) security.getUserPrincipal(), error);
 		}
 	}
 

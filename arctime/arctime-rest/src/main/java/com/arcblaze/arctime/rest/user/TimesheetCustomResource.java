@@ -27,6 +27,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.DatabaseException;
 import com.arcblaze.arccore.rest.BaseResource;
@@ -59,6 +60,8 @@ public class TimesheetCustomResource extends BaseResource {
 	/**
 	 * @param security
 	 *            the security information associated with the request
+	 * @param config
+	 *            the system configuration properties
 	 * @param daoFactory
 	 *            used to communicate with the back-end database
 	 * @param timer
@@ -71,15 +74,15 @@ public class TimesheetCustomResource extends BaseResource {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public CustomResponse custom(@Context final SecurityContext security,
+			@Context final Config config,
 			@Context final ArcTimeDaoFactory daoFactory,
 			@Context final Timer timer, @PathParam("date") final String date) {
 		log.debug("Custom timesheet request");
+		final User currentUser = (User) security.getUserPrincipal();
 		try (final Timer.Context timerContext = timer.time()) {
 			final Set<Enrichment> timesheetEnrichments = new LinkedHashSet<>(
 					Arrays.asList(PAY_PERIODS, AUDIT_LOGS, HOLIDAYS, USERS,
 							TASKS, BILLS));
-
-			final User currentUser = (User) security.getUserPrincipal();
 
 			log.debug("Getting requested pay period");
 			final Date day = DateUtils.parseDate(date, FMT);
@@ -103,9 +106,9 @@ public class TimesheetCustomResource extends BaseResource {
 			response.timesheet = timesheet;
 			return response;
 		} catch (final DatabaseException dbException) {
-			throw dbError(dbException);
+			throw dbError(config, currentUser, dbException);
 		} catch (final HolidayConfigurationException badHoliday) {
-			throw serverError(badHoliday);
+			throw serverError(config, currentUser, badHoliday);
 		} catch (final ParseException badDate) {
 			throw badRequest("The specified date is invalid: "
 					+ badDate.getMessage());
