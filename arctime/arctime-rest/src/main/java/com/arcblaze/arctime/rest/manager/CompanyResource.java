@@ -7,11 +7,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 
+import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.Company;
 import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.DaoFactory;
 import com.arcblaze.arccore.db.DatabaseException;
-import com.arcblaze.arccore.db.dao.CompanyDao;
 import com.arcblaze.arccore.rest.BaseResource;
 import com.codahale.metrics.Timer;
 
@@ -23,6 +23,8 @@ public class CompanyResource extends BaseResource {
 	/**
 	 * @param security
 	 *            the security information associated with the request
+	 * @param config
+	 *            the system configuration information
 	 * @param daoFactory
 	 *            used to communicate with the back-end database
 	 * @param timer
@@ -36,12 +38,13 @@ public class CompanyResource extends BaseResource {
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Company mine(@Context final SecurityContext security,
-			@Context final DaoFactory daoFactory, @Context final Timer timer)
-			throws DatabaseException {
+			@Context final Config config, @Context final DaoFactory daoFactory,
+			@Context final Timer timer) throws DatabaseException {
+		final User currentUser = (User) security.getUserPrincipal();
 		try (final Timer.Context timerContext = timer.time()) {
-			final User currentUser = (User) security.getUserPrincipal();
-			final CompanyDao dao = daoFactory.getCompanyDao();
-			return dao.get(currentUser.getCompanyId());
+			return daoFactory.getCompanyDao().get(currentUser.getCompanyId());
+		} catch (final DatabaseException dbException) {
+			throw dbError(config, currentUser, dbException);
 		}
 	}
 }
