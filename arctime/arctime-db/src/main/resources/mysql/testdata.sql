@@ -9,7 +9,9 @@ INSERT INTO `users` (`id`, `company_id`, `login`, `hashed_pass`, `salt`, `email`
 
 
 INSERT INTO `roles` (`name`, `user_id`) VALUES
-('ADMIN', 1);
+('ADMIN', 1),
+('MANAGER', 1),
+('PAYROLL', 1);
 
 
 INSERT INTO `supervisors` (`company_id`, `user_id`, `supervisor_id`, `is_primary`) VALUES
