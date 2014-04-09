@@ -1,7 +1,7 @@
 
-Ext.namespace("data.store");
+Ext.namespace("data.store.user");
 
-data.store.SupervisorStore = Ext.extend(Ext.data.JsonStore, {
+data.store.user.SupervisorStore = Ext.extend(Ext.data.JsonStore, {
 	constructor: function(c) {
 		if (!c || !c.user)
 			throw "SupervisorStore requires an user.";
@@ -22,7 +22,7 @@ data.store.SupervisorStore = Ext.extend(Ext.data.JsonStore, {
 			}
 		});
 
-		data.store.SupervisorStore.superclass.constructor.call(this, config);
+		data.store.user.SupervisorStore.superclass.constructor.call(this, config);
 	}
 });
 

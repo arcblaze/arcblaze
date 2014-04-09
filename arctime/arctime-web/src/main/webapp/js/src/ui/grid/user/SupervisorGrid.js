@@ -1,10 +1,10 @@
 
-Ext.namespace("ui.grid");
+Ext.namespace("ui.grid.user");
 
-ui.grid.SupervisorGrid = Ext.extend(Ext.grid.GridPanel, {
+ui.grid.user.SupervisorGrid = Ext.extend(Ext.grid.GridPanel, {
 	constructor: function(c) {
 		if (!c || !c.user)
-			throw "SupervisorGrid requires an user.";
+			throw "SupervisorGrid requires a user.";
 
 		// Determine if the toolbar should be included.
 		var tbar = false;
@@ -17,25 +17,25 @@ ui.grid.SupervisorGrid = Ext.extend(Ext.grid.GridPanel, {
 
 		var config = Ext.applyIf(c || {}, {
 			title:      'Supervisors',
-			id:         'ui.grid.supervisorgrid',
+			id:         'ui.grid.user.supervisorgrid',
 			stripeRows: true,
 			width:      520,
 			height:     300,
 			loadMask:   true,
 			columns:    supervisor.getColumnModel(),
-			store: new data.store.SupervisorStore({
+			store: new data.store.user.SupervisorStore({
 				user: c.user
 			})
 		});
 
 		if (tbar)
 			Ext.apply(config, {
-				tbar: new ui.tbar.SupervisorToolbar({
+				tbar: new ui.tbar.user.SupervisorToolbar({
 					user: c.user
 				})
 			});
 
-		ui.grid.SupervisorGrid.superclass.constructor.call(this, config);
+		ui.grid.user.SupervisorGrid.superclass.constructor.call(this, config);
 
 		if (tbar) {
 			this.getSelectionModel().addListener('selectionchange', function(model) {
@@ -46,7 +46,7 @@ ui.grid.SupervisorGrid = Ext.extend(Ext.grid.GridPanel, {
 				var total = grid.store.getCount();
 
 				// Get the buttons.
-				var supervisorDel = Ext.getCmp('action.supervisor.dosupervisordelete');
+				var supervisorDel = Ext.getCmp('action.user.supervisor.dosupervisordelete');
 
 				// Update the buttons based on the selected rows.
 				if (supervisorDel)

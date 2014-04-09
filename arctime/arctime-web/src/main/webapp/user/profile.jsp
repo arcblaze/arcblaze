@@ -26,10 +26,10 @@
       <!-- Add the profile management scripts. -->
       <script src="/js/src/util/io/ServerIO.js"></script>
       <script src="/js/src/data/model/Supervisor.js"></script>
-      <script src="/js/src/data/store/SupervisorStore.js"></script>
+      <script src="/js/src/data/store/user/SupervisorStore.js"></script>
       <script src="/js/src/action/user/DoProfileUpdate.js"></script>
       <script src="/js/src/ui/panel/user/ProfileUpdatePanel.js"></script>
-      <script src="/js/src/ui/grid/SupervisorGrid.js"></script>
+      <script src="/js/src/ui/grid/user/SupervisorGrid.js"></script>
       <script>
         // Invoked when the page is ready.
         Ext.onReady(function() {
@@ -44,7 +44,7 @@
             });
 
             // Create the supervisor grid.
-            new ui.grid.SupervisorGrid({
+            new ui.grid.user.SupervisorGrid({
                 // Specify where the grid will be rendered.
                 renderTo: 'supervisor-grid',
 
