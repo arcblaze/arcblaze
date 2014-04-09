@@ -10,6 +10,7 @@
     <%@ include file="/ssi/scripts.jspf" %>
 
     <div id="container-maxwidth">
+      <%@ include file="/ssi/manager_navigation.jspf" %>
 
     </div>
 

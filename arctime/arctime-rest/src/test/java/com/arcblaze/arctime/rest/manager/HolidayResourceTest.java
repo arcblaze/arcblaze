@@ -1,6 +1,7 @@
 package com.arcblaze.arctime.rest.manager;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -193,6 +194,34 @@ public class HolidayResourceTest {
 			assertNotNull(holidays);
 			assertEquals(10, holidays.size());
 		}
+	}
+
+	/**
+	 * Test how the resource responds to adding a new holiday.
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a database problem
+	 * @throws HolidayConfigurationException
+	 *             if there is a holiday definition problem
+	 */
+	@Test
+	public void testValidate() throws DatabaseException,
+			HolidayConfigurationException {
+		final MetricRegistry metricRegistry = new MetricRegistry();
+		final Timer timer = metricRegistry.timer("test");
+
+		final HolidayResource resource = new HolidayResource();
+		assertFalse(resource.validate(timer, "").valid);
+		assertFalse(resource.validate(timer, "J").valid);
+		assertFalse(resource.validate(timer, "Jan").valid);
+		assertTrue(resource.validate(timer, "Jan 1").valid);
+		assertTrue(resource.validate(timer, "Jan 1st").valid);
+		assertTrue(resource.validate(timer, "Jan 1st Observance").valid);
+		assertTrue(resource.validate(timer, "jan 1st observance").valid);
+		assertTrue(resource.validate(timer, "3rd Monday in January").valid);
+		assertTrue(resource.validate(timer, "3rd monday in january").valid);
+		assertTrue(resource.validate(timer, "last monday in january").valid);
+		assertTrue(resource.validate(timer, "first monday in january").valid);
 	}
 
 	/**

@@ -14,7 +14,7 @@ import org.apache.commons.lang.time.DateUtils;
  */
 public class HolidayCalculator {
 	private final static String OCCURRENCES = "(1st|1|2nd|2|3rd|3|4th|4|"
-			+ "5th|5|Last)";
+			+ "5th|5|First|Second|Third|Fourth|Fifth|Last)";
 	private final static String DAYS = "(Sunday|Sun|Monday|Mon|Tuesday|Tue|"
 			+ "Wednesday|Wed|Thursday|Thu|Friday|Fri|Saturday|Sat)";
 	private final static String MONTHS = "(January|Jan|February|Feb|March|Mar|"
@@ -123,8 +123,7 @@ public class HolidayCalculator {
 				}
 			} else
 				throw new HolidayConfigurationException(
-						"Unrecognized holiday configutration pattern: "
-								+ config);
+						"Unrecognized holiday configuration pattern: " + config);
 		} catch (final ParseException badDate) {
 			throw new HolidayConfigurationException("Failed to parse date.",
 					badDate);
@@ -143,6 +142,16 @@ public class HolidayCalculator {
 	protected static int convertToInt(final String value) {
 		if (StringUtils.isBlank(value))
 			return 0;
+		if (StringUtils.equalsIgnoreCase("first", value))
+			return 1;
+		if (StringUtils.equalsIgnoreCase("second", value))
+			return 2;
+		if (StringUtils.equalsIgnoreCase("third", value))
+			return 3;
+		if (StringUtils.equalsIgnoreCase("fourth", value))
+			return 4;
+		if (StringUtils.equalsIgnoreCase("fifth", value))
+			return 5;
 		if (StringUtils.equalsIgnoreCase("last", value))
 			return -1;
 

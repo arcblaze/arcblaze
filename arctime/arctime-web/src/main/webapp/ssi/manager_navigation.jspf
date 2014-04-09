@@ -1,0 +1,20 @@
+
+<div id="manager-navigation">
+  <% if (request.getRemoteUser() != null) { %>
+    <% if (request.isUserInRole("MANAGER")) { %>
+      <li><a href="/manager/employees.jsp">Employees</a></li>
+      <li><a href="/manager/tasks.jsp">Tasks</a></li>
+      <li><a href="/manager/holidays.jsp">Holidays</a></li>
+    <% } %>
+    <% if (request.isUserInRole("PAYROLL")) { %>
+      <li><a href="/payroll/">Employee Timesheets</a></li>
+    <% } else if (request.isUserInRole("SUPERVISOR")) { %>
+      <li><a href="/supervisor/">Employee Timesheets</a></li>
+    <% } %>
+    <% if (request.isUserInRole("FINANCE")) { %>
+      <li><a href="/finance/">Invoices</a></li>
+    <% } %>
+  <% } else { %>
+    &nbsp;
+  <% } %>
+</div>

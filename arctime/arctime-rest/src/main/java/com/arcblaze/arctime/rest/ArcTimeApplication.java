@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.arcblaze.arccore.rest.BaseApplication;
 import com.arcblaze.arctime.rest.factory.DaoFactoryFactory;
+import com.arcblaze.arctime.rest.factory.HolidayFactory;
 
 /**
  * Configures the REST end-points for this system.
@@ -25,5 +26,6 @@ public class ArcTimeApplication extends BaseApplication {
 		registerPackage(ArcTimeApplication.class.getPackage().getName());
 
 		register(DaoFactoryFactory.getBinder());
+		register(HolidayFactory.getBinder());
 	}
 }

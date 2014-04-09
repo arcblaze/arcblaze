@@ -300,7 +300,7 @@ html, body {
  z-index:1000;
 }
 
-/* The memory usage guage styles */
+/* The memory usage gauge styles */
 
 #heap-memory-usage {
  float:left;
@@ -363,3 +363,13 @@ html, body {
  color:cyan;
 }
 
+/* Fix ExtJS tooltip size issues. */
+.x-tip {
+ width: auto !important;
+}
+.x-tip-body {
+ width: auto !important;
+}
+.x-tip-body span {
+ width: auto !important;
+}

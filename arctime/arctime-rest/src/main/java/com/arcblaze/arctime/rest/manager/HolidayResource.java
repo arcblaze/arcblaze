@@ -1,5 +1,6 @@
 package com.arcblaze.arctime.rest.manager;
 
+import java.util.Date;
 import java.util.Set;
 
 import javax.ws.rs.DELETE;
@@ -8,17 +9,21 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang.time.DateFormatUtils;
+
 import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.DatabaseException;
 import com.arcblaze.arccore.rest.BaseResource;
 import com.arcblaze.arctime.common.model.Holiday;
+import com.arcblaze.arctime.common.model.util.HolidayCalculator;
 import com.arcblaze.arctime.common.model.util.HolidayConfigurationException;
 import com.arcblaze.arctime.db.ArcTimeDaoFactory;
 import com.codahale.metrics.Timer;
@@ -28,6 +33,34 @@ import com.codahale.metrics.Timer;
  */
 @Path("/manager/holiday")
 public class HolidayResource extends BaseResource {
+	@XmlRootElement
+	static class DeleteResponse {
+		@XmlElement
+		public final boolean success = true;
+
+		@XmlElement
+		public final String title = "Holiday Deleted";
+
+		@XmlElement
+		public final String msg = "The specified holidays have been deleted "
+				+ "successfully.";
+	}
+
+	@XmlRootElement
+	static class ValidateResponse {
+		@XmlElement
+		public boolean success;
+
+		@XmlElement
+		public String msg;
+
+		@XmlElement
+		public boolean valid;
+
+		@XmlElement
+		public Date day;
+	}
+
 	/**
 	 * @param security
 	 *            the security information associated with the request
@@ -48,7 +81,7 @@ public class HolidayResource extends BaseResource {
 	 *             information
 	 */
 	@GET
-	@Path("{holidayId}")
+	@Path("{holidayId:\\d+}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Holiday get(@Context final SecurityContext security,
 			@Context final Config config,
@@ -101,6 +134,36 @@ public class HolidayResource extends BaseResource {
 	}
 
 	/**
+	 * @param timer
+	 *            tracks performance metrics of this REST end-point
+	 * @param config
+	 *            the holiday configuration to validate
+	 * 
+	 * @return whether the provided holiday configuration is valid
+	 */
+	@GET
+	@Path("/validate")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public ValidateResponse validate(@Context final Timer timer,
+			@QueryParam("config") final String config) {
+		try (final Timer.Context timerContext = timer.time()) {
+			final ValidateResponse response = new ValidateResponse();
+			response.success = true;
+			try {
+				response.day = HolidayCalculator.getDay(config, Integer
+						.parseInt(DateFormatUtils.format(new Date(), "yyyy")));
+				response.valid = true;
+				response.msg = "Successfully processed holiday configuration.";
+			} catch (final HolidayConfigurationException badConfig) {
+				response.valid = false;
+				response.msg = "Invalid holiday configuration: "
+						+ badConfig.getMessage();
+			}
+			return response;
+		}
+	}
+
+	/**
 	 * @param security
 	 *            the security information associated with the request
 	 * @param config
@@ -128,19 +191,6 @@ public class HolidayResource extends BaseResource {
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
 		}
-	}
-
-	@XmlRootElement
-	static class DeleteResponse {
-		@XmlElement
-		public final boolean success = true;
-
-		@XmlElement
-		public final String title = "Holiday Deleted";
-
-		@XmlElement
-		public final String msg = "The specified holidays have been deleted "
-				+ "successfully.";
 	}
 
 	/**
