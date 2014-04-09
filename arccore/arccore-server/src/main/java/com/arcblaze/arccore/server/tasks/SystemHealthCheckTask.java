@@ -40,7 +40,7 @@ public class SystemHealthCheckTask extends BackgroundTask {
 	 */
 	@Override
 	public void schedule(final ScheduledExecutorService executor) {
-		executor.scheduleAtFixedRate(this, 0, 3, TimeUnit.MINUTES);
+		executor.scheduleAtFixedRate(this, 1, 3, TimeUnit.MINUTES);
 	}
 
 	/**
