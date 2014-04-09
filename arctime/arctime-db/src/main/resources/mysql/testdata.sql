@@ -10,6 +10,7 @@ INSERT INTO `users` (`id`, `company_id`, `login`, `hashed_pass`, `salt`, `email`
 
 INSERT INTO `roles` (`name`, `user_id`) VALUES
 ('ADMIN', 1),
+('FINANCE', 1),
 ('MANAGER', 1),
 ('PAYROLL', 1);
 

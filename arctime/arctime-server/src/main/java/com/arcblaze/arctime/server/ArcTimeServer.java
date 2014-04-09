@@ -69,6 +69,7 @@ public class ArcTimeServer extends BaseServer {
 	@Override
 	public Map<String, List<Role>> getEndpointRoleMap(final Config config) {
 		final Role admin = new Role("ADMIN");
+		final Role finance = new Role("FINANCE");
 		final Role manager = new Role("MANAGER");
 		final Role payroll = new Role("PAYROLL");
 		final Role supervisor = new Role("SUPERVISOR");
@@ -76,12 +77,14 @@ public class ArcTimeServer extends BaseServer {
 
 		final Map<String, List<Role>> map = new HashMap<>();
 		map.put("/rest/admin/*", Arrays.asList(admin));
+		map.put("/rest/finance/*", Arrays.asList(admin, finance));
 		map.put("/rest/manager/*", Arrays.asList(admin, manager));
 		map.put("/rest/payroll/*", Arrays.asList(admin, payroll));
 		map.put("/rest/supervisor/*", Arrays.asList(admin, supervisor));
 		map.put("/rest/user/*", Arrays.asList(admin, user));
 
 		map.put("/admin/*", Arrays.asList(admin));
+		map.put("/finance/*", Arrays.asList(admin, finance));
 		map.put("/manager/*", Arrays.asList(admin, manager));
 		map.put("/payroll/*", Arrays.asList(admin, payroll));
 		map.put("/supervisor/*", Arrays.asList(admin, supervisor));
@@ -96,7 +99,7 @@ public class ArcTimeServer extends BaseServer {
 	public Set<Role> getSystemRoles(final Config config) {
 		return new TreeSet<>(Arrays.asList(new Role("USER"),
 				new Role("MANAGER"), new Role("SUPERVISOR"),
-				new Role("PAYROLL"), new Role("ADMIN")));
+				new Role("PAYROLL"), new Role("FINANCE"), new Role("ADMIN")));
 	}
 
 	/**
