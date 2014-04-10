@@ -34,13 +34,19 @@ public class JdbcHolidayDao implements HolidayDao {
 		this.connectionManager = connectionManager;
 	}
 
-	protected Holiday fromResultSet(final ResultSet rs) throws SQLException,
+	protected Holiday fromResultSet(final ResultSet rs,
+			final boolean includeCompanyId) throws SQLException,
 			HolidayConfigurationException {
 		final Holiday holiday = new Holiday();
 		holiday.setId(rs.getInt("id"));
-		holiday.setCompanyId(rs.getInt("company_id"));
 		holiday.setDescription(rs.getString("description"));
 		holiday.setConfig(rs.getString("config"));
+		// The common_holidays table does not include a company id, so
+		// false is passed in as a parameter when retrieving holidays from
+		// it. This is easier and faster than using the ResultSetMetaData
+		// to check and see if the column exists.
+		if (includeCompanyId)
+			holiday.setCompanyId(rs.getInt("company_id"));
 		return holiday;
 	}
 
@@ -62,7 +68,7 @@ public class JdbcHolidayDao implements HolidayDao {
 			ps.setInt(2, id);
 			try (final ResultSet rs = ps.executeQuery();) {
 				if (rs.next())
-					return fromResultSet(rs);
+					return fromResultSet(rs, true);
 			}
 			return null;
 		} catch (final SQLException sqlException) {
@@ -87,7 +93,28 @@ public class JdbcHolidayDao implements HolidayDao {
 			final Set<Holiday> holidays = new TreeSet<>();
 			try (final ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
-					holidays.add(fromResultSet(rs));
+					holidays.add(fromResultSet(rs, true));
+			}
+			return holidays;
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<Holiday> getCommon() throws DatabaseException,
+			HolidayConfigurationException {
+		final String sql = "SELECT * FROM common_holidays";
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql)) {
+			final Set<Holiday> holidays = new TreeSet<>();
+			try (final ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					holidays.add(fromResultSet(rs, false));
 			}
 			return holidays;
 		} catch (final SQLException sqlException) {

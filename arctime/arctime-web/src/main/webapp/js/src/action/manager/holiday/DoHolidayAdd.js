@@ -28,7 +28,11 @@ action.manager.holiday.DoHolidayAdd = function() {
 			// Submit the form.
 			io.doFormRequest(formPanel, {
 				// Set the URL.
-				url: '/rest/manager/holiday/add',
+				url: '/rest/manager/holiday',
+				method: 'POST',
+				message: true,
+				
+				params: formPanel.getValues(),
 
 				// The function to invoke after success.
 				mysuccess: function(data) {

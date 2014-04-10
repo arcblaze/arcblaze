@@ -15,6 +15,10 @@ INSERT INTO `roles` (`name`, `user_id`) VALUES
 ('PAYROLL', 1);
 
 
+INSERT INTO transactions (`company_id`, `user_id`, `timestamp`, `type`, `description`, `amount`, `notes`) VALUES
+(1, 1, '2013-12-24 01:02:03', 'PAYMENT', 'Purchased 40 user months.', '20.00', NULL);
+
+
 INSERT INTO `supervisors` (`company_id`, `user_id`, `supervisor_id`, `is_primary`) VALUES
 (1, 1, 2, 1),
 (1, 2, 1, 1);
@@ -66,17 +70,28 @@ INSERT INTO `timesheets` (`id`, `company_id`, `user_id`, `pp_begin`, `completed`
 
 INSERT INTO `holidays` (`id`, `company_id`, `description`, `config`) VALUES
 (1, 1, 'New Years', 'January 1st Observance'),
-(2, 1, 'President''s Day', '3rd Monday in February'),
-(3, 1, 'Memorial Day', 'Last Monday in May'),
-(4, 1, 'Independence Day', 'July 4th Observance'),
-(5, 1, 'Labor Day', '1st Monday in September'),
-(6, 1, 'Columbus Day', '2nd Monday in October'),
-(7, 1, 'Veterans Day', 'November 11th Observance'),
-(8, 1, 'Thanksgiving Day', '4th Thursday in November'),
-(9, 1, 'Christmas Day', 'December 25th Observance'),
-(10, 1, 'Martin Luther King Junior Day', '3rd Monday in January'),
-(11, 1, 'Friday After Thanksgiving', '4th Thursday in November + 1');
+(2, 1, 'Martin Luther King Junior Day', '3rd Monday in January'),
+(3, 1, 'President''s Day', '3rd Monday in February'),
+(4, 1, 'Memorial Day', 'Last Monday in May'),
+(5, 1, 'Independence Day', 'July 4th Observance'),
+(6, 1, 'Labor Day', '1st Monday in September'),
+(7, 1, 'Columbus Day', '2nd Monday in October'),
+(8, 1, 'Veterans Day', 'November 11th Observance'),
+(9, 1, 'Thanksgiving Day', '4th Thursday in November'),
+(10, 1, 'Friday After Thanksgiving', '4th Thursday in November + 1'),
+(11, 1, 'Christmas Day', 'December 25th Observance');
 
-INSERT INTO transactions (`company_id`, `user_id`, `timestamp`, `type`, `description`, `amount`, `notes`) VALUES
-(1, 1, '2013-12-24 01:02:03', 'PAYMENT', 'Purchased 40 user months.', '20.00', NULL);
+
+INSERT INTO `common_holidays` (`id`, `description`, `config`) VALUES
+(1, 'New Years', 'January 1st Observance'),
+(2, 'Martin Luther King Junior Day', '3rd Monday in January'),
+(3, 'President''s Day', '3rd Monday in February'),
+(4, 'Memorial Day', 'Last Monday in May'),
+(5, 'Independence Day', 'July 4th Observance'),
+(6, 'Labor Day', '1st Monday in September'),
+(7, 'Columbus Day', '2nd Monday in October'),
+(8, 'Veterans Day', 'November 11th Observance'),
+(9, 'Thanksgiving Day', '4th Thursday in November'),
+(10, 'Friday After Thanksgiving', '4th Thursday in November + 1'),
+(11, 'Christmas Day', 'December 25th Observance');
 

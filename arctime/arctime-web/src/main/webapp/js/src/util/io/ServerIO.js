@@ -85,8 +85,12 @@ util.io.ServerIO = Ext.extend(Ext.util.Observable, {
 
 					// Cannot communicate with the server.
 					case Ext.form.Action.CONNECT_FAILURE:
-						Ext.Msg.alert('Failure',
-							'Server communication failed.');
+						if (action.response && action.response.responseText)
+							Ext.Msg.alert('Failure',
+								action.response.responseText);
+						else
+							Ext.Msg.alert('Failure',
+								'Server communication failed.');
 						break;
 
 					// Server said it failed.

@@ -8,7 +8,7 @@ data.store.manager.HolidayStore = Ext.extend(Ext.data.JsonStore, {
 			autoLoad: true,
 			proxy: {
 				type: 'ajax',
-				url: '/rest/manager/holiday',
+				url: '/rest/manager/holiday' + (c && c.common ? '/common' : ''),
 				reader: {
 					type: 'json',
 					root: 'holidays'

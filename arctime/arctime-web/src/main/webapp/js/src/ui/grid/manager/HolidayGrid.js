@@ -6,22 +6,23 @@ ui.grid.manager.HolidayGrid = Ext.extend(Ext.grid.GridPanel, {
 		var holiday = new data.model.Holiday();
 
 		var config = Ext.applyIf(c || {}, {
-			title:      'Holidays',
-			id:         'ui.grid.manager.holidaygrid',
-			store:      new data.store.manager.HolidayStore(),
-			stripeRows: true,
-			width:      660,
-			height:     350,
-			tbar:       new ui.tbar.manager.HolidayToolbar(),
-			columns:    holiday.getColumnModel(),
-			loadMask:   true
+			title:       'Holidays',
+			id:          'ui.grid.manager.holidaygrid',
+			multiSelect: true,
+			store:       new data.store.manager.HolidayStore(),
+			stripeRows:  true,
+			width:       660,
+			height:      350,
+			tbar:        new ui.tbar.manager.HolidayToolbar(),
+			columns:     holiday.getColumnModel(),
+			loadMask:    true
 		});
 
 		ui.grid.manager.HolidayGrid.superclass.constructor.call(this, config);
 
 		this.getSelectionModel().addListener('selectionchange', function(model) {
 			// Get the number of selected rows.
-			var count = model.getSelections().length;
+			var count = model.selected.items.length;
 
 			// Get the buttons.
 			var holidayDel = Ext.getCmp('action.manager.holiday.doholidaydelete');
@@ -40,7 +41,7 @@ ui.grid.manager.HolidayGrid = Ext.extend(Ext.grid.GridPanel, {
 		var ids = [ ];
 
 		// Get the selected records.
-		var records = this.getSelectionModel().getSelections();
+		var records = this.selModel.selected.items;
 
 		// Iterate over the selected records.
 		for (var i = 0; i < records.length; i++)

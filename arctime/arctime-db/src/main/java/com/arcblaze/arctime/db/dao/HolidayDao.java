@@ -51,6 +51,18 @@ public interface HolidayDao {
 			HolidayConfigurationException;
 
 	/**
+	 * @return the common set of holidays, possibly empty but never {@code null}
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 * @throws HolidayConfigurationException
+	 *             if there is a problem parsing the holiday configuration
+	 *             information
+	 */
+	Set<Holiday> getCommon() throws DatabaseException,
+			HolidayConfigurationException;
+
+	/**
 	 * @param companyId
 	 *            the unique id of the company for which the holidays should be
 	 *            retrieved

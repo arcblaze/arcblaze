@@ -1,5 +1,5 @@
 
-DROP TABLE IF EXISTS transactions;
+DROP TABLE IF EXISTS common_holidays;
 DROP TABLE IF EXISTS holidays;
 DROP TABLE IF EXISTS audit_logs;
 DROP TABLE IF EXISTS timesheets;
@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS pay_periods;
 DROP TABLE IF EXISTS assignments;
 DROP TABLE IF EXISTS tasks;
 DROP TABLE IF EXISTS supervisors;
+DROP TABLE IF EXISTS transactions;
 DROP TABLE IF EXISTS active_user_counts;
 DROP TABLE IF EXISTS active_company_counts;
 DROP TABLE IF EXISTS roles;
@@ -70,6 +71,24 @@ CREATE TABLE IF NOT EXISTS active_user_counts (
         REFERENCES companies(`id`) ON DELETE CASCADE,
 
     INDEX idx_active_company_counts_day USING HASH (`day`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+CREATE TABLE IF NOT EXISTS transactions (
+    `id`             INTEGER      NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `company_id`     INTEGER      NOT NULL,
+    `user_id`        INTEGER      NOT NULL,
+    `timestamp`      TIMESTAMP    NOT NULL DEFAULT NOW(),
+    `type`           VARCHAR(80)  NOT NULL,
+    `description`    VARCHAR(200) NOT NULL,
+    `amount`         FLOAT        NOT NULL,
+    `notes`          LONGTEXT,
+
+    CONSTRAINT fk_transactions_company_id FOREIGN KEY (`company_id`)
+        REFERENCES companies(`id`) ON DELETE CASCADE,
+    CONSTRAINT fk_transactions_user_id FOREIGN KEY (`user_id`)
+        REFERENCES users(`id`) ON DELETE CASCADE,
+
+    INDEX idx_transactions_type USING HASH (`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS supervisors (
@@ -229,21 +248,12 @@ CREATE TABLE IF NOT EXISTS holidays (
         REFERENCES companies(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-CREATE TABLE IF NOT EXISTS transactions (
+CREATE TABLE IF NOT EXISTS common_holidays (
     `id`             INTEGER      NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `company_id`     INTEGER      NOT NULL,
-    `user_id`        INTEGER      NOT NULL,
-    `timestamp`      TIMESTAMP    NOT NULL DEFAULT NOW(),
-    `type`           VARCHAR(80)  NOT NULL,
-    `description`    VARCHAR(200) NOT NULL,
-    `amount`         FLOAT        NOT NULL,
-    `notes`          LONGTEXT,
+    `description`    VARCHAR(100) NOT NULL,
+    `config`         VARCHAR(100) NOT NULL,
 
-    CONSTRAINT fk_transactions_company_id FOREIGN KEY (`company_id`)
-        REFERENCES companies(`id`) ON DELETE CASCADE,
-    CONSTRAINT fk_transactions_user_id FOREIGN KEY (`user_id`)
-        REFERENCES users(`id`) ON DELETE CASCADE,
-
-    INDEX idx_transactions_type USING HASH (`type`)
+    CONSTRAINT unique_common_holiday_desc UNIQUE (`description`),
+    CONSTRAINT unique_common_holiday_config UNIQUE (`config`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 

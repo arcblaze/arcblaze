@@ -38,10 +38,11 @@ action.manager.holiday.DoHolidayDelete = function() {
 					// Send the Ajax request.
 					io.doAjaxRequest({
 						// Add the URL.
-						url: '/rest/manager/holiday/delete',
+						url: '/rest/manager/holiday',
+						method: 'DELETE',
 
 						// Add the parameters to send to the server.
-						params: {
+						headers: {
 							ids: ids
 						},
 

@@ -1,7 +1,6 @@
 package com.arcblaze.arctime.rest.factory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
+import javax.ws.rs.FormParam;
 
 import org.apache.commons.lang.StringUtils;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -15,14 +14,29 @@ import com.arcblaze.arctime.common.model.util.HolidayConfigurationException;
  * based on parameters from the web request.
  */
 public class HolidayFactory extends BaseFactory<Holiday> {
-	private final HttpServletRequest request;
+	private final Integer id;
+	private final Integer companyId;
+	private final String description;
+	private final String config;
 
 	/**
-	 * @param request
-	 *            the web request from the client
+	 * @param id
+	 *            the unique id of the holiday
+	 * @param companyId
+	 *            the id of the company that owns the holiday
+	 * @param description
+	 *            a description of the holiday
+	 * @param config
+	 *            the holiday configuration value
 	 */
-	public HolidayFactory(@Context final HttpServletRequest request) {
-		this.request = request;
+	public HolidayFactory(@FormParam("id") final Integer id,
+			@FormParam("companyId") final Integer companyId,
+			@FormParam("description") final String description,
+			@FormParam("config") final String config) {
+		this.id = id;
+		this.companyId = companyId;
+		this.description = description;
+		this.config = config;
 	}
 
 	/**
@@ -30,26 +44,20 @@ public class HolidayFactory extends BaseFactory<Holiday> {
 	 */
 	@Override
 	public Holiday provide() {
-		final String id = this.request.getParameter("id");
-		final String companyId = this.request.getParameter("companyId");
-		final String description = this.request.getParameter("description");
-		final String config = this.request.getParameter("config");
-
 		try {
 			final Holiday holiday = new Holiday();
-			if (StringUtils.isNotBlank(id) && StringUtils.isNumeric(id))
-				holiday.setId(Integer.parseInt(id));
-			if (StringUtils.isNotBlank(companyId)
-					&& StringUtils.isNumeric(companyId))
-				holiday.setCompanyId(Integer.parseInt(companyId));
-			if (StringUtils.isNotBlank(description))
-				holiday.setDescription(description);
-			if (StringUtils.isNotBlank(config))
-				holiday.setConfig(config);
+			if (this.id != null)
+				holiday.setId(this.id);
+			if (this.companyId != null)
+				holiday.setCompanyId(this.companyId);
+			if (StringUtils.isNotBlank(this.description))
+				holiday.setDescription(this.description);
+			if (StringUtils.isNotBlank(this.config))
+				holiday.setConfig(this.config);
 			return holiday;
 		} catch (final HolidayConfigurationException badConfig) {
 			throw new IllegalArgumentException(
-					"Invalid holiday configuration: " + config);
+					"Invalid holiday configuration: " + this.config);
 		}
 	}
 

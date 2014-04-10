@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,12 +20,14 @@ import org.mockito.Mockito;
 
 import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.Company;
+import com.arcblaze.arccore.common.model.IdSet;
 import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.DatabaseException;
 import com.arcblaze.arctime.common.model.Holiday;
 import com.arcblaze.arctime.common.model.util.HolidayConfigurationException;
 import com.arcblaze.arctime.db.ArcTimeDaoFactory;
 import com.arcblaze.arctime.db.util.TestDatabase;
+import com.arcblaze.arctime.rest.manager.HolidayResource.AddResponse;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 
@@ -159,8 +160,7 @@ public class HolidayResourceTest {
 	}
 
 	/**
-	 * Test how the resource responds to retrieving all holidays when none are
-	 * available.
+	 * Test how the resource responds to retrieving all holidays.
 	 * 
 	 * @throws DatabaseException
 	 *             if there is a database problem
@@ -254,11 +254,13 @@ public class HolidayResourceTest {
 					.setConfig("Jan 1st").setDescription("New Years");
 
 			final HolidayResource resource = new HolidayResource();
-			final Holiday inserted = resource.add(securityContext, config,
+			final AddResponse response = resource.add(securityContext, config,
 					daoFactory, timer, holiday);
 
-			assertNotNull(inserted);
-			assertEquals(holiday, inserted);
+			assertNotNull(response);
+			assertTrue(response.success);
+			assertNotNull(response.holiday);
+			assertEquals(holiday, response.holiday);
 
 			assertEquals(1, daoFactory.getHolidayDao().getAll(company.getId())
 					.size());
@@ -297,7 +299,7 @@ public class HolidayResourceTest {
 
 			final HolidayResource resource = new HolidayResource();
 			resource.delete(securityContext, config, daoFactory, timer,
-					Collections.singleton(holiday.getId()));
+					new IdSet(holiday.getId()));
 
 			assertEquals(0, daoFactory.getHolidayDao().getAll(company.getId())
 					.size());

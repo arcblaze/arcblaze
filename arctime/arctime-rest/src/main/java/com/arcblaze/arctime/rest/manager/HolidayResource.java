@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -19,6 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang.time.DateFormatUtils;
 
 import com.arcblaze.arccore.common.config.Config;
+import com.arcblaze.arccore.common.model.IdSet;
 import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.DatabaseException;
 import com.arcblaze.arccore.rest.BaseResource;
@@ -59,6 +61,18 @@ public class HolidayResource extends BaseResource {
 
 		@XmlElement
 		public Date day;
+	}
+
+	@XmlRootElement
+	static class AddResponse {
+		@XmlElement
+		public final boolean success = true;
+
+		@XmlElement
+		public final String msg = "The holiday was added successfully.";
+
+		@XmlElement
+		public Holiday holiday;
 	}
 
 	/**
@@ -134,6 +148,37 @@ public class HolidayResource extends BaseResource {
 	}
 
 	/**
+	 * @param security
+	 *            the security information associated with the request
+	 * @param config
+	 *            the system configuration properties
+	 * @param daoFactory
+	 *            used to communicate with the back-end database
+	 * @param timer
+	 *            tracks performance metrics of this REST end-point
+	 * 
+	 * @return all of the common holidays available in the system
+	 * 
+	 * @throws HolidayConfigurationException
+	 *             if there is a problem parsing the holiday configuration
+	 *             information
+	 */
+	@GET
+	@Path("/common")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Set<Holiday> common(@Context final SecurityContext security,
+			@Context final Config config,
+			@Context final ArcTimeDaoFactory daoFactory,
+			@Context final Timer timer) throws HolidayConfigurationException {
+		final User currentUser = (User) security.getUserPrincipal();
+		try (final Timer.Context timerContext = timer.time()) {
+			return daoFactory.getHolidayDao().getCommon();
+		} catch (final DatabaseException dbException) {
+			throw dbError(config, currentUser, dbException);
+		}
+	}
+
+	/**
 	 * @param timer
 	 *            tracks performance metrics of this REST end-point
 	 * @param config
@@ -179,7 +224,7 @@ public class HolidayResource extends BaseResource {
 	 */
 	@POST
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Holiday add(@Context final SecurityContext security,
+	public AddResponse add(@Context final SecurityContext security,
 			@Context final Config config,
 			@Context final ArcTimeDaoFactory daoFactory,
 			@Context final Timer timer, @Context final Holiday holiday) {
@@ -187,7 +232,10 @@ public class HolidayResource extends BaseResource {
 		try (final Timer.Context timerContext = timer.time()) {
 			holiday.setCompanyId(currentUser.getCompanyId());
 			daoFactory.getHolidayDao().add(holiday);
-			return holiday;
+
+			final AddResponse response = new AddResponse();
+			response.holiday = holiday;
+			return response;
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
 		}
@@ -212,22 +260,19 @@ public class HolidayResource extends BaseResource {
 	 *             information
 	 */
 	@DELETE
-	@Path("{holidayIds}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public DeleteResponse delete(@Context final SecurityContext security,
 			@Context final Config config,
 			@Context final ArcTimeDaoFactory daoFactory,
 			@Context final Timer timer,
-			@PathParam("holidayIds") final Set<Integer> holidayIds)
+			@HeaderParam("ids") final IdSet holidayIds)
 			throws HolidayConfigurationException {
 		final User currentUser = (User) security.getUserPrincipal();
 		try (final Timer.Context timerContext = timer.time()) {
 			if (holidayIds == null || holidayIds.isEmpty())
 				throw badRequest("No holiday ids provided");
-
 			daoFactory.getHolidayDao().delete(currentUser.getCompanyId(),
 					holidayIds);
-
 			return new DeleteResponse();
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
