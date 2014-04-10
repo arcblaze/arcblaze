@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.arcblaze.arccore.common.config.Config;
 import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.DatabaseException;
+import com.arcblaze.arccore.mail.MailSenderThread;
 import com.arcblaze.arccore.mail.sender.SystemErrorMailSender;
 import com.codahale.metrics.health.HealthCheck;
 
@@ -75,12 +76,8 @@ public class BaseResource extends HealthCheck {
 		final ForbiddenException forbidden = new ForbiddenException(Response
 				.status(Status.FORBIDDEN).entity(message).build());
 
-		try {
-			new SystemErrorMailSender(config, user, forbidden).send();
-		} catch (final MessagingException mailFailure) {
-			log.error("Failed to send admin notification of forbidden action.",
-					mailFailure);
-		}
+		new MailSenderThread(new SystemErrorMailSender(config, user, forbidden))
+				.start();
 
 		return forbidden;
 	}
@@ -103,12 +100,8 @@ public class BaseResource extends HealthCheck {
 
 		log.error("Database error", exception);
 
-		try {
-			new SystemErrorMailSender(config, user, exception).send();
-		} catch (final MessagingException mailFailure) {
-			log.error("Failed to send admin notification of database error.",
-					mailFailure);
-		}
+		new MailSenderThread(new SystemErrorMailSender(config, user, exception))
+				.start();
 
 		return new InternalServerErrorException(Response
 				.status(Status.INTERNAL_SERVER_ERROR)
@@ -133,12 +126,8 @@ public class BaseResource extends HealthCheck {
 
 		log.error("Server error", exception);
 
-		try {
-			new SystemErrorMailSender(config, user, exception).send();
-		} catch (final MessagingException mailFailure) {
-			log.error("Failed to send admin notification of database error.",
-					mailFailure);
-		}
+		new MailSenderThread(new SystemErrorMailSender(config, user, exception))
+				.start();
 
 		return new InternalServerErrorException(Response
 				.status(Status.INTERNAL_SERVER_ERROR)
@@ -159,12 +148,8 @@ public class BaseResource extends HealthCheck {
 
 		log.error("Mail error", exception);
 
-		try {
-			new SystemErrorMailSender(config, user, exception).send();
-		} catch (final MessagingException mailFailure) {
-			log.error("Failed to send admin notification of mail error.",
-					mailFailure);
-		}
+		new MailSenderThread(new SystemErrorMailSender(config, user, exception))
+				.start();
 
 		String message = exception.getMessage();
 		if (message == null)
