@@ -16,13 +16,14 @@ ui.grid.user.SupervisorGrid = Ext.extend(Ext.grid.GridPanel, {
 		var supervisor = new data.model.Supervisor();
 
 		var config = Ext.applyIf(c || {}, {
-			title:      'Supervisors',
-			id:         'ui.grid.user.supervisorgrid',
-			stripeRows: true,
-			width:      520,
-			height:     300,
-			loadMask:   true,
-			columns:    supervisor.getColumnModel(),
+			title:       'Supervisors',
+			id:          'ui.grid.user.supervisorgrid',
+			stripeRows:  true,
+			width:       520,
+			height:      300,
+			loadMask:    true,
+			multiSelect: true,
+			columns:     supervisor.getColumnModel(),
 			store: new data.store.user.SupervisorStore({
 				user: c.user
 			})
@@ -40,7 +41,7 @@ ui.grid.user.SupervisorGrid = Ext.extend(Ext.grid.GridPanel, {
 		if (tbar) {
 			this.getSelectionModel().addListener('selectionchange', function(model) {
 				// Get the number of selected rows.
-				var count = model.getSelections().length;
+				var count = model.selected.items.length;
 
 				// Get the total number of rows.
 				var total = grid.store.getCount();
@@ -61,7 +62,7 @@ ui.grid.user.SupervisorGrid = Ext.extend(Ext.grid.GridPanel, {
 		var ids = [ ];
 
 		// Get the selected records.
-		var records = this.getSelectionModel().getSelections();
+		var records = this.selModel.selected.items;
 
 		// Iterate over the selected records.
 		for (var i = 0; i < records.length; i++)
