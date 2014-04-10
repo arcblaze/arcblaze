@@ -73,7 +73,7 @@ public class TimerFactory extends BaseFactory<Timer> {
 	 * @return a representative name to use in the timer
 	 */
 	protected String getTimerName(final HttpServletRequest request) {
-		return request.getRequestURI();
+		return request.getRequestURI() + " " + request.getMethod();
 	}
 
 	/**
