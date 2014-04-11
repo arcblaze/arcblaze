@@ -19,9 +19,10 @@ action.admin.company.DoCompanyActivate = function() {
 
 			var io = new util.io.ServerIO();
 			io.doAjaxRequest({
-				url: '/admin/company/activate',
-				params: {
-					ids: ids.join(',')
+				url: '/rest/admin/company/activate',
+				method: 'PUT',
+				headers: {
+					ids: ids
 				},
 				mysuccess: function(data) {
 					var grid = Ext.getCmp('ui.grid.admin.companygrid');

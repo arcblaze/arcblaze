@@ -20,7 +20,9 @@ action.admin.company.DoCompanyAdd = function() {
 
 			var io = new util.io.ServerIO();
 			io.doFormRequest(formPanel, {
-				url: '/admin/company/add',
+				url: '/rest/admin/company',
+				method: 'POST',
+				message: true,
 				mysuccess: function(data) {
 					var grid = Ext.getCmp('ui.grid.admin.companygrid');
 					grid.getStore().reload();

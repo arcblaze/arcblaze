@@ -6,7 +6,7 @@ action.admin.company.DoCompanySearch = function() {
 		id:      'action.admin.company.docompanysearch',
 		iconCls: 'icon-search',
 		handler: function() {
-			var txt = Ext.getCmp('ui.field.company.search').getValue();
+			var txt = Ext.getCmp('ui.field.admin.company.search').getValue();
 			var grid = Ext.getCmp('ui.grid.admin.companygrid');
 
 			if (txt != undefined && txt.length > 0) {

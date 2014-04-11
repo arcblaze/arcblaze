@@ -10,22 +10,23 @@ ui.panel.admin.company.CompanyUpdatePanel = Ext.extend(Ext.Panel, {
 
 		this.form = new Ext.form.FormPanel({
 			title:       'Update Company',
-			width:       400,
+			width:       450,
 			autoHeight:  true,
 			bodyStyle:   'padding: 10px;',
-			labelWidth:  110,
 			items: [
 				{
 					xtype: 'hidden',
 					name:  'id'
 				}, {
 					xtype:      'textfield',
+					labelWidth: 60,
 					fieldLabel: 'Name',
 					name:       'name',
 					allowBlank: false,
-					width:      220
+					width:      400
 				}, {
 					xtype:      'radiogroup',
+					labelWidth: 60,
 					fieldLabel: 'Active',
 					name:       'active',
 					items: [
@@ -33,13 +34,13 @@ ui.panel.admin.company.CompanyUpdatePanel = Ext.extend(Ext.Panel, {
 							boxLabel:   'Yes',
 							name:       'active',
 							id:         'company-active-modify-yes',
-							inputValue: 1,
+							inputValue: "true",
 							style:      'border: 0px;'
 						}, {
 							boxLabel:   'No',
 							name:       'active',
 							id:         'company-active-modify-no',
-							inputValue: 0,
+							inputValue: "false",
 							style:      'border: 0px;'
 						}
 					]
@@ -71,10 +72,8 @@ ui.panel.admin.company.CompanyUpdatePanel = Ext.extend(Ext.Panel, {
 	setValues: function(company) {
 		this.form.getForm().findField('id').setValue(company.data.id);
 		this.form.getForm().findField('name').setValue(company.data.name);
-		this.form.getForm().findField('active').
-			setValue('company-active-modify-yes', company.data.active == "1");
-		this.form.getForm().findField('active').
-			setValue('company-active-modify-no', company.data.active == "0");
+		Ext.getCmp('company-active-modify-yes').setValue(company.data.active);
+		Ext.getCmp('company-active-modify-no').setValue(!company.data.active);
 
 		this.setInitialFocus();
 	}

@@ -18,7 +18,7 @@ data.store.admin.CompanyStore = Ext.extend(Ext.data.JsonStore, {
 				load: function(store, records, options) {
 					if (c) return;
 
-					var filterCB = Ext.getCmp('ui.field.company.inactive');
+					var filterCB = Ext.getCmp('ui.field.admin.company.inactive');
 
 					if (filterCB)
 						filterCB.getValue() ?
@@ -33,7 +33,7 @@ data.store.admin.CompanyStore = Ext.extend(Ext.data.JsonStore, {
 
 	setInactiveFilter: function() {
 		this.filterBy(function(record) {
-			return record.data.active == "1";
+			return record.data.active;
 		});
 	},
 

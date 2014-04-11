@@ -123,6 +123,52 @@ public interface CompanyDao {
 
 	/**
 	 * @param companyIds
+	 *            the unique ids of the companies to make active
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided parameter is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	void activate(final Integer... companyIds) throws DatabaseException;
+
+	/**
+	 * @param companyIds
+	 *            the unique ids of the companies to make active
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided parameter is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	void activate(final Collection<Integer> companyIds)
+			throws DatabaseException;
+
+	/**
+	 * @param companyIds
+	 *            the unique ids of the companies to make inactive
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided parameter is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	void deactivate(final Integer... companyIds) throws DatabaseException;
+
+	/**
+	 * @param companyIds
+	 *            the unique ids of the companies to make inactive
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided parameter is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	void deactivate(final Collection<Integer> companyIds)
+			throws DatabaseException;
+
+	/**
+	 * @param companyIds
 	 *            the unique ids of the companies to be deleted
 	 * 
 	 * @throws IllegalArgumentException

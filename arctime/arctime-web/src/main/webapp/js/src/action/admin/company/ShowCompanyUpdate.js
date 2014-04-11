@@ -9,7 +9,7 @@ action.admin.company.ShowCompanyUpdate = function() {
 		disabled: true,
 		handler: function() {
 			var companyGrid = Ext.getCmp('ui.grid.admin.companygrid');
-			var company = companyGrid.getSelectionModel().getSelections()[0];
+			var company = companyGrid.selModel.selected.items[0];
 
 			companyGrid.hide();
 

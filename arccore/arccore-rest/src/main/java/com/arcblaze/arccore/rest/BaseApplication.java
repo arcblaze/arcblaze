@@ -11,6 +11,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.arcblaze.arccore.rest.factory.CompanyFactory;
 import com.arcblaze.arccore.rest.factory.ConfigFactory;
 import com.arcblaze.arccore.rest.factory.DaoFactoryFactory;
 import com.arcblaze.arccore.rest.factory.HealthCheckRegistryFactory;
@@ -39,6 +40,7 @@ public abstract class BaseApplication extends ResourceConfig {
 		// finding the resources when Tomcat is run as an embedded app.
 		registerPackage(BaseApplication.class.getPackage().getName());
 
+		register(CompanyFactory.getBinder());
 		register(ConfigFactory.getBinder());
 		register(DaoFactoryFactory.getBinder());
 		register(MetricRegistryFactory.getBinder());

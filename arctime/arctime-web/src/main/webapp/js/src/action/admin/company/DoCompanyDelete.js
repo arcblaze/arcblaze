@@ -26,9 +26,10 @@ action.admin.company.DoCompanyDelete = function() {
 
 					var io = new util.io.ServerIO();
 					io.doAjaxRequest({
-						url: '/admin/company/delete',
-						params: {
-							ids: ids.join(',')
+						url: '/rest/admin/company',
+						method: 'DELETE',
+						headers: {
+							ids: ids
 						},
 						mysuccess: function(data) {
 							var grid = Ext.getCmp('ui.grid.admin.companygrid');

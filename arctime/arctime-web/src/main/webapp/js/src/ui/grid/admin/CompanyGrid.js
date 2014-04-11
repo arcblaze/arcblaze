@@ -11,21 +11,22 @@ ui.grid.admin.CompanyGrid = Ext.extend(Ext.grid.GridPanel, {
 		this.toolbar = new ui.tbar.admin.CompanyToolbar();
 
 		var config = Ext.applyIf(c || {}, {
-			title:            'Companies',
-			id:               'ui.grid.admin.companygrid',
-			store:            grid.store,
-			stripeRows:       true,
-			autoWidth:        true,
-			height:           400,
-			tbar:             grid.toolbar,
-			columns:          company.getColumnModel(),
-			loadMask:         true
+			title:       'Companies',
+			id:          'ui.grid.admin.companygrid',
+			store:       grid.store,
+			multiSelect: true,
+			stripeRows:  true,
+			autoWidth:   true,
+			height:      400,
+			tbar:        grid.toolbar,
+			columns:     company.getColumnModel(),
+			loadMask:    true
 		});
 
 		ui.grid.admin.CompanyGrid.superclass.constructor.call(this, config);
 
 		this.getSelectionModel().addListener('selectionchange', function(model) {
-			var count = model.getSelections().length;
+			var count = model.selected.items.length;
 
 			var companyDel = Ext.getCmp('action.admin.company.docompanydelete');
 			var companyAct = Ext.getCmp('action.admin.company.docompanyactivate');
@@ -34,11 +35,11 @@ ui.grid.admin.CompanyGrid = Ext.extend(Ext.grid.GridPanel, {
 
 			var allActive = true;
 			for (var s = 0; s < count && allActive; s++)
-				allActive = model.getSelections()[s].data.active == "1";
+				allActive = model.selected.items[s].data.active;
 
 			var allInactive = true;
 			for (var s = 0; s < count && allInactive; s++)
-				allInactive = model.getSelections()[s].data.active == "0";
+				allInactive = !model.selected.items[s].data.active;
 
 			if (companyDel)
 				(count > 0) ? companyDel.enable() : companyDel.disable();
@@ -55,7 +56,7 @@ ui.grid.admin.CompanyGrid = Ext.extend(Ext.grid.GridPanel, {
 
 	getSelectedIds: function() {
 		var ids = [ ];
-		var records = this.getSelectionModel().getSelections();
+		var records = this.selModel.selected.items;
 		for (var i = 0; i < records.length; i++)
 			ids.push(records[i].data.id);
 		return ids;

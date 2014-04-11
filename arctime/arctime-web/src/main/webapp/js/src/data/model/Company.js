@@ -13,18 +13,11 @@ Ext.define('data.model.Company', {
 			hidden:    true,
 			sortable:  true
 		}, {
-			id:        'created',
-			name:      'created',
-			dataIndex: 'created',
-			header:    'Created',
-			width:     80,
-			sortable:  true
-		}, {
 			id:        'name',
 			name:      'name',
 			dataIndex: 'name',
 			header:    'Name',
-			width:     120,
+			width:     400,
 			sortable:  true
 		}, {
 			id:        'active',
@@ -32,10 +25,9 @@ Ext.define('data.model.Company', {
 			dataIndex: 'active',
 			header:    'Active',
 			width:     60,
-			hidden:    true,
 			sortable:  true,
 			renderer:  function(val) {
-				return ("" + val) == "1" ? "Yes" : "No";
+				return val ? "Yes" : "No";
 			}
 		}
 	],

@@ -204,6 +204,66 @@ public class JdbcCompanyDao implements CompanyDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void activate(final Integer... ids) throws DatabaseException {
+		this.activate(ids == null ? null : Arrays.asList(ids));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void activate(final Collection<Integer> ids)
+			throws DatabaseException {
+		if (ids == null || ids.isEmpty())
+			return;
+
+		final String sql = "UPDATE companies SET active = true WHERE id = ?";
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql)) {
+			for (final Integer id : ids) {
+				ps.setInt(1, id);
+				ps.executeUpdate();
+			}
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deactivate(final Integer... ids) throws DatabaseException {
+		this.deactivate(ids == null ? null : Arrays.asList(ids));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deactivate(final Collection<Integer> ids)
+			throws DatabaseException {
+		if (ids == null || ids.isEmpty())
+			return;
+
+		final String sql = "UPDATE companies SET active = false WHERE id = ?";
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql)) {
+			for (final Integer id : ids) {
+				ps.setInt(1, id);
+				ps.executeUpdate();
+			}
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void delete(final Integer... ids) throws DatabaseException {
 		this.delete(ids == null ? null : Arrays.asList(ids));
 	}

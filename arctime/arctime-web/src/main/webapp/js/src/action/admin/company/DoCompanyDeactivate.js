@@ -19,9 +19,10 @@ action.admin.company.DoCompanyDeactivate = function() {
 
 			var io = new util.io.ServerIO();
 			io.doAjaxRequest({
-				url: '/admin/company/deactivate',
-				params: {
-					ids: ids.join(',')
+				url: '/rest/admin/company/deactivate',
+				method: 'PUT',
+				headers: {
+					ids: ids
 				},
 				mysuccess: function(data) {
 					var grid = Ext.getCmp('ui.grid.admin.companygrid');

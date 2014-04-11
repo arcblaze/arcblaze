@@ -6,19 +6,20 @@ ui.panel.admin.company.CompanyAddPanel = Ext.extend(Ext.form.FormPanel, {
 		var config = Ext.applyIf(c || {}, {
 			id:         'ui.panel.admin.company.companyaddpanel',
 			title:      'Add a new Company',
-			width:      400,
+			width:      450,
 			autoHeight: true,
 			bodyStyle:  'padding: 10px;',
-			labelWidth: 110,
 			items: [
 				{
 					xtype:      'textfield',
+					labelWidth: 60,
 					fieldLabel: 'Name',
 					name:       'name',
 					allowBlank: false,
-					width:      220
+					width:      400
 				}, {
 					xtype:      'radiogroup',
+					labelWidth: 60,
 					fieldLabel: 'Active',
 					name:       'active',
 					items: [
@@ -26,14 +27,14 @@ ui.panel.admin.company.CompanyAddPanel = Ext.extend(Ext.form.FormPanel, {
 							boxLabel:   'Yes',
 							name:       'active',
 							id:         'company-active-yes',
-							inputValue: 1,
+							inputValue: "true",
 							checked:    true,
 							style:      'border: 0px;'
 						}, {
 							boxLabel:   'No',
 							name:       'active',
 							id:         'company-active-no',
-							inputValue: 0,
+							inputValue: "false",
 							checked:    false,
 							style:      'border: 0px;'
 						}

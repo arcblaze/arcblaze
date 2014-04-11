@@ -18,10 +18,10 @@ ui.tbar.admin.CompanyToolbar = Ext.extend(Ext.Toolbar, {
 					style: 'padding-right:10px;'
 				}),
 				new Ext.form.Checkbox({
-					id: 'ui.field.company.inactive',
+					id: 'ui.field.admin.company.inactive',
 					checked: false,
 					listeners: {
-						check: function(cb, checked) {
+						change: function(cb, checked) {
 							var grid = Ext.getCmp('ui.grid.admin.companygrid');
 							if (grid) {
 								var store = grid.getStore();
@@ -35,7 +35,7 @@ ui.tbar.admin.CompanyToolbar = Ext.extend(Ext.Toolbar, {
 				'-',
 
 				new Ext.form.TextField({
-					id: 'ui.field.company.search',
+					id: 'ui.field.admin.company.search',
 					width: 100,
 					listeners: {
 						specialkey: function(tf, evt) {

@@ -85,6 +85,14 @@ public class JdbcCompanyDaoTest {
 			assertEquals(1, companyDao.count(true));
 			assertEquals(0, companyDao.count(false));
 
+			companyDao.activate(company.getId());
+			assertEquals(1, companyDao.count(true));
+			assertEquals(1, companyDao.count(false));
+
+			companyDao.deactivate(company.getId());
+			assertEquals(1, companyDao.count(true));
+			assertEquals(0, companyDao.count(false));
+
 			companyDao.delete(company.getId());
 			getCompany = companyDao.get(company.getId());
 			assertNull(getCompany);

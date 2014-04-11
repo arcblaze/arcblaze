@@ -20,7 +20,9 @@ action.admin.company.DoCompanyUpdate = function() {
 
 			var io = new util.io.ServerIO();
 			io.doFormRequest(form, {
-				url: '/admin/company/update',
+				url: '/rest/admin/company',
+				method: 'PUT',
+				message: true,
 				mysuccess: function(data) {
 					var grid = Ext.getCmp('ui.grid.admin.companygrid');
 					grid.getStore().reload();
