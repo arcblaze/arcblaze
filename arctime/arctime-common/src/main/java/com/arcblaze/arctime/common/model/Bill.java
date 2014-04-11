@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -451,7 +452,8 @@ public class Bill implements Comparable<Bill> {
 				bill.setHours(new BigDecimal(pieces[2]));
 
 				if (pieces.length == 4 && StringUtils.isNotBlank(pieces[3]))
-					bill.setReason(StringUtils.trim(pieces[3]));
+					bill.setReason(StringUtils.trim(StringEscapeUtils
+							.escapeHtml(pieces[3])));
 
 				bills.add(bill);
 			} catch (final NumberFormatException badNumber) {

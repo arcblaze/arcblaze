@@ -13,6 +13,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,20 +58,21 @@ public class LoginResource extends BaseResource {
 			throws URISyntaxException {
 		log.debug("User login request: {}", login);
 		try (final Timer.Context timerContext = timer.time()) {
-			if (StringUtils.isBlank(login))
+			final String escapedLogin = StringEscapeUtils.escapeHtml(login);
+			if (StringUtils.isBlank(escapedLogin))
 				throw badRequest("Invalid blank user login");
 			if (StringUtils.isBlank(password))
 				throw badRequest("Invalid blank user password");
 
 			final String remoteUser = request.getRemoteUser();
 			if (StringUtils.isNotBlank(remoteUser)) {
-				if (!remoteUser.equals(login)) {
+				if (!remoteUser.equals(escapedLogin)) {
 					request.logout();
-					request.login(login, password);
+					request.login(escapedLogin, password);
 				} else
 					log.debug("Already logged in.");
 			} else
-				request.login(login, password);
+				request.login(escapedLogin, password);
 
 			final String baseUri = StringUtils.substringBefore(uriInfo
 					.getBaseUri().toString(), "/rest");

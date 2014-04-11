@@ -2,6 +2,7 @@ package com.arcblaze.arccore.rest.factory;
 
 import javax.ws.rs.FormParam;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
@@ -28,7 +29,7 @@ public class CompanyFactory extends BaseFactory<Company> {
 			@FormParam("name") final String name,
 			@FormParam("active") final Boolean active) {
 		this.id = id;
-		this.name = name;
+		this.name = StringEscapeUtils.escapeHtml(name);
 		this.active = active;
 	}
 

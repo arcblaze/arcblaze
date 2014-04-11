@@ -12,6 +12,7 @@ import javax.ws.rs.core.SecurityContext;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,10 +124,10 @@ public class ProfileUpdateResource extends BaseResource {
 			if (user == null)
 				throw notFound("The current user was not found.");
 
-			user.setFirstName(firstName);
-			user.setLastName(lastName);
-			user.setLogin(login);
-			user.setEmail(email);
+			user.setFirstName(StringEscapeUtils.escapeHtml(firstName));
+			user.setLastName(StringEscapeUtils.escapeHtml(lastName));
+			user.setLogin(StringEscapeUtils.escapeHtml(login));
+			user.setEmail(StringEscapeUtils.escapeHtml(email));
 			user.setActive(currentUser.isActive());
 			log.debug("Modified user: {}", user);
 

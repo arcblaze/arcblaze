@@ -2,6 +2,7 @@ package com.arcblaze.arctime.rest.factory;
 
 import javax.ws.rs.FormParam;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
@@ -35,8 +36,8 @@ public class HolidayFactory extends BaseFactory<Holiday> {
 			@FormParam("config") final String config) {
 		this.id = id;
 		this.companyId = companyId;
-		this.description = description;
-		this.config = config;
+		this.description = StringEscapeUtils.escapeHtml(description);
+		this.config = StringEscapeUtils.escapeHtml(config);
 	}
 
 	/**

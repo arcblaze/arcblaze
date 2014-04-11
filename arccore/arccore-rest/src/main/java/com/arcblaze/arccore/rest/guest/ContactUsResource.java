@@ -96,6 +96,7 @@ public class ContactUsResource extends BaseResource {
 				throw badRequest("The message parameter must be specified.");
 
 			try {
+				// The parameters are escaped in ContactUsMailSender.
 				if (this.mailSender == null)
 					this.mailSender = new ContactUsMailSender(config,
 							"ArcTime", name, email, type, message);

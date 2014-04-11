@@ -41,11 +41,11 @@ public class ContactUsMailSender extends MailSender {
 			final String message) {
 		super(config);
 
-		this.system = system;
-		this.name = name;
-		this.email = email;
-		this.type = type;
-		this.message = message;
+		this.system = StringEscapeUtils.escapeHtml(system);
+		this.name = StringEscapeUtils.escapeHtml(name);
+		this.email = StringEscapeUtils.escapeHtml(email);
+		this.type = StringEscapeUtils.escapeHtml(type);
+		this.message = StringEscapeUtils.escapeHtml(message);
 	}
 
 	/**
