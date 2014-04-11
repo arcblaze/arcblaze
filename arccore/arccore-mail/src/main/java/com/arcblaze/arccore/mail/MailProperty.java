@@ -6,6 +6,8 @@ import com.arcblaze.arccore.common.config.Property;
  * Defines email-related configuration properties.
  */
 public enum MailProperty implements Property {
+	/** Whether emails should be sent (turned off in unit tests). */
+	SEND_EMAILS("true"),
 	/** The name of the system from which the emails originate. */
 	SYSTEM_NAME("ArcBlaze"),
 	/** The server to use when sending emails over SMTP. */

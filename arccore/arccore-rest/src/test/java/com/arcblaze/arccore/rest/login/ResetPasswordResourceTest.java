@@ -20,6 +20,7 @@ import com.arcblaze.arccore.db.DaoFactory;
 import com.arcblaze.arccore.db.DatabaseException;
 import com.arcblaze.arccore.db.dao.UserDao;
 import com.arcblaze.arccore.db.util.TestDatabase;
+import com.arcblaze.arccore.mail.MailProperty;
 import com.arcblaze.arccore.mail.sender.ResetPasswordMailSender;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
@@ -234,6 +235,7 @@ public class ResetPasswordResourceTest {
 	public void testExistingUserEmailError() throws DatabaseException,
 			MessagingException {
 		final Config config = new Config();
+		config.set(MailProperty.SEND_EMAILS, "false");
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/db.sql");
 			final DaoFactory daoFactory = testDatabase.getDaoFactory();

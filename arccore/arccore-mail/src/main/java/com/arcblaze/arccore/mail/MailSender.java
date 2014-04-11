@@ -101,6 +101,9 @@ public abstract class MailSender {
 	 *             if there is a problem sending the message
 	 */
 	public void send() throws MessagingException {
+		if (!this.config.getBoolean(MailProperty.SEND_EMAILS))
+			return;
+
 		final Session session = this.mailer.getSession();
 		final MimeMessage message = new MimeMessage(session);
 
