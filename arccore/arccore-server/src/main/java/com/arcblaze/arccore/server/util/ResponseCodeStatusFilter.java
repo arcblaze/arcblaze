@@ -40,14 +40,15 @@ public class ResponseCodeStatusFilter extends AbstractInstrumentedFilter {
 				Response.Status.BAD_REQUEST, Response.Status.FORBIDDEN,
 				Response.Status.NOT_FOUND,
 				Response.Status.INTERNAL_SERVER_ERROR,
-				Response.Status.UNAUTHORIZED));
+				Response.Status.UNAUTHORIZED,
+				Response.Status.METHOD_NOT_ALLOWED));
 	}
 
-	private static String getStatusCodeName(Response.Status status) {
+	private static String getStatusCodeName(final Response.Status status) {
 		final StringBuilder str = new StringBuilder();
 		boolean underscore = true;
 		for (int i = 0; i < status.name().length(); i++) {
-			char c = status.name().charAt(i);
+			final char c = status.name().charAt(i);
 			if (c == '_') {
 				str.append(" ");
 				underscore = true;
