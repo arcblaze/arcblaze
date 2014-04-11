@@ -38,7 +38,9 @@ util.io.ServerIO = Ext.extend(Ext.util.Observable, {
 			// Add a default failure function.
 			failure: function(response) {
 				// Display the error message from the server.
-				var msg = 'Error ' + response.status + ', ' + response.statusText;
+				var msg = response.status == 0 ?
+					'Unable to connect to system server.' :
+					'Error ' + response.status + ', ' + response.statusText;
 				if (response.responseText)
 					msg = response.responseText;
 				Ext.Msg.alert('Failed', msg);
