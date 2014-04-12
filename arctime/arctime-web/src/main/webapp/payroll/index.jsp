@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>ArcTime: Manager</title>
+    <title>ArcTime: Payroll</title>
     <%@ include file="/ssi/meta.jspf" %>
   </head>
   <body>

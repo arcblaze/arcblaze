@@ -27,8 +27,9 @@ html, body {
 
 #header-container #header #header-logo {
  float:left;
+ height:60px;
  line-height:60px;
- margin:0px auto;
+ margin:0px;
  text-align:left;
  width:300px;
 }
@@ -58,7 +59,29 @@ html, body {
 #header-container #header #header-navigation a:hover {
  text-decoration:underline;
 }
- 
+
+#manager-navigation {
+ font-size:11pt;
+ line-height:20px;
+ margin:0px auto;
+ padding-bottom:12px;
+ text-align:left;
+ width:940px;
+}
+
+#manager-navigation li {
+ display:inline;
+ list-style-type:none;
+ padding-right:30px;
+}
+#manager-navigation a {
+ color:blue;
+ text-decoration:none;
+}
+#manager-navigation a:hover {
+ text-decoration:underline;
+}
+
 #container {
  margin:0px auto;
  overflow:auto;

@@ -12,14 +12,11 @@
         <% if (request.isUserInRole("ADMIN")) { %>
           <li><a href="/admin/">Admin</a></li>
         <% } %>
-        <% if (request.isUserInRole("PAYROLL")) { %>
-          <li><a href="/payroll/">Payroll</a></li>
-        <% } %>
-        <% if (request.isUserInRole("MANAGER")) { %>
-          <li><a href="/manager/">Manage</a></li>
-        <% } %>
-        <% if (request.isUserInRole("SUPERVISOR")) { %>
-          <li><a href="/supervisor/">Supervisor</a></li>
+        <% if (request.isUserInRole("MANAGER") ||
+               request.isUserInRole("SUPERVISOR") ||
+               request.isUserInRole("PAYROLL") ||
+               request.isUserInRole("FINANCE")) { %>
+          <li><a href="/manage.jsp">Manage</a></li>
         <% } %>
         <li><a href="/user/">Timesheet</a></li>
         <li><a href="/user/profile.jsp">Profile</a></li>

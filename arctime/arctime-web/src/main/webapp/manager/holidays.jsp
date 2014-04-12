@@ -10,6 +10,7 @@
     <%@ include file="/ssi/scripts.jspf" %>
 
     <div id="container-maxwidth">
+      <%@ include file="/ssi/manager_navigation.jspf" %>
       
       <!-- This is where the holiday grid and panels will be rendered. -->
       <div id="holiday-management-grid"></div>
