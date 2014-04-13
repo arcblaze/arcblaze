@@ -6,6 +6,7 @@ ui.tbar.manager.HolidayToolbar = Ext.extend(Ext.Toolbar, {
 		var config = Ext.applyIf(c || {}, {
 			items: [
 				new action.manager.holiday.ShowHolidayAdd(),
+				new action.manager.holiday.ShowHolidayUpdate(),
 				new action.manager.holiday.DoHolidayDelete(),
 
 				'->',

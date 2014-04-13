@@ -7,17 +7,11 @@ action.manager.holiday.ShowHolidayAdd = function() {
 		text:    'Add',
 		iconCls: 'icon-holiday-add',
 		handler: function() {
-			// Get the add panel and the grid.
-			var holidayAddPanel =
-				Ext.getCmp('ui.panel.manager.holiday.holidayaddpanel');
 			var holidayGrid = Ext.getCmp('ui.grid.manager.holidaygrid');
 
-			// Make sure the panel exists.
-			if (!holidayAddPanel) {
-				holidayAddPanel = new ui.panel.manager.holiday.HolidayAddPanel({
-					renderTo: 'holiday-add-panel'
-				});
-			}
+			var holidayAddPanel = new ui.panel.manager.holiday.HolidayAddPanel({
+				renderTo: 'holiday-add-panel'
+			});
 
 			// Hide the grid and show the panel.
 			holidayGrid.hide();

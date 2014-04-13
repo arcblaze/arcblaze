@@ -7,6 +7,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -70,6 +71,18 @@ public class HolidayResource extends BaseResource {
 
 		@XmlElement
 		public final String msg = "The holiday was added successfully.";
+
+		@XmlElement
+		public Holiday holiday;
+	}
+
+	@XmlRootElement
+	static class UpdateResponse {
+		@XmlElement
+		public final boolean success = true;
+
+		@XmlElement
+		public final String msg = "The holiday was saved successfully.";
 
 		@XmlElement
 		public Holiday holiday;
@@ -234,6 +247,42 @@ public class HolidayResource extends BaseResource {
 			daoFactory.getHolidayDao().add(holiday);
 
 			final AddResponse response = new AddResponse();
+			response.holiday = holiday;
+			return response;
+		} catch (final DatabaseException dbException) {
+			throw dbError(config, currentUser, dbException);
+		}
+	}
+
+	/**
+	 * @param security
+	 *            the security information associated with the request
+	 * @param config
+	 *            the system configuration properties
+	 * @param daoFactory
+	 *            used to communicate with the back-end database
+	 * @param timer
+	 *            tracks performance metrics of this REST end-point
+	 * @param holiday
+	 *            the holiday to add to the back-end database
+	 * 
+	 * @return the updated holiday that was modified
+	 */
+	@PUT
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public UpdateResponse update(@Context final SecurityContext security,
+			@Context final Config config,
+			@Context final ArcTimeDaoFactory daoFactory,
+			@Context final Timer timer, @Context final Holiday holiday) {
+		final User currentUser = (User) security.getUserPrincipal();
+		try (final Timer.Context timerContext = timer.time()) {
+			if (holiday == null || holiday.getId() == null)
+				throw badRequest("A holiday with an id must be provided.");
+
+			holiday.setCompanyId(currentUser.getCompanyId());
+			daoFactory.getHolidayDao().update(holiday);
+
+			final UpdateResponse response = new UpdateResponse();
 			response.holiday = holiday;
 			return response;
 		} catch (final DatabaseException dbException) {

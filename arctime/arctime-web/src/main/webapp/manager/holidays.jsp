@@ -22,11 +22,14 @@
       <script src="/js/src/data/model/Holiday.js"></script>
       <script src="/js/src/data/store/manager/HolidayStore.js"></script>
       <script src="/js/src/action/manager/holiday/DoHolidayAdd.js"></script>
+      <script src="/js/src/action/manager/holiday/DoHolidayUpdate.js"></script>
       <script src="/js/src/action/manager/holiday/DoHolidayDelete.js"></script>
       <script src="/js/src/action/manager/holiday/DoHolidaySearch.js"></script>
       <script src="/js/src/action/manager/holiday/ShowHolidayAdd.js"></script>
+      <script src="/js/src/action/manager/holiday/ShowHolidayUpdate.js"></script>
       <script src="/js/src/action/manager/holiday/ShowHolidayGrid.js"></script>
-      <script src="/js/src/ui/panel/manager/HolidayAddPanel.js"></script>
+      <script src="/js/src/ui/panel/manager/holiday/HolidayAddPanel.js"></script>
+      <script src="/js/src/ui/panel/manager/holiday/HolidayUpdatePanel.js"></script>
       <script src="/js/src/ui/grid/manager/HolidayGrid.js"></script>
       <script src="/js/src/ui/tbar/manager/HolidayToolbar.js"></script>
       <script>

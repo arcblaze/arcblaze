@@ -1,14 +1,14 @@
 
 Ext.namespace("action.manager.holiday");
 
-action.manager.holiday.DoHolidayAdd = function() {
+action.manager.holiday.DoHolidayUpdate = function() {
 	return new Ext.Action({
-		id:      'action.manager.holiday.doholidayadd',
-		text:    'Add',
-		iconCls: 'icon-holiday-add',
+		id:      'action.manager.holiday.doholidayupdate',
+		text:    'Update',
+		iconCls: 'icon-holiday-edit',
 		handler: function() {
 			// Get the panel containing the form data.
-			var formPanel = Ext.getCmp('ui.panel.manager.holiday.holidayaddpanel');
+			var formPanel = Ext.getCmp('ui.panel.manager.holiday.holidayupdatepanel');
 
 			// Make sure the form is valid.
 			if (!formPanel.getForm().isValid()) {
@@ -18,9 +18,9 @@ action.manager.holiday.DoHolidayAdd = function() {
 				return;
 			}
 
-			// Show the progress bar while the holiday is being added.
-			Ext.Msg.progress('Adding Holiday',
-				'Please wait while the holiday is added...');
+			// Show the progress bar while the holiday is being saved.
+			Ext.Msg.progress('Saving Holiday',
+				'Please wait while the holiday is saved...');
 
 			// Create a new ServerIO object.
 			var io = new util.io.ServerIO();
@@ -29,7 +29,7 @@ action.manager.holiday.DoHolidayAdd = function() {
 			io.doFormRequest(formPanel, {
 				// Set the URL.
 				url: '/rest/manager/holiday',
-				method: 'POST',
+				method: 'PUT',
 				message: true,
 				
 				// The function to invoke after success.

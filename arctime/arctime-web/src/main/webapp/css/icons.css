@@ -137,6 +137,9 @@
 .icon-holiday-delete {
 	background-image:		url(/img/holiday_delete.png) !important;
 }
+.icon-holiday-edit {
+	background-image:		url(/img/holiday_edit.png) !important;
+}
 .icon-holiday-go {
 	background-image:		url(/img/holiday_go.png) !important;
 }

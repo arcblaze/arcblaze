@@ -26,8 +26,10 @@ import com.arcblaze.arccore.db.DatabaseException;
 import com.arcblaze.arctime.common.model.Holiday;
 import com.arcblaze.arctime.common.model.util.HolidayConfigurationException;
 import com.arcblaze.arctime.db.ArcTimeDaoFactory;
+import com.arcblaze.arctime.db.dao.HolidayDao;
 import com.arcblaze.arctime.db.util.TestDatabase;
 import com.arcblaze.arctime.rest.manager.HolidayResource.AddResponse;
+import com.arcblaze.arctime.rest.manager.HolidayResource.UpdateResponse;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 
@@ -264,6 +266,88 @@ public class HolidayResourceTest {
 
 			assertEquals(1, daoFactory.getHolidayDao().getAll(company.getId())
 					.size());
+		}
+	}
+
+	/**
+	 * Test how the resource responds to updating a holiday without an id.
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a database problem
+	 * @throws HolidayConfigurationException
+	 *             if there is a holiday definition problem
+	 */
+	@Test(expected = BadRequestException.class)
+	public void testUpdateNoId() throws DatabaseException,
+			HolidayConfigurationException {
+		final Config config = new Config();
+		try (final TestDatabase testDatabase = new TestDatabase()) {
+			testDatabase.load("hsqldb/arctime-db.sql");
+			final User user = new User().setId(1).setCompanyId(1)
+					.setLogin("user");
+			final SecurityContext securityContext = Mockito
+					.mock(SecurityContext.class);
+			Mockito.when(securityContext.getUserPrincipal()).thenReturn(user);
+			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
+			final MetricRegistry metricRegistry = new MetricRegistry();
+			final Timer timer = metricRegistry.timer("test");
+
+			final Company company = new Company().setName("company");
+			daoFactory.getCompanyDao().add(company);
+
+			final Holiday holiday = new Holiday().setCompanyId(company.getId())
+					.setConfig("Jan 1st").setDescription("New Years");
+
+			final HolidayResource resource = new HolidayResource();
+			resource.update(securityContext, config, daoFactory, timer, holiday);
+		}
+	}
+
+	/**
+	 * Test how the resource responds to updating a holiday.
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a database problem
+	 * @throws HolidayConfigurationException
+	 *             if there is a holiday definition problem
+	 */
+	@Test
+	public void testUpdate() throws DatabaseException,
+			HolidayConfigurationException {
+		final Config config = new Config();
+		try (final TestDatabase testDatabase = new TestDatabase()) {
+			testDatabase.load("hsqldb/arctime-db.sql");
+			final User user = new User().setId(1).setCompanyId(1)
+					.setLogin("user");
+			final SecurityContext securityContext = Mockito
+					.mock(SecurityContext.class);
+			Mockito.when(securityContext.getUserPrincipal()).thenReturn(user);
+			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
+			final MetricRegistry metricRegistry = new MetricRegistry();
+			final Timer timer = metricRegistry.timer("test");
+
+			final Company company = new Company().setName("company");
+			daoFactory.getCompanyDao().add(company);
+
+			final Holiday holiday = new Holiday().setCompanyId(company.getId())
+					.setConfig("Jan 1st").setDescription("New Years");
+
+			final HolidayDao dao = daoFactory.getHolidayDao();
+			dao.add(holiday);
+
+			holiday.setDescription("New Years Day");
+
+			final HolidayResource resource = new HolidayResource();
+			final UpdateResponse response = resource.update(securityContext,
+					config, daoFactory, timer, holiday);
+
+			assertNotNull(response);
+			assertTrue(response.success);
+			assertNotNull(response.holiday);
+			assertEquals(holiday, response.holiday);
+
+			final Holiday fromDb = dao.get(company.getId(), holiday.getId());
+			assertEquals(holiday, fromDb);
 		}
 	}
 

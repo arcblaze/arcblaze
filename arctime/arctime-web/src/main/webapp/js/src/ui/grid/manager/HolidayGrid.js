@@ -8,8 +8,8 @@ ui.grid.manager.HolidayGrid = Ext.extend(Ext.grid.GridPanel, {
 		var config = Ext.applyIf(c || {}, {
 			title:       'Holidays',
 			id:          'ui.grid.manager.holidaygrid',
-			multiSelect: true,
 			store:       new data.store.manager.HolidayStore(),
+			multiSelect: true,
 			stripeRows:  true,
 			width:       660,
 			height:      350,
