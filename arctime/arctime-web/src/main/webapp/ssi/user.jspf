@@ -1,4 +1,5 @@
 <%@ page import="com.arcblaze.arccore.common.model.User" %>
+<%@ page import="com.arcblaze.arccore.common.model.Role" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 
 <script>
@@ -13,6 +14,10 @@
 		login: '<%= StringEscapeUtils.escapeJavaScript(user.getLogin()) %>',
 		email: '<%= StringEscapeUtils.escapeJavaScript(user.getEmail()) %>'
 	};
+	var roles = [ ];
+	<% for (final Role role : user.getRoles()) { %>
+	roles.push("<%= StringEscapeUtils.escapeJavaScript(role.getName()) %>");
+	<% } %>
 	<% } else { %>
 	// Not logged in.
 	var user = { };

@@ -1,6 +1,7 @@
 package com.arcblaze.arctime.db.dao.jdbc;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -78,6 +79,14 @@ public class TaskDaoTest {
 			taskDao.update(task);
 			getTask = taskDao.get(company.getId(), task.getId());
 			assertEquals(task, getTask);
+
+			taskDao.deactivate(company.getId(), task.getId());
+			getTask = taskDao.get(company.getId(), task.getId());
+			assertFalse(getTask.isActive());
+
+			taskDao.activate(company.getId(), task.getId());
+			getTask = taskDao.get(company.getId(), task.getId());
+			assertTrue(getTask.isActive());
 
 			taskDao.delete(company.getId(), task.getId());
 			getTask = taskDao.get(company.getId(), task.getId());

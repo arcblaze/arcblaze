@@ -93,16 +93,21 @@ public class JdbcSupervisorDao extends JdbcUserDao implements SupervisorDao {
 		notNull(companyId, "Invalid null company id");
 		notNull(userId, "Invalid null user id");
 
+		// We need to insert in such a way as to prevent a supervisor from one
+		// company being assigned to a user from a different company.
 		final String sql = "INSERT INTO supervisors (company_id, user_id, "
-				+ "supervisor_id, is_primary) VALUES (?, ?, ?, ?)";
+				+ "supervisor_id, is_primary) "
+				+ "SELECT u.company_id, u.id, s.id, ? FROM users u "
+				+ "JOIN users s ON (u.company_id = s.company_id) "
+				+ "WHERE u.company_id = ? AND u.id = ? and s.id = ?";
 
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Integer supervisorId : supervisorIds) {
-				ps.setInt(1, companyId);
-				ps.setInt(2, userId);
-				ps.setInt(3, supervisorId);
-				ps.setBoolean(4, primary);
+				ps.setBoolean(1, primary);
+				ps.setInt(2, companyId);
+				ps.setInt(3, userId);
+				ps.setInt(4, supervisorId);
 				ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {

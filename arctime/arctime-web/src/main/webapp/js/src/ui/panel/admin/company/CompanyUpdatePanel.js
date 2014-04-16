@@ -29,6 +29,7 @@ ui.panel.admin.company.CompanyUpdatePanel = Ext.extend(Ext.Panel, {
 					labelWidth: 60,
 					fieldLabel: 'Active',
 					name:       'active',
+					width:      240,
 					items: [
 						{
 							boxLabel:   'Yes',

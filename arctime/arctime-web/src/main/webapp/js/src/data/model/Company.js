@@ -5,7 +5,6 @@ Ext.define('data.model.Company', {
 	extend: 'Ext.data.Model',
 	fields: [
 		{
-			id:        'id',
 			name:      'id',
 			dataIndex: 'id',
 			header:    'ID',
@@ -13,14 +12,12 @@ Ext.define('data.model.Company', {
 			hidden:    true,
 			sortable:  true
 		}, {
-			id:        'name',
 			name:      'name',
 			dataIndex: 'name',
 			header:    'Name',
 			width:     400,
 			sortable:  true
 		}, {
-			id:        'active',
 			name:      'active',
 			dataIndex: 'active',
 			header:    'Active',
@@ -38,7 +35,6 @@ Ext.define('data.model.Company', {
 			flds.push({
 				dataIndex: field.dataIndex,
 				hidden:    field.hidden,
-				id:        field.id,
 				renderer:  field.renderer,
 				sortable:  field.sortable,
 				text:      field.header,

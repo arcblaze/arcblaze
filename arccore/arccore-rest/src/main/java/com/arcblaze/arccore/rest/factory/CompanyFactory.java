@@ -19,7 +19,7 @@ public class CompanyFactory extends BaseFactory<Company> {
 
 	/**
 	 * @param id
-	 *            the unique id of the holiday
+	 *            the unique id of the company
 	 * @param name
 	 *            the name of the company
 	 * @param active

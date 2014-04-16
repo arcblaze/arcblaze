@@ -5,7 +5,6 @@ Ext.define('data.model.Holiday', {
 	extend: 'Ext.data.Model',
 	fields: [
 		{
-			id:        'id',
 			name:      'id',
 			dataIndex: 'id',
 			header:    'ID',
@@ -13,21 +12,18 @@ Ext.define('data.model.Holiday', {
 			hidden:    true,
 			sortable:  true
 		}, {
-			id:        'description',
 			name:      'description',
 			dataIndex: 'description',
 			header:    'Description',
 			width:     240,
 			sortable:  true
 		}, {
-			id:        'config',
 			name:      'config',
 			dataIndex: 'config',
 			header:    'Configuration',
 			width:     260,
 			sortable:  true
 		}, {
-			id:        'day',
 			name:      'day',
 			dataIndex: 'day',
 			header:    'Day',
@@ -45,7 +41,6 @@ Ext.define('data.model.Holiday', {
 			flds.push({
 				dataIndex: field.dataIndex,
 				hidden:    field.hidden,
-				id:        field.id,
 				renderer:  field.renderer,
 				sortable:  field.sortable,
 				text:      field.header,

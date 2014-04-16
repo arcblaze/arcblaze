@@ -102,6 +102,64 @@ public interface TaskDao {
 	void add(final Collection<Task> tasks) throws DatabaseException;
 
 	/**
+	 * @param companyId
+	 *            the unique id of the company for which tasks will be activated
+	 * @param taskIds
+	 *            the unique ids of the tasks to make active
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if either of the provided parameters are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	void activate(final Integer companyId, final Integer... taskIds)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which tasks will be activated
+	 * @param taskIds
+	 *            the unique ids of the tasks to make active
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if either of the provided parameters are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	void activate(final Integer companyId, final Collection<Integer> taskIds)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which tasks will be
+	 *            deactivated
+	 * @param taskIds
+	 *            the unique ids of the tasks to make inactive
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if either of the provided parameters are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	void deactivate(final Integer companyId, final Integer... taskIds)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which tasks will be
+	 *            deactivated
+	 * @param taskIds
+	 *            the unique ids of the tasks to make inactive
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if either of the provided parameters are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	void deactivate(final Integer companyId, final Collection<Integer> taskIds)
+			throws DatabaseException;
+
+	/**
 	 * @param tasks
 	 *            the tasks to be updated
 	 * 

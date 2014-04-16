@@ -85,6 +85,12 @@
 .icon-user-edit {
 	background-image:		url(/img/user_edit.png) !important;
 }
+.icon-user-activate {
+	background-image:		url(/img/user_activate.png) !important;
+}
+.icon-user-deactivate {
+	background-image:		url(/img/user_deactivate.png) !important;
+}
 .icon-user-go {
 	background-image:		url(/img/user_go.png) !important;
 }

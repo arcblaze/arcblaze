@@ -67,7 +67,7 @@ public class HolidayResourceTest {
 	 *             if there is a bad holiday config
 	 */
 	@Test(expected = BadRequestException.class)
-	public void testOneInvalidId() throws DatabaseException,
+	public void testGetInvalidId() throws DatabaseException,
 			HolidayConfigurationException {
 		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
@@ -95,7 +95,7 @@ public class HolidayResourceTest {
 	 *             if there is a bad holiday config
 	 */
 	@Test
-	public void testOne() throws DatabaseException,
+	public void testGet() throws DatabaseException,
 			HolidayConfigurationException {
 		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {

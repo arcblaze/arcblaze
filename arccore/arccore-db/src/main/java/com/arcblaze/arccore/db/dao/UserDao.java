@@ -95,13 +95,16 @@ public interface UserDao {
 	/**
 	 * @param companyId
 	 *            the unique id of the company for which users will be retrieved
+	 * @param includeInactive
+	 *            whether inactive users should be included in the response
 	 * 
 	 * @return all available users, possibly empty but never {@code null}
 	 * 
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	Set<User> getAll(final Integer companyId) throws DatabaseException;
+	Set<User> getAll(final Integer companyId, final boolean includeInactive)
+			throws DatabaseException;
 
 	/**
 	 * @return all available users, possibly empty but never {@code null}
@@ -140,6 +143,64 @@ public interface UserDao {
 	 */
 	void add(final Collection<User> users)
 			throws DatabaseUniqueConstraintException, DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which users will be activated
+	 * @param userIds
+	 *            the unique ids of the users to make active
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if either of the provided parameters are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	void activate(final Integer companyId, final Integer... userIds)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which users will be activated
+	 * @param userIds
+	 *            the unique ids of the users to make active
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if either of the provided parameters are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	void activate(final Integer companyId, final Collection<Integer> userIds)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which users will be
+	 *            deactivated
+	 * @param userIds
+	 *            the unique ids of the users to make inactive
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if either of the provided parameters are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	void deactivate(final Integer companyId, final Integer... userIds)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which users will be
+	 *            deactivated
+	 * @param userIds
+	 *            the unique ids of the users to make inactive
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if either of the provided parameters are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	void deactivate(final Integer companyId, final Collection<Integer> userIds)
+			throws DatabaseException;
 
 	/**
 	 * Save property updates within the provided users to the database. Note

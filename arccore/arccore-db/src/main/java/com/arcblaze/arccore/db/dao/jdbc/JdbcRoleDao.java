@@ -13,8 +13,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.arcblaze.arccore.common.model.Role;
 import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.ConnectionManager;
@@ -81,17 +79,16 @@ public class JdbcRoleDao implements RoleDao {
 		for (final User user : users)
 			userMap.put(user.getId(), user);
 
-		final String sql = String.format(
-				"SELECT * FROM roles WHERE user_id IN (%s)",
-				StringUtils.join(userMap.keySet(), ","));
+		final String sql = "SELECT * FROM roles WHERE user_id = ?";
 
 		try (final Connection conn = this.connectionManager.getConnection();
-				final PreparedStatement ps = conn.prepareStatement(sql);
-				final ResultSet rs = ps.executeQuery()) {
-			while (rs.next()) {
-				final User user = userMap.get(rs.getInt("user_id"));
-				if (user != null)
-					user.addRoles(new Role(rs.getString("name")));
+				final PreparedStatement ps = conn.prepareStatement(sql)) {
+			for (final User user : users) {
+				ps.setInt(1, user.getId());
+				try (final ResultSet rs = ps.executeQuery()) {
+					while (rs.next())
+						user.addRoles(new Role(rs.getString("name")));
+				}
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);

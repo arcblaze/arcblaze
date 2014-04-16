@@ -41,11 +41,12 @@ public class SupervisorDaoTest {
 			final SupervisorDao supervisorDao = new JdbcSupervisorDao(
 					database.getConnectionManager());
 
-			final Company company = new Company().setName("company");
-			companyDao.add(company);
+			final Company company1 = new Company().setName("company1");
+			final Company company2 = new Company().setName("company2");
+			companyDao.add(company1, company2);
 
 			final User supervisor1 = new User();
-			supervisor1.setCompanyId(company.getId());
+			supervisor1.setCompanyId(company1.getId());
 			supervisor1.setLogin("s1");
 			supervisor1.setHashedPass("hashed");
 			supervisor1.setSalt("salt");
@@ -55,7 +56,7 @@ public class SupervisorDaoTest {
 			supervisor1.setActive(true);
 
 			final User supervisor2 = new User();
-			supervisor2.setCompanyId(company.getId());
+			supervisor2.setCompanyId(company1.getId());
 			supervisor2.setLogin("s2");
 			supervisor2.setHashedPass("hashed");
 			supervisor2.setSalt("salt");
@@ -64,8 +65,19 @@ public class SupervisorDaoTest {
 			supervisor2.setLastName("last");
 			supervisor2.setActive(true);
 
+			// In a different company.
+			final User supervisor3 = new User();
+			supervisor3.setCompanyId(company2.getId());
+			supervisor3.setLogin("s3");
+			supervisor3.setHashedPass("hashed");
+			supervisor3.setSalt("salt");
+			supervisor3.setEmail("s3@whatever.com");
+			supervisor3.setFirstName("first");
+			supervisor3.setLastName("last");
+			supervisor3.setActive(true);
+
 			final User user = new User();
-			user.setCompanyId(company.getId());
+			user.setCompanyId(company1.getId());
 			user.setLogin("user");
 			user.setHashedPass("hashed");
 			user.setSalt("salt");
@@ -74,19 +86,21 @@ public class SupervisorDaoTest {
 			user.setLastName("last");
 			user.setActive(true);
 
-			userDao.add(supervisor1, supervisor2, user);
+			userDao.add(supervisor1, supervisor2, supervisor3, user);
 
 			Set<Supervisor> supervisors = supervisorDao.getSupervisors(
-					company.getId(), user.getId());
+					company1.getId(), user.getId());
 			assertNotNull(supervisors);
 			assertTrue(supervisors.isEmpty());
 
-			supervisorDao.add(company.getId(), user.getId(), true,
+			supervisorDao.add(company1.getId(), user.getId(), true,
 					supervisor1.getId());
-			supervisorDao.add(company.getId(), user.getId(), false,
+			supervisorDao.add(company1.getId(), user.getId(), false,
 					supervisor2.getId());
+			supervisorDao.add(company2.getId(), user.getId(), false,
+					supervisor3.getId());
 
-			supervisors = supervisorDao.getSupervisors(company.getId(),
+			supervisors = supervisorDao.getSupervisors(company1.getId(),
 					user.getId());
 			assertNotNull(supervisors);
 			assertEquals(2, supervisors.size());
@@ -99,10 +113,10 @@ public class SupervisorDaoTest {
 			assertEquals(supervisor2.getId(), supervisor.getId());
 			assertFalse(supervisor.isPrimary());
 
-			supervisorDao.delete(company.getId(), user.getId(),
+			supervisorDao.delete(company1.getId(), user.getId(),
 					supervisor2.getId());
 
-			supervisors = supervisorDao.getSupervisors(company.getId(),
+			supervisors = supervisorDao.getSupervisors(company1.getId(),
 					user.getId());
 			assertNotNull(supervisors);
 			assertEquals(1, supervisors.size());
@@ -111,10 +125,10 @@ public class SupervisorDaoTest {
 			assertEquals(supervisor1.getId(), supervisor.getId());
 			assertTrue(supervisor.isPrimary());
 
-			supervisorDao.delete(company.getId(), user.getId(),
+			supervisorDao.delete(company1.getId(), user.getId(),
 					supervisor1.getId());
 
-			supervisors = supervisorDao.getSupervisors(company.getId(),
+			supervisors = supervisorDao.getSupervisors(company1.getId(),
 					user.getId());
 			assertNotNull(supervisors);
 			assertTrue(supervisors.isEmpty());

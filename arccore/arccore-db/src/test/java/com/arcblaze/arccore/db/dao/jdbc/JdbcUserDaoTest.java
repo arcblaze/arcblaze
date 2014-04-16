@@ -95,7 +95,7 @@ public class JdbcUserDaoTest {
 			assertEquals(1, users.size());
 			assertTrue(users.contains(user));
 
-			users = userDao.getAll(company.getId());
+			users = userDao.getAll(company.getId(), true);
 			assertNotNull(users);
 			assertEquals(1, users.size());
 			assertTrue(users.contains(user));
@@ -131,6 +131,20 @@ public class JdbcUserDaoTest {
 
 			assertEquals(1, userDao.count(true));
 			assertEquals(0, userDao.count(false));
+			assertEquals(1, userDao.getAll(company.getId(), true).size());
+			assertEquals(0, userDao.getAll(company.getId(), false).size());
+
+			userDao.activate(company.getId(), user.getId());
+			assertEquals(1, userDao.count(true));
+			assertEquals(1, userDao.count(false));
+			assertEquals(1, userDao.getAll(company.getId(), true).size());
+			assertEquals(1, userDao.getAll(company.getId(), false).size());
+
+			userDao.deactivate(company.getId(), user.getId());
+			assertEquals(1, userDao.count(true));
+			assertEquals(0, userDao.count(false));
+			assertEquals(1, userDao.getAll(company.getId(), true).size());
+			assertEquals(0, userDao.getAll(company.getId(), false).size());
 
 			userDao.delete(user.getId());
 			getUser = userDao.get(user.getId());

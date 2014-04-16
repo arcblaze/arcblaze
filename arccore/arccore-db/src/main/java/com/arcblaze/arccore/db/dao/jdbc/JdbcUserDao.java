@@ -201,13 +201,18 @@ public class JdbcUserDao implements UserDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<User> getAll(final Integer companyId) throws DatabaseException {
+	public Set<User> getAll(final Integer companyId,
+			final boolean includeInactive) throws DatabaseException {
 		notNull(companyId, "Invalid null company id");
 
-		final String sql = "SELECT * FROM users WHERE company_id = ?";
+		final StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM users WHERE company_id = ?");
+		if (!includeInactive)
+			sql.append(" AND active = true");
 
 		try (final Connection conn = this.connectionManager.getConnection();
-				final PreparedStatement ps = conn.prepareStatement(sql)) {
+				final PreparedStatement ps = conn.prepareStatement(sql
+						.toString())) {
 			ps.setInt(1, companyId);
 			final Set<User> users = new TreeSet<>();
 			try (final ResultSet rs = ps.executeQuery()) {
@@ -292,6 +297,74 @@ public class JdbcUserDao implements UserDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void activate(final Integer companyId, final Integer... ids)
+			throws DatabaseException {
+		this.activate(companyId, ids == null ? null : Arrays.asList(ids));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void activate(final Integer companyId, final Collection<Integer> ids)
+			throws DatabaseException {
+		if (ids == null || ids.isEmpty())
+			return;
+		notNull(companyId, "Invalid null company id");
+
+		final String sql = "UPDATE users SET active = true "
+				+ "WHERE company_id = ? AND id = ?";
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql)) {
+			for (final Integer id : ids) {
+				ps.setInt(1, companyId);
+				ps.setInt(2, id);
+				ps.executeUpdate();
+			}
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deactivate(final Integer companyId, final Integer... ids)
+			throws DatabaseException {
+		this.deactivate(companyId, ids == null ? null : Arrays.asList(ids));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deactivate(final Integer companyId,
+			final Collection<Integer> ids) throws DatabaseException {
+		if (ids == null || ids.isEmpty())
+			return;
+		notNull(companyId, "Invalid null company id");
+
+		final String sql = "UPDATE users SET active = false "
+				+ "WHERE company_id = ? AND id = ?";
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql)) {
+			for (final Integer id : ids) {
+				ps.setInt(1, companyId);
+				ps.setInt(2, id);
+				ps.executeUpdate();
+			}
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void update(final User... users)
 			throws DatabaseUniqueConstraintException, DatabaseException {
 		this.update(users == null ? null : Arrays.asList(users));
@@ -308,20 +381,20 @@ public class JdbcUserDao implements UserDao {
 
 		// NOTE: the hashed_pass and salt values are not updated.
 
-		final String sql = "UPDATE users SET company_id = ?, login = ?, "
-				+ "email = ?, first_name = ?, last_name = ?, active = ? "
-				+ "WHERE id = ?";
+		final String sql = "UPDATE users SET login = ?, email = ?, "
+				+ "first_name = ?, last_name = ?, active = ? "
+				+ "WHERE company_id = ? AND id = ?";
 
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final User user : users) {
 				int index = 1;
-				ps.setInt(index++, user.getCompanyId());
 				ps.setString(index++, user.getLogin());
 				ps.setString(index++, user.getEmail());
 				ps.setString(index++, user.getFirstName());
 				ps.setString(index++, user.getLastName());
 				ps.setBoolean(index++, user.isActive());
+				ps.setInt(index++, user.getCompanyId());
 				ps.setInt(index++, user.getId());
 				ps.executeUpdate();
 			}

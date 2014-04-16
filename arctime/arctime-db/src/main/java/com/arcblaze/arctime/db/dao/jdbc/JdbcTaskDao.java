@@ -279,6 +279,74 @@ public class JdbcTaskDao implements TaskDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void activate(final Integer companyId, final Integer... ids)
+			throws DatabaseException {
+		this.activate(companyId, ids == null ? null : Arrays.asList(ids));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void activate(final Integer companyId, final Collection<Integer> ids)
+			throws DatabaseException {
+		if (ids == null || ids.isEmpty())
+			return;
+		notNull(companyId, "Invalid null company id");
+
+		final String sql = "UPDATE tasks SET active = true "
+				+ "WHERE company_id = ? AND id = ?";
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql)) {
+			for (final Integer id : ids) {
+				ps.setInt(1, companyId);
+				ps.setInt(2, id);
+				ps.executeUpdate();
+			}
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deactivate(final Integer companyId, final Integer... ids)
+			throws DatabaseException {
+		this.deactivate(companyId, ids == null ? null : Arrays.asList(ids));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deactivate(final Integer companyId,
+			final Collection<Integer> ids) throws DatabaseException {
+		if (ids == null || ids.isEmpty())
+			return;
+		notNull(companyId, "Invalid null company id");
+
+		final String sql = "UPDATE tasks SET active = false "
+				+ "WHERE company_id = ? AND id = ?";
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql)) {
+			for (final Integer id : ids) {
+				ps.setInt(1, companyId);
+				ps.setInt(2, id);
+				ps.executeUpdate();
+			}
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void update(final Task... tasks) throws DatabaseException {
 		this.update(tasks == null ? null : Arrays.asList(tasks));
 	}
@@ -292,7 +360,7 @@ public class JdbcTaskDao implements TaskDao {
 			return;
 
 		final String sql = "UPDATE tasks SET description = ?, job_code = ?, "
-				+ "admin = ?, active = ? WHERE id = ?";
+				+ "admin = ?, active = ? WHERE company_id = ? AND id = ?";
 
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -302,6 +370,7 @@ public class JdbcTaskDao implements TaskDao {
 				ps.setString(index++, task.getJobCode());
 				ps.setBoolean(index++, task.isAdministrative());
 				ps.setBoolean(index++, task.isActive());
+				ps.setInt(index++, task.getCompanyId());
 				ps.setInt(index++, task.getId());
 				ps.executeUpdate();
 			}

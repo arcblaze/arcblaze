@@ -5,14 +5,12 @@ Ext.define('data.model.Stat', {
 	extend: 'Ext.data.Model',
 	fields: [
 		{
-			id:        'name',
 			name:      'name',
 			dataIndex: 'name',
 			header:    'Name',
 			width:     140,
 			sortable:  true
 		}, {
-			id:        'value',
 			name:      'value',
 			dataIndex: 'value',
 			header:    'Value',
@@ -27,7 +25,6 @@ Ext.define('data.model.Stat', {
 			flds.push({
 				dataIndex: field.dataIndex,
 				hidden:    field.hidden,
-				id:        field.id,
 				renderer:  field.renderer,
 				sortable:  field.sortable,
 				text:      field.header,
