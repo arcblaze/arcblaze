@@ -39,7 +39,7 @@ public class TaskResource extends BaseResource {
 		public final String title = "User Deleted";
 
 		@XmlElement
-		public final String msg = "The specified users have been deleted "
+		public final String msg = "The specified tasks have been deleted "
 				+ "successfully.";
 	}
 
@@ -49,7 +49,7 @@ public class TaskResource extends BaseResource {
 		public final boolean success = true;
 
 		@XmlElement
-		public final String msg = "The user was added successfully.";
+		public final String msg = "The task was added successfully.";
 
 		@XmlElement
 		public Task task;
@@ -61,7 +61,7 @@ public class TaskResource extends BaseResource {
 		public final boolean success = true;
 
 		@XmlElement
-		public final String msg = "The specified users were activated successfully.";
+		public final String msg = "The specified tasks were activated successfully.";
 	}
 
 	@XmlRootElement
@@ -70,7 +70,7 @@ public class TaskResource extends BaseResource {
 		public final boolean success = true;
 
 		@XmlElement
-		public final String msg = "The specified users were deactivated successfully.";
+		public final String msg = "The specified tasks were deactivated successfully.";
 	}
 
 	@XmlRootElement
@@ -79,7 +79,7 @@ public class TaskResource extends BaseResource {
 		public final boolean success = true;
 
 		@XmlElement
-		public final String msg = "The user was modified successfully.";
+		public final String msg = "The task was modified successfully.";
 
 		@XmlElement
 		public Task task;
