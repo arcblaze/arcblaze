@@ -25,6 +25,9 @@ public interface AssignmentDao {
 	Assignment get(final Integer assignmentId) throws DatabaseException;
 
 	/**
+	 * @param companyId
+	 *            the unique id of the company for which assignments should be
+	 *            retrieved
 	 * @param userId
 	 *            the unique id of the user for which assignments will be
 	 *            retrieved
@@ -40,8 +43,30 @@ public interface AssignmentDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	Set<Assignment> getForUser(final Integer userId, final Date day)
-			throws DatabaseException;
+	Set<Assignment> getForUser(final Integer companyId, final Integer userId,
+			final Date day) throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which assignments should be
+	 *            retrieved
+	 * @param taskId
+	 *            the unique id of the task for which assignments will be
+	 *            retrieved
+	 * @param day
+	 *            the day for which assignments must be valid, may be
+	 *            {@code null} if date is not important
+	 * 
+	 * @return all available assignments for the user during the specified day,
+	 *         possibly empty but never {@code null}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id or day is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	Set<Assignment> getForTask(final Integer companyId, final Integer taskId,
+			final Date day) throws DatabaseException;
 
 	/**
 	 * @param assignments

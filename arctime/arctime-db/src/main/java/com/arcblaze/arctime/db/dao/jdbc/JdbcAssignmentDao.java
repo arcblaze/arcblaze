@@ -15,10 +15,12 @@ import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.ConnectionManager;
 import com.arcblaze.arccore.db.DatabaseException;
 import com.arcblaze.arctime.common.model.Assignment;
 import com.arcblaze.arctime.common.model.PayPeriod;
+import com.arcblaze.arctime.common.model.Task;
 import com.arcblaze.arctime.db.dao.AssignmentDao;
 
 /**
@@ -51,6 +53,22 @@ public class JdbcAssignmentDao implements AssignmentDao {
 		final Date end = rs.getDate("end");
 		if (end != null)
 			assignment.setEnd(end);
+
+		final User user = new User();
+		user.setId(rs.getInt("user_id"));
+		user.setLogin(rs.getString("login"));
+		user.setEmail(rs.getString("email"));
+		user.setFirstName(rs.getString("first_name"));
+		user.setLastName(rs.getString("last_name"));
+		assignment.setUser(user);
+
+		final Task task = new Task();
+		task.setId(rs.getInt("task_id"));
+		task.setDescription(rs.getString("description"));
+		task.setJobCode(rs.getString("job_code"));
+		task.setAdministrative(rs.getBoolean("admin"));
+		assignment.setTask(task);
+
 		return assignment;
 	}
 
@@ -61,7 +79,11 @@ public class JdbcAssignmentDao implements AssignmentDao {
 	public Assignment get(final Integer assignmentId) throws DatabaseException {
 		notNull(assignmentId, "Invalid null assignment id");
 
-		final String sql = "SELECT * FROM assignments WHERE id = ?";
+		final String sql = "SELECT a.*, u.id AS user_id, u.login, u.email, "
+				+ "u.first_name, u.last_name, t.id AS task_id, t.description, "
+				+ "t.job_code, t.admin FROM assignments a "
+				+ "JOIN users u ON (a.user_id = u.id) "
+				+ "JOIN tasks t ON (a.task_id = t.id) WHERE a.id = ?";
 
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -80,22 +102,72 @@ public class JdbcAssignmentDao implements AssignmentDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<Assignment> getForUser(final Integer userId, final Date day)
-			throws DatabaseException {
+	public Set<Assignment> getForUser(final Integer companyId,
+			final Integer userId, final Date day) throws DatabaseException {
 		notNull(userId, "Invalid null user id");
 
-		String sql = "SELECT * FROM assignments WHERE user_id = ?";
+		final StringBuilder sql = new StringBuilder();
+		sql.append("SELECT a.*, u.id AS user_id, u.login, u.email, ");
+		sql.append("u.first_name, u.last_name, t.id AS task_id, ");
+		sql.append("t.description, t.job_code, t.admin FROM assignments a ");
+		sql.append("JOIN users u ON (a.user_id = u.id) ");
+		sql.append("JOIN tasks t ON (a.task_id = t.id) WHERE a.user_id = ? ");
+		sql.append("AND a.company_id = ? ");
 		if (day != null) {
-			sql += " AND (begin IS NULL OR begin <= ?)";
-			sql += " AND (end IS NULL OR end >= ?)";
+			sql.append(" AND (begin IS NULL OR begin <= ?)");
+			sql.append(" AND (end IS NULL OR end >= ?)");
 		}
 
 		try (final Connection conn = this.connectionManager.getConnection();
-				final PreparedStatement ps = conn.prepareStatement(sql)) {
+				final PreparedStatement ps = conn.prepareStatement(sql
+						.toString())) {
 			ps.setInt(1, userId);
+			ps.setInt(2, companyId);
 			if (day != null) {
-				ps.setTimestamp(2, new Timestamp(day.getTime()));
 				ps.setTimestamp(3, new Timestamp(day.getTime()));
+				ps.setTimestamp(4, new Timestamp(day.getTime()));
+			}
+
+			final Set<Assignment> assignments = new TreeSet<>();
+			try (final ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					assignments.add(fromResultSet(rs));
+			}
+
+			return assignments;
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<Assignment> getForTask(final Integer companyId,
+			final Integer taskId, final Date day) throws DatabaseException {
+		notNull(taskId, "Invalid null task id");
+
+		final StringBuilder sql = new StringBuilder();
+		sql.append("SELECT a.*, u.id AS user_id, u.login, u.email, ");
+		sql.append("u.first_name, u.last_name, t.id AS task_id, ");
+		sql.append("t.description, t.job_code, t.admin FROM assignments a ");
+		sql.append("JOIN users u ON (a.user_id = u.id) ");
+		sql.append("JOIN tasks t ON (a.task_id = t.id) WHERE a.task_id = ? ");
+		sql.append("AND a.company_id = ? ");
+		if (day != null) {
+			sql.append(" AND (begin IS NULL OR begin <= ?)");
+			sql.append(" AND (end IS NULL OR end >= ?)");
+		}
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql
+						.toString())) {
+			ps.setInt(1, taskId);
+			ps.setInt(2, companyId);
+			if (day != null) {
+				ps.setTimestamp(3, new Timestamp(day.getTime()));
+				ps.setTimestamp(4, new Timestamp(day.getTime()));
 			}
 
 			final Set<Assignment> assignments = new TreeSet<>();
@@ -120,11 +192,16 @@ public class JdbcAssignmentDao implements AssignmentDao {
 		notNull(userId, "Invalid null user id");
 		notNull(payPeriod, "Invalid null pay period");
 
-		final String sql = "SELECT * FROM assignments WHERE user_id = ? AND "
-				+ "(begin IS NULL OR begin <= ?) AND "
-				+ "(end IS NULL OR end >= ?)";
+		final StringBuilder sql = new StringBuilder();
+		sql.append("SELECT a.*, u.id AS user_id, u.login, u.email, ");
+		sql.append("u.first_name, u.last_name, t.id AS task_id, ");
+		sql.append("t.description, t.job_code, t.admin FROM assignments a ");
+		sql.append("JOIN users u ON (a.user_id = u.id) ");
+		sql.append("JOIN tasks t ON (a.task_id = t.id) WHERE a.user_id = ? ");
+		sql.append("AND (begin IS NULL OR begin <= ?) ");
+		sql.append("AND (end IS NULL OR end >= ?)");
 
-		try (final PreparedStatement ps = conn.prepareStatement(sql)) {
+		try (final PreparedStatement ps = conn.prepareStatement(sql.toString())) {
 			ps.setInt(1, userId);
 			ps.setTimestamp(2, new Timestamp(payPeriod.getEnd().getTime()));
 			ps.setTimestamp(3, new Timestamp(payPeriod.getBegin().getTime()));

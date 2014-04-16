@@ -64,17 +64,23 @@ Ext.define('data.model.TaskUser', {
 			width:     220,
 			sortable:  true
 		}, {
-			name:      'start',
-			dataIndex: 'start',
-			header:    'Start',
+			name:      'begin',
+			dataIndex: 'begin',
+			header:    'Begin',
 			width:     80,
-			sortable:  true
+			sortable:  true,
+			renderer:  function(value) {
+				return Ext.Date.format(new Date(value), 'D, M j, Y');
+			}
 		}, {
 			name:      'end',
 			dataIndex: 'end',
 			header:    'End',
 			width:     80,
-			sortable:  true
+			sortable:  true,
+			renderer:  function(value) {
+				return Ext.Date.format(new Date(value), 'D, M j, Y');
+			}
 		}, {
 			name:      'email',
 			dataIndex: 'email',

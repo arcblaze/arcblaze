@@ -41,7 +41,7 @@ Ext.define('data.model.UserTask', {
 			name:      'laborCat',
 			dataIndex: 'laborCat',
 			header:    'Labor Category',
-			width:     90,
+			width:     160,
 			sortable:  true
 		}, {
 			name:      'itemName',
@@ -50,17 +50,23 @@ Ext.define('data.model.UserTask', {
 			width:     220,
 			sortable:  true
 		}, {
-			name:      'start',
-			dataIndex: 'start',
-			header:    'Start',
+			name:      'begin',
+			dataIndex: 'begin',
+			header:    'Begin',
 			width:     80,
-			sortable:  true
+			sortable:  true,
+			renderer:  function(value) {
+				return Ext.Date.format(new Date(value), 'Y-m-d');
+			}
 		}, {
 			name:      'end',
 			dataIndex: 'end',
 			header:    'End',
 			width:     80,
-			sortable:  true
+			sortable:  true,
+			renderer:  function(value) {
+				return Ext.Date.format(new Date(value), 'Y-m-d');
+			}
 		}, {
 			name:      'admin',
 			dataIndex: 'admin',

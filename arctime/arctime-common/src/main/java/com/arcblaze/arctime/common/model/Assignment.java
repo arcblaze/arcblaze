@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -25,6 +26,9 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.commons.lang.time.DateUtils;
+
+import com.arcblaze.arccore.common.model.Role;
+import com.arcblaze.arccore.common.model.User;
 
 /**
  * Represents an assignment of a user to a task.
@@ -48,9 +52,19 @@ public class Assignment implements Comparable<Assignment> {
 	private Integer taskId;
 
 	/**
+	 * The task associated with this assignment.
+	 */
+	private Task task;
+
+	/**
 	 * The unique id of the user assigned to the task.
 	 */
 	private Integer userId;
+
+	/**
+	 * The user associated with this assignment.
+	 */
+	private User user;
 
 	/**
 	 * The labor category being used by the user on the task.
@@ -110,6 +124,11 @@ public class Assignment implements Comparable<Assignment> {
 		if (other.getEnd() != null)
 			setEnd(other.getEnd());
 		setBills(other.getBills());
+
+		if (other.getUser() != null)
+			setUser(other.getUser());
+		if (other.getTask() != null)
+			setTask(other.getTask());
 	}
 
 	/**
@@ -212,6 +231,28 @@ public class Assignment implements Comparable<Assignment> {
 	}
 
 	/**
+	 * @return whether a task has been set in this assignment
+	 */
+	public boolean hasTask() {
+		return this.task != null;
+	}
+
+	/**
+	 * @return the task in the assignment
+	 */
+	public Task getTask() {
+		return this.task;
+	}
+
+	/**
+	 * @param task
+	 *            the new task in the assignment
+	 */
+	public void setTask(final Task task) {
+		this.task = new Task(task);
+	}
+
+	/**
 	 * @return the unique id of the user for which this assignment applies
 	 */
 	@XmlElement
@@ -235,6 +276,28 @@ public class Assignment implements Comparable<Assignment> {
 
 		this.userId = userId;
 		return this;
+	}
+
+	/**
+	 * @return whether a user has been set in this assignment
+	 */
+	public boolean hasUser() {
+		return this.user != null;
+	}
+
+	/**
+	 * @return the user in the assignment
+	 */
+	public User getUser() {
+		return this.user;
+	}
+
+	/**
+	 * @param user
+	 *            the new user in the assignment
+	 */
+	public void setUser(final User user) {
+		this.user = new User(user);
 	}
 
 	/**
@@ -431,6 +494,98 @@ public class Assignment implements Comparable<Assignment> {
 	public Assignment clearBills() {
 		this.bills.clear();
 		return this;
+	}
+
+	/**
+	 * @return the task description
+	 */
+	@XmlElement
+	public String getDescription() {
+		return this.task == null ? null : this.task.getDescription();
+	}
+
+	/**
+	 * @return the job code associated with the task
+	 */
+	@XmlElement
+	public String getJobCode() {
+		return this.task == null ? null : this.task.getJobCode();
+	}
+
+	/**
+	 * @return whether the task is administrative and available to all users
+	 */
+	@XmlElement
+	public Boolean isAdministrative() {
+		return this.task == null ? null : this.task.isAdministrative();
+	}
+
+	/**
+	 * @return the user login value
+	 */
+	@XmlElement
+	public String getLogin() {
+		return this.user == null ? null : this.user.getLogin();
+	}
+
+	/**
+	 * @return the user's email address
+	 */
+	@XmlElement
+	public String getEmail() {
+		return this.user == null ? null : this.user.getEmail();
+	}
+
+	/**
+	 * @return the user's first name
+	 */
+	@XmlElement
+	public String getFirstName() {
+		return this.user == null ? null : this.user.getFirstName();
+	}
+
+	/**
+	 * @return the user's last name
+	 */
+	@XmlElement
+	public String getLastName() {
+		return this.user == null ? null : this.user.getLastName();
+	}
+
+	/**
+	 * @return the full name of the user
+	 */
+	@XmlElement
+	public String getFullName() {
+		if (this.user == null)
+			return null;
+		final StringBuilder name = new StringBuilder();
+		name.append(getFirstName());
+		name.append(" ");
+		name.append(getLastName());
+		return name.toString();
+	}
+
+	/**
+	 * @return the privileges available to the user, based on the roles
+	 */
+	@XmlElement
+	public String getPrivileges() {
+		if (this.user == null)
+			return null;
+		final Set<Character> privs = new TreeSet<>();
+		for (final Role role : getRoles())
+			privs.add(role.getName().charAt(0));
+		return StringUtils.join(privs, " ");
+	}
+
+	/**
+	 * @return all of the roles authorized for the user account
+	 */
+	@XmlElementWrapper
+	@XmlElement(name = "role")
+	public Set<Role> getRoles() {
+		return this.user == null ? new HashSet<Role>() : this.user.getRoles();
 	}
 
 	/**

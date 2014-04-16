@@ -12,7 +12,7 @@ data.store.manager.TaskUserStore = Ext.extend(Ext.data.JsonStore, {
 			autoLoad: true,
 			proxy: {
 				type: 'ajax',
-				url: '/rest/manager/user/task/' + c.task.data.id,
+				url: '/rest/manager/assignment/task/' + c.task.data.id,
 				reader: {
 					type: 'json',
 					root: 'users'
