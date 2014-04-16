@@ -69,13 +69,13 @@ ui.panel.manager.task.TaskUpdatePanel = Ext.extend(Ext.form.FormPanel, {
 							boxLabel:   'Yes',
 							name:       'administrative',
 							id:         'task-admin-modify-yes',
-							inputValue: 1,
+							inputValue: 'true',
 							style:      'border: 0px;'
 						}, {
 							boxLabel:   'No',
 							name:       'administrative',
 							id:         'task-admin-modify-no',
-							inputValue: 0,
+							inputValue: 'false',
 							style:      'border: 0px;'
 						}
 					]
@@ -95,13 +95,13 @@ ui.panel.manager.task.TaskUpdatePanel = Ext.extend(Ext.form.FormPanel, {
 							boxLabel:   'Yes',
 							name:       'active',
 							id:         'task-active-modify-yes',
-							inputValue: 1,
+							inputValue: 'true',
 							style:      'border: 0px;'
 						}, {
 							boxLabel:   'No',
 							name:       'active',
 							id:         'task-active-modify-no',
-							inputValue: 0,
+							inputValue: 'false',
 							style:      'border: 0px;'
 						}
 					]

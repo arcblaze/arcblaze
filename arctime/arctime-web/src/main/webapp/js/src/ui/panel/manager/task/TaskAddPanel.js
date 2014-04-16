@@ -66,14 +66,14 @@ ui.panel.manager.task.TaskAddPanel = Ext.extend(Ext.form.FormPanel, {
 							boxLabel:   'Yes',
 							name:       'administrative',
 							id:         'task-admin-yes',
-							inputValue: 1,
+							inputValue: 'true',
 							checked:    false,
 							style:      'border: 0px;'
 						}, {
 							boxLabel:   'No',
 							name:       'administrative',
 							id:         'task-admin-no',
-							inputValue: 0,
+							inputValue: 'false',
 							checked:    true,
 							style:      'border: 0px;'
 						}
@@ -94,14 +94,14 @@ ui.panel.manager.task.TaskAddPanel = Ext.extend(Ext.form.FormPanel, {
 							boxLabel:   'Yes',
 							name:       'active',
 							id:         'task-active-yes',
-							inputValue: 1,
+							inputValue: 'true',
 							checked:    true,
 							style:      'border: 0px;'
 						}, {
 							boxLabel:   'No',
 							name:       'active',
 							id:         'task-active-no',
-							inputValue: 0,
+							inputValue: 'false',
 							checked:    false,
 							style:      'border: 0px;'
 						}
