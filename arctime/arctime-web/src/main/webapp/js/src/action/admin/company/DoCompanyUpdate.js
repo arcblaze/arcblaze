@@ -25,6 +25,8 @@ action.admin.company.DoCompanyUpdate = function() {
 				message: true,
 				mysuccess: function(data) {
 					var grid = Ext.getCmp('ui.grid.admin.companygrid');
+					grid.selModel.clearSelections();
+					grid.selModel.fireEvent('selectionchange', grid.selModel);
 					grid.getStore().reload();
 				}
 			});

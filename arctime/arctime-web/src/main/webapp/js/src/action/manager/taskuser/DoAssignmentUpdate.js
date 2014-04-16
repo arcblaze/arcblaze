@@ -38,6 +38,8 @@ action.manager.taskuser.DoAssignmentUpdate = function(task) {
 				mysuccess: function(data) {
 					// Get the grid.
 					var grid = Ext.getCmp('ui.grid.manager.taskusergrid');
+					grid.selModel.clearSelections();
+					grid.selModel.fireEvent('selectionchange', grid.selModel);
 
 					// Reload the data store.
 					grid.getStore().reload();

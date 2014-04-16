@@ -41,6 +41,8 @@ action.manager.user.DoUserActivate = function() {
 				mysuccess: function(data) {
 					// Get the grid.
 					var grid = Ext.getCmp('ui.grid.manager.usergrid');
+					grid.selModel.clearSelections();
+					grid.selModel.fireEvent('selectionchange', grid.selModel);
 
 					// Reload the data store.
 					grid.getStore().reload();

@@ -26,6 +26,8 @@ action.admin.company.DoCompanyActivate = function() {
 				},
 				mysuccess: function(data) {
 					var grid = Ext.getCmp('ui.grid.admin.companygrid');
+					grid.selModel.clearSelections();
+					grid.selModel.fireEvent('selectionchange', grid.selModel);
 					grid.getStore().reload();
 				}
 			});
