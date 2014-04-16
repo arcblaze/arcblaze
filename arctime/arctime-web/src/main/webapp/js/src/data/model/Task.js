@@ -15,7 +15,7 @@ Ext.define('data.model.Task', {
 			name:      'description',
 			dataIndex: 'description',
 			header:    'Description',
-			width:     220,
+			width:     320,
 			sortable:  true
 		}, {
 			name:      'jobCode',
@@ -37,7 +37,6 @@ Ext.define('data.model.Task', {
 			dataIndex: 'active',
 			header:    'Active',
 			width:     60,
-			hidden:    true,
 			sortable:  true,
 			renderer:  function(val) {
 				return val ? "Yes" : "No";
