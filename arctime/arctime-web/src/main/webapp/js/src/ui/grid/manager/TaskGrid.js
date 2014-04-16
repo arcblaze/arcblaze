@@ -46,7 +46,7 @@ ui.grid.manager.TaskGrid = Ext.extend(Ext.grid.GridPanel, {
 			if (taskUpd)
 				(count == 1) ? taskUpd.enable() : taskUpd.disable();
 			if (taskUsr)
-				(count == 1 && model.selected.items[0].data.admin == "0") ?
+				(count == 1 && !model.selected.items[0].data.administrative) ?
 					taskUsr.enable() : taskUsr.disable();
 			if (taskAct)
 				(count > 0 && allInactive) ?
