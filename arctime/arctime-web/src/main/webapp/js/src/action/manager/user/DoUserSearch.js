@@ -19,10 +19,15 @@ action.manager.user.DoUserSearch = function() {
 
 				// Add the filter to the store.
 				grid.getStore().filterBy(function(rec, recId) {
+					var roles = [ ];
+					for (var i = 0; rec.data.roles && i < rec.data.roles.length; i++)
+						roles.push(rec.data.roles[i].name);
+
 					// Check the searchable fields.
 					return rec.data.fullName.match(r) ||
 						   rec.data.login.match(r) ||
-						   rec.data.email.match(r);
+						   rec.data.email.match(r) ||
+						   roles.join(" ").match(r);
 				});
 			} else
 				// Clear the filter on the store.

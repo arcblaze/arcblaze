@@ -42,7 +42,7 @@ ui.tbar.manager.UserToolbar = Ext.extend(Ext.Toolbar, {
 				'-',
 
 				new Ext.form.TextField({
-					id: 'ui.field.user.search',
+					id: 'ui.field.manager.user.search',
 					width: 100,
 					listeners: {
 						specialkey: function(tf, evt) {
