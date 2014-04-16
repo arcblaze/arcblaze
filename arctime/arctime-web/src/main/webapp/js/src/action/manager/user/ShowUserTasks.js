@@ -17,7 +17,7 @@ action.manager.user.ShowUserTasks = function() {
 			// Create the user task grid.
 			var assignmentGrid = new ui.grid.manager.UserTaskGrid({
 				user:     user,
-				day:      (new Date()).format('Y-m-d'),
+				day:      Ext.Date.format(new Date(), 'Y-m-d'),
 				renderTo: 'user-task-grid'
 			});
 
