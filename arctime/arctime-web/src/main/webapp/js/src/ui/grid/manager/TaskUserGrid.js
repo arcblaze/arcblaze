@@ -17,7 +17,7 @@ ui.grid.manager.TaskUserGrid = Ext.extend(Ext.grid.GridPanel, {
 			stripeRows:       true,
 			autoExpandColumn: 'fullName',
 			autoWidth:        true,
-			height:           300,
+			autoHeight:       true,
 			columns:          taskUser.getColumnModel(),
 			loadMask:         true,
 			store: new data.store.manager.TaskUserStore({

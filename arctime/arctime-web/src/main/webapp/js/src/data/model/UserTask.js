@@ -35,19 +35,19 @@ Ext.define('data.model.UserTask', {
 			name:      'jobCode',
 			dataIndex: 'jobCode',
 			header:    'Job Code',
-			width:     160,
+			width:     180,
 			sortable:  true
 		}, {
 			name:      'laborCat',
 			dataIndex: 'laborCat',
 			header:    'Labor Category',
-			width:     160,
+			width:     180,
 			sortable:  true
 		}, {
 			name:      'itemName',
 			dataIndex: 'itemName',
 			header:    'Item Name',
-			width:     220,
+			width:     215,
 			sortable:  true
 		}, {
 			name:      'begin',
@@ -56,7 +56,7 @@ Ext.define('data.model.UserTask', {
 			width:     80,
 			sortable:  true,
 			renderer:  function(value) {
-				return Ext.Date.format(new Date(value), 'Y-m-d');
+				return Ext.Date.format(new Date(value), 'm/d/Y');
 			}
 		}, {
 			name:      'end',
@@ -65,7 +65,7 @@ Ext.define('data.model.UserTask', {
 			width:     80,
 			sortable:  true,
 			renderer:  function(value) {
-				return Ext.Date.format(new Date(value), 'Y-m-d');
+				return Ext.Date.format(new Date(value), 'm/d/Y');
 			}
 		}, {
 			name:      'admin',

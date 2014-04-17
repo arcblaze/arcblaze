@@ -70,7 +70,7 @@ Ext.define('data.model.TaskUser', {
 			width:     80,
 			sortable:  true,
 			renderer:  function(value) {
-				return Ext.Date.format(new Date(value), 'D, M j, Y');
+				return Ext.Date.format(new Date(value), 'm/d/Y');
 			}
 		}, {
 			name:      'end',
@@ -79,7 +79,7 @@ Ext.define('data.model.TaskUser', {
 			width:     80,
 			sortable:  true,
 			renderer:  function(value) {
-				return Ext.Date.format(new Date(value), 'D, M j, Y');
+				return Ext.Date.format(new Date(value), 'm/d/Y');
 			}
 		}, {
 			name:      'email',

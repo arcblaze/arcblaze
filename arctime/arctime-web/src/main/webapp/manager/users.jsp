@@ -23,6 +23,7 @@
       <!-- Add the employee management scripts. -->
       <script src="/js/src/util/io/ServerIO.js"></script>
       <script src="/js/src/data/model/Supervisor.js"></script>
+      <script src="/js/src/data/model/Task.js"></script>
       <script src="/js/src/data/model/User.js"></script>
       <script src="/js/src/data/model/UserTask.js"></script>
       <script src="/js/src/action/manager/user/DoUserActivate.js"></script>
@@ -45,6 +46,7 @@
       <script src="/js/src/action/manager/supervisor/DoSupervisorAdd.js"></script>
       <script src="/js/src/action/manager/supervisor/DoSupervisorDelete.js"></script>
       <script src="/js/src/action/manager/supervisor/ShowSupervisorAdd.js"></script>
+      <script src="/js/src/data/store/manager/TaskStore.js"></script>
       <script src="/js/src/data/store/manager/UserStore.js"></script>
       <script src="/js/src/data/store/manager/UserTaskStore.js"></script>
       <script src="/js/src/data/store/manager/SupervisorStore.js"></script>
