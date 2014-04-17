@@ -5,6 +5,7 @@ import static org.apache.commons.lang.Validate.notNull;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -12,6 +13,7 @@ import java.sql.Types;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -54,20 +56,29 @@ public class JdbcAssignmentDao implements AssignmentDao {
 		if (end != null)
 			assignment.setEnd(end);
 
-		final User user = new User();
-		user.setId(rs.getInt("user_id"));
-		user.setLogin(rs.getString("login"));
-		user.setEmail(rs.getString("email"));
-		user.setFirstName(rs.getString("first_name"));
-		user.setLastName(rs.getString("last_name"));
-		assignment.setUser(user);
+		final Set<String> labels = new HashSet<>();
+		final ResultSetMetaData meta = rs.getMetaData();
+		for (int i = 1; i < meta.getColumnCount(); i++)
+			labels.add(meta.getColumnLabel(i).toLowerCase());
 
-		final Task task = new Task();
-		task.setId(rs.getInt("task_id"));
-		task.setDescription(rs.getString("description"));
-		task.setJobCode(rs.getString("job_code"));
-		task.setAdministrative(rs.getBoolean("admin"));
-		assignment.setTask(task);
+		if (labels.contains("login")) {
+			final User user = new User();
+			user.setId(rs.getInt("user_id"));
+			user.setLogin(rs.getString("login"));
+			user.setEmail(rs.getString("email"));
+			user.setFirstName(rs.getString("first_name"));
+			user.setLastName(rs.getString("last_name"));
+			assignment.setUser(user);
+		}
+
+		if (labels.contains("job_code")) {
+			final Task task = new Task();
+			task.setId(rs.getInt("task_id"));
+			task.setDescription(rs.getString("description"));
+			task.setJobCode(rs.getString("job_code"));
+			task.setAdministrative(rs.getBoolean("admin"));
+			assignment.setTask(task);
+		}
 
 		return assignment;
 	}
