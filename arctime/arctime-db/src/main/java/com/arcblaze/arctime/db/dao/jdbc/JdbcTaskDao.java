@@ -81,13 +81,21 @@ public class JdbcTaskDao implements TaskDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<Task> getAll(final Integer companyId) throws DatabaseException {
+	public Set<Task> getAll(final Integer companyId,
+			final boolean includeAdmin, final boolean includeInactive)
+			throws DatabaseException {
 		notNull(companyId, "Invalid null company id");
 
-		final String sql = "SELECT * FROM tasks WHERE company_id = ?";
+		final StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM tasks WHERE company_id = ?");
+		if (!includeAdmin)
+			sql.append(" AND admin = false");
+		if (!includeInactive)
+			sql.append(" AND active = true");
 
 		try (final Connection conn = this.connectionManager.getConnection();
-				final PreparedStatement ps = conn.prepareStatement(sql)) {
+				final PreparedStatement ps = conn.prepareStatement(sql
+						.toString())) {
 			ps.setInt(1, companyId);
 			final Set<Task> tasks = new TreeSet<>();
 			try (final ResultSet rs = ps.executeQuery()) {

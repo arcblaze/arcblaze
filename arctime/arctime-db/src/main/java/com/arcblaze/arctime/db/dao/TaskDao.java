@@ -69,6 +69,10 @@ public interface TaskDao {
 	/**
 	 * @param companyId
 	 *            the unique id of the company for which tasks will be retrieved
+	 * @param includeAdmin
+	 *            whether administrative tasks should be included
+	 * @param includeInactive
+	 *            whether inactive tasks should be included
 	 * 
 	 * @return all available tasks, possibly empty but never {@code null}
 	 * 
@@ -77,7 +81,8 @@ public interface TaskDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	Set<Task> getAll(final Integer companyId) throws DatabaseException;
+	Set<Task> getAll(final Integer companyId, final boolean includeAdmin,
+			final boolean includeInactive) throws DatabaseException;
 
 	/**
 	 * @param tasks

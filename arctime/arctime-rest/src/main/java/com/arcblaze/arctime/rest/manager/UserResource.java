@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -144,18 +145,18 @@ public class UserResource extends BaseResource {
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Set<User> all(@Context final SecurityContext security,
+	public Set<User> all(
+			@Context final SecurityContext security,
 			@Context final Config config,
 			@Context final ArcTimeDaoFactory daoFactory,
 			@Context final Timer timer,
-			@QueryParam("includeInactive") final Boolean includeInactive,
-			@QueryParam("filterMe") final Boolean filterMe) {
+			@QueryParam("includeInactive") @DefaultValue("true") final Boolean includeInactive,
+			@QueryParam("filterMe") @DefaultValue("false") final Boolean filterMe) {
 		final User currentUser = (User) security.getUserPrincipal();
 		try (final Timer.Context timerContext = timer.time()) {
 			final Set<User> users = daoFactory.getUserDao().getAll(
-					currentUser.getCompanyId(),
-					includeInactive == null ? true : includeInactive);
-			if (filterMe != null && filterMe)
+					currentUser.getCompanyId(), includeInactive);
+			if (filterMe)
 				users.remove(currentUser);
 			daoFactory.getRoleDao().populateUsers(users);
 			return users;

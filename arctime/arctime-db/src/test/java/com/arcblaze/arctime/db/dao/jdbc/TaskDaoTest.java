@@ -53,7 +53,7 @@ public class TaskDaoTest {
 					true);
 			companyDao.add(company);
 
-			Set<Task> tasks = taskDao.getAll(company.getId());
+			Set<Task> tasks = taskDao.getAll(company.getId(), true, true);
 			assertNotNull(tasks);
 			assertEquals(0, tasks.size());
 
@@ -64,13 +64,44 @@ public class TaskDaoTest {
 			task.setAdministrative(false);
 			task.setActive(true);
 
-			taskDao.add(task);
-			assertNotNull(task.getId());
-			assertEquals(company.getId(), task.getCompanyId());
+			final Task admin = new Task();
+			admin.setCompanyId(company.getId());
+			admin.setDescription("admin");
+			admin.setJobCode("admin");
+			admin.setAdministrative(true);
+			admin.setActive(true);
 
-			Set<Task> getAllTasks = taskDao.getAll(company.getId());
+			final Task inactive = new Task();
+			inactive.setCompanyId(company.getId());
+			inactive.setDescription("inactive");
+			inactive.setJobCode("inactive");
+			inactive.setAdministrative(false);
+			inactive.setActive(false);
+
+			taskDao.add(task, admin, inactive);
+			assertNotNull(task.getId());
+			assertNotNull(inactive.getId());
+			assertEquals(company.getId(), task.getCompanyId());
+			assertEquals(company.getId(), inactive.getCompanyId());
+
+			Set<Task> getAllTasks = taskDao.getAll(company.getId(), true, true);
 			assertNotNull(getAllTasks);
-			assertEquals(1, getAllTasks.size());
+			assertEquals(3, getAllTasks.size());
+			assertTrue(getAllTasks.contains(task));
+			assertTrue(getAllTasks.contains(admin));
+			assertTrue(getAllTasks.contains(inactive));
+
+			getAllTasks = taskDao.getAll(company.getId(), false, true);
+			assertNotNull(getAllTasks);
+			assertEquals(2, getAllTasks.size());
+			assertTrue(getAllTasks.contains(task));
+			assertTrue(getAllTasks.contains(inactive));
+
+			getAllTasks = taskDao.getAll(company.getId(), true, false);
+			assertNotNull(getAllTasks);
+			assertEquals(2, getAllTasks.size());
+			assertTrue(getAllTasks.contains(task));
+			assertTrue(getAllTasks.contains(admin));
 
 			Task getTask = taskDao.get(company.getId(), task.getId());
 			assertEquals(task, getTask);
@@ -92,7 +123,26 @@ public class TaskDaoTest {
 			getTask = taskDao.get(company.getId(), task.getId());
 			assertNull(getTask);
 
-			getAllTasks = taskDao.getAll(company.getId());
+			getAllTasks = taskDao.getAll(company.getId(), false, false);
+			assertNotNull(getAllTasks);
+			assertEquals(0, getAllTasks.size());
+
+			getAllTasks = taskDao.getAll(company.getId(), true, true);
+			assertNotNull(getAllTasks);
+			assertEquals(2, getAllTasks.size());
+			assertTrue(getAllTasks.contains(admin));
+			assertTrue(getAllTasks.contains(inactive));
+
+			taskDao.delete(company.getId(), inactive.getId());
+
+			getAllTasks = taskDao.getAll(company.getId(), true, true);
+			assertNotNull(getAllTasks);
+			assertEquals(1, getAllTasks.size());
+			assertTrue(getAllTasks.contains(admin));
+
+			taskDao.delete(company.getId(), admin.getId());
+
+			getAllTasks = taskDao.getAll(company.getId(), true, true);
 			assertNotNull(getAllTasks);
 			assertEquals(0, getAllTasks.size());
 

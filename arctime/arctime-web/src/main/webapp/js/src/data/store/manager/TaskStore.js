@@ -12,10 +12,11 @@ data.store.manager.TaskStore = Ext.extend(Ext.data.JsonStore, {
 				reader: {
 					type: 'json',
 					root: 'tasks'
+				},
+				extraParams: {
+					includeAdministrative: c ? c.includeAdministrative : true,
+					includeInactive: c ? c.includeInactive : true
 				}
-			},
-			params: {
-				includeAdministrative: c ? c.includeAdministrative : undefined
 			},
 			listeners: {
 				load: function(store, records, options) {

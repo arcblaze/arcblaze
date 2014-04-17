@@ -31,7 +31,8 @@ ui.panel.manager.usertask.AssignmentAddPanel = Ext.extend(Ext.form.FormPanel, {
 					width:          320,
 					allowBlank:     false,
 					store: new data.store.manager.TaskStore({
-						includeAdministrative: false
+						includeAdministrative: false,
+						includeInactive: false
 					})
 				}), {
 					xtype:      'datefield',

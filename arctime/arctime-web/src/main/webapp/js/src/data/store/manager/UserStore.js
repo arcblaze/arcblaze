@@ -12,10 +12,11 @@ data.store.manager.UserStore = Ext.extend(Ext.data.JsonStore, {
 				reader: {
 					type: 'json',
 					root: 'users'
+				},
+				extraParams: {
+					includeInactive: c ? c.includeInactive : true,
+					filterMe: c ? c.filterMe : false
 				}
-			},
-			params: {
-				includeInactive: c ? c.includeInactive : undefined
 			},
 			listeners: {
 				load: function(store, records, options) {
