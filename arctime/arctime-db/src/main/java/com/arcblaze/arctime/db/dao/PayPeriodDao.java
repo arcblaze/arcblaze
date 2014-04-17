@@ -119,21 +119,25 @@ public interface PayPeriodDao {
 	 * @param payPeriods
 	 *            the new pay periods to be inserted
 	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided pay periods are invalid
-	 * @throws DatabaseException
-	 *             if there is a problem communicating with the database
-	 */
-	void add(final PayPeriod... payPeriods) throws DatabaseException;
-
-	/**
-	 * @param payPeriods
-	 *            the new pay periods to be inserted
+	 * @return the number if records inserted
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided pay periods are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void add(final Collection<PayPeriod> payPeriods) throws DatabaseException;
+	int add(final PayPeriod... payPeriods) throws DatabaseException;
+
+	/**
+	 * @param payPeriods
+	 *            the new pay periods to be inserted
+	 * 
+	 * @return the number if records inserted
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided pay periods are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	int add(final Collection<PayPeriod> payPeriods) throws DatabaseException;
 }

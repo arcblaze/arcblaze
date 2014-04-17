@@ -74,22 +74,22 @@ public class JdbcSupervisorDao extends JdbcUserDao implements SupervisorDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(final Integer companyId, final Integer userId,
+	public int add(final Integer companyId, final Integer userId,
 			final boolean primary, final Integer... supervisorIds)
 			throws DatabaseException {
-		this.add(companyId, userId, primary, supervisorIds == null ? null
-				: Arrays.asList(supervisorIds));
+		return this.add(companyId, userId, primary,
+				supervisorIds == null ? null : Arrays.asList(supervisorIds));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(final Integer companyId, final Integer userId,
+	public int add(final Integer companyId, final Integer userId,
 			final boolean primary, final Collection<Integer> supervisorIds)
 			throws DatabaseException {
 		if (supervisorIds == null || supervisorIds.isEmpty())
-			return;
+			return 0;
 		notNull(companyId, "Invalid null company id");
 		notNull(userId, "Invalid null user id");
 
@@ -101,6 +101,7 @@ public class JdbcSupervisorDao extends JdbcUserDao implements SupervisorDao {
 				+ "JOIN users s ON (u.company_id = s.company_id) "
 				+ "WHERE u.company_id = ? AND u.id = ? and s.id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Integer supervisorId : supervisorIds) {
@@ -108,47 +109,50 @@ public class JdbcSupervisorDao extends JdbcUserDao implements SupervisorDao {
 				ps.setInt(2, companyId);
 				ps.setInt(3, userId);
 				ps.setInt(4, supervisorId);
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Integer companyId, final Integer userId,
+	public int delete(final Integer companyId, final Integer userId,
 			final Integer... supervisorIds) throws DatabaseException {
-		this.delete(companyId, userId,
-				supervisorIds == null ? null : Arrays.asList(supervisorIds));
+		return this.delete(companyId, userId, supervisorIds == null ? null
+				: Arrays.asList(supervisorIds));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Integer companyId, final Integer userId,
+	public int delete(final Integer companyId, final Integer userId,
 			final Collection<Integer> supervisorIds) throws DatabaseException {
 		if (supervisorIds == null || supervisorIds.isEmpty())
-			return;
+			return 0;
 		notNull(companyId, "Invalid null company id");
 		notNull(userId, "Invalid null user id");
 
 		final String sql = "DELETE FROM supervisors WHERE company_id = ? AND "
 				+ "user_id = ? AND supervisor_id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Integer supervisorId : supervisorIds) {
 				ps.setInt(1, companyId);
 				ps.setInt(2, userId);
 				ps.setInt(3, supervisorId);
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 }

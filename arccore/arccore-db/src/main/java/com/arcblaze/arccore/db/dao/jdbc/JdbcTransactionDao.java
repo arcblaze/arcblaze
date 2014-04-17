@@ -243,23 +243,25 @@ public class JdbcTransactionDao implements TransactionDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(final Transaction... transactions) throws DatabaseException {
-		this.add(transactions == null ? null : Arrays.asList(transactions));
+	public int add(final Transaction... transactions) throws DatabaseException {
+		return this.add(transactions == null ? null : Arrays
+				.asList(transactions));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(final Collection<Transaction> transactions)
+	public int add(final Collection<Transaction> transactions)
 			throws DatabaseException {
 		if (transactions == null || transactions.isEmpty())
-			return;
+			return 0;
 
 		final String sql = "INSERT INTO transactions (company_id, user_id, "
 				+ "timestamp, type, description, amount, notes) VALUES "
 				+ "(?, ?, ?, ?, ?, ?, ?)";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql,
 						Statement.RETURN_GENERATED_KEYS)) {
@@ -273,7 +275,7 @@ public class JdbcTransactionDao implements TransactionDao {
 				ps.setString(index++, transaction.getDescription());
 				ps.setString(index++, transaction.getAmount().toPlainString());
 				ps.setString(index++, transaction.getNotes());
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 
 				try (final ResultSet rs = ps.getGeneratedKeys()) {
 					if (rs.next())
@@ -283,30 +285,33 @@ public class JdbcTransactionDao implements TransactionDao {
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void update(final Transaction... transactions)
+	public int update(final Transaction... transactions)
 			throws DatabaseException {
-		this.update(transactions == null ? null : Arrays.asList(transactions));
+		return this.update(transactions == null ? null : Arrays
+				.asList(transactions));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void update(final Collection<Transaction> transactions)
+	public int update(final Collection<Transaction> transactions)
 			throws DatabaseException {
 		if (transactions == null || transactions.isEmpty())
-			return;
+			return 0;
 
 		final String sql = "UPDATE transactions SET company_id = ?, user_id = ?, "
 				+ "timestamp = ?, type = ?, description = ?, amount = ?, "
 				+ "notes = ? WHERE id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (Transaction transaction : transactions) {
@@ -320,39 +325,42 @@ public class JdbcTransactionDao implements TransactionDao {
 				ps.setString(index++, transaction.getAmount().toPlainString());
 				ps.setString(index++, transaction.getNotes());
 				ps.setInt(index++, transaction.getId());
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Integer... ids) throws DatabaseException {
-		this.delete(ids == null ? null : Arrays.asList(ids));
+	public int delete(final Integer... ids) throws DatabaseException {
+		return this.delete(ids == null ? null : Arrays.asList(ids));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Collection<Integer> ids) throws DatabaseException {
+	public int delete(final Collection<Integer> ids) throws DatabaseException {
 		if (ids == null || ids.isEmpty())
-			return;
+			return 0;
 
 		final String sql = "DELETE FROM transactions WHERE id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Integer id : ids) {
 				ps.setInt(1, id);
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 }

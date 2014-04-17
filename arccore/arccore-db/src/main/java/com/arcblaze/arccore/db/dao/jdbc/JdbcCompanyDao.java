@@ -132,21 +132,22 @@ public class JdbcCompanyDao implements CompanyDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(final Company... companies) throws DatabaseException {
-		this.add(companies == null ? null : Arrays.asList(companies));
+	public int add(final Company... companies) throws DatabaseException {
+		return this.add(companies == null ? null : Arrays.asList(companies));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(final Collection<Company> companies)
+	public int add(final Collection<Company> companies)
 			throws DatabaseException {
 		if (companies == null || companies.isEmpty())
-			return;
+			return 0;
 
 		final String sql = "INSERT INTO companies (name, active) VALUES (?, ?)";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql,
 						Statement.RETURN_GENERATED_KEYS)) {
@@ -154,7 +155,7 @@ public class JdbcCompanyDao implements CompanyDao {
 				int index = 1;
 				ps.setString(index++, company.getName());
 				ps.setBoolean(index++, company.isActive());
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 
 				try (final ResultSet rs = ps.getGeneratedKeys()) {
 					if (rs.next())
@@ -164,28 +165,30 @@ public class JdbcCompanyDao implements CompanyDao {
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void update(final Company... companies) throws DatabaseException {
-		this.update(companies == null ? null : Arrays.asList(companies));
+	public int update(final Company... companies) throws DatabaseException {
+		return this.update(companies == null ? null : Arrays.asList(companies));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void update(final Collection<Company> companies)
+	public int update(final Collection<Company> companies)
 			throws DatabaseException {
 		if (companies == null || companies.isEmpty())
-			return;
+			return 0;
 
 		final String sql = "UPDATE companies SET name = ?, active = ? "
 				+ "WHERE id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Company company : companies) {
@@ -193,99 +196,105 @@ public class JdbcCompanyDao implements CompanyDao {
 				ps.setString(index++, company.getName());
 				ps.setBoolean(index++, company.isActive());
 				ps.setInt(index++, company.getId());
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void activate(final Integer... ids) throws DatabaseException {
-		this.activate(ids == null ? null : Arrays.asList(ids));
+	public int activate(final Integer... ids) throws DatabaseException {
+		return this.activate(ids == null ? null : Arrays.asList(ids));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void activate(final Collection<Integer> ids)
-			throws DatabaseException {
+	public int activate(final Collection<Integer> ids) throws DatabaseException {
 		if (ids == null || ids.isEmpty())
-			return;
+			return 0;
 
 		final String sql = "UPDATE companies SET active = true WHERE id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Integer id : ids) {
 				ps.setInt(1, id);
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void deactivate(final Integer... ids) throws DatabaseException {
-		this.deactivate(ids == null ? null : Arrays.asList(ids));
+	public int deactivate(final Integer... ids) throws DatabaseException {
+		return this.deactivate(ids == null ? null : Arrays.asList(ids));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void deactivate(final Collection<Integer> ids)
+	public int deactivate(final Collection<Integer> ids)
 			throws DatabaseException {
 		if (ids == null || ids.isEmpty())
-			return;
+			return 0;
 
 		final String sql = "UPDATE companies SET active = false WHERE id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Integer id : ids) {
 				ps.setInt(1, id);
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Integer... ids) throws DatabaseException {
-		this.delete(ids == null ? null : Arrays.asList(ids));
+	public int delete(final Integer... ids) throws DatabaseException {
+		return this.delete(ids == null ? null : Arrays.asList(ids));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Collection<Integer> ids) throws DatabaseException {
+	public int delete(final Collection<Integer> ids) throws DatabaseException {
 		if (ids == null || ids.isEmpty())
-			return;
+			return 0;
 
 		final String sql = "DELETE FROM companies WHERE id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Integer id : ids) {
 				ps.setInt(1, id);
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 }

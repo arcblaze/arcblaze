@@ -88,23 +88,27 @@ public interface TaskDao {
 	 * @param tasks
 	 *            the new tasks to be added
 	 * 
+	 * @return the number if records inserted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided tasks are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void add(final Task... tasks) throws DatabaseException;
+	int add(final Task... tasks) throws DatabaseException;
 
 	/**
 	 * @param tasks
 	 *            the new tasks to be added
 	 * 
+	 * @return the number if records inserted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided tasks are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void add(final Collection<Task> tasks) throws DatabaseException;
+	int add(final Collection<Task> tasks) throws DatabaseException;
 
 	/**
 	 * @param companyId
@@ -112,12 +116,14 @@ public interface TaskDao {
 	 * @param taskIds
 	 *            the unique ids of the tasks to make active
 	 * 
+	 * @return the number if records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if either of the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void activate(final Integer companyId, final Integer... taskIds)
+	int activate(final Integer companyId, final Integer... taskIds)
 			throws DatabaseException;
 
 	/**
@@ -126,12 +132,14 @@ public interface TaskDao {
 	 * @param taskIds
 	 *            the unique ids of the tasks to make active
 	 * 
+	 * @return the number if records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if either of the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void activate(final Integer companyId, final Collection<Integer> taskIds)
+	int activate(final Integer companyId, final Collection<Integer> taskIds)
 			throws DatabaseException;
 
 	/**
@@ -141,12 +149,14 @@ public interface TaskDao {
 	 * @param taskIds
 	 *            the unique ids of the tasks to make inactive
 	 * 
+	 * @return the number if records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if either of the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void deactivate(final Integer companyId, final Integer... taskIds)
+	int deactivate(final Integer companyId, final Integer... taskIds)
 			throws DatabaseException;
 
 	/**
@@ -156,35 +166,41 @@ public interface TaskDao {
 	 * @param taskIds
 	 *            the unique ids of the tasks to make inactive
 	 * 
+	 * @return the number if records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if either of the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void deactivate(final Integer companyId, final Collection<Integer> taskIds)
+	int deactivate(final Integer companyId, final Collection<Integer> taskIds)
 			throws DatabaseException;
 
 	/**
 	 * @param tasks
 	 *            the tasks to be updated
 	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided tasks are invalid
-	 * @throws DatabaseException
-	 *             if there is a problem communicating with the database
-	 */
-	void update(final Task... tasks) throws DatabaseException;
-
-	/**
-	 * @param tasks
-	 *            the tasks to be updated
+	 * @return the number if records modified
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided tasks are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void update(final Collection<Task> tasks) throws DatabaseException;
+	int update(final Task... tasks) throws DatabaseException;
+
+	/**
+	 * @param tasks
+	 *            the tasks to be updated
+	 * 
+	 * @return the number if records modified
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided tasks are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	int update(final Collection<Task> tasks) throws DatabaseException;
 
 	/**
 	 * @param companyId
@@ -193,12 +209,14 @@ public interface TaskDao {
 	 * @param taskIds
 	 *            the unique ids of the tasks to be deleted
 	 * 
+	 * @return the number if records deleted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Integer companyId, final Integer... taskIds)
+	int delete(final Integer companyId, final Integer... taskIds)
 			throws DatabaseException;
 
 	/**
@@ -208,11 +226,13 @@ public interface TaskDao {
 	 * @param taskIds
 	 *            the unique ids of the tasks to be deleted
 	 * 
+	 * @return the number if records deleted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Integer companyId, final Collection<Integer> taskIds)
+	int delete(final Integer companyId, final Collection<Integer> taskIds)
 			throws DatabaseException;
 }

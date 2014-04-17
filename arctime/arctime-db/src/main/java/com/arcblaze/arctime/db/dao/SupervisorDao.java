@@ -40,12 +40,14 @@ public interface SupervisorDao {
 	 * @param supervisorIds
 	 *            the unique ids of the users that are to become supervisors
 	 * 
+	 * @return the number if records inserted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	public void add(final Integer companyId, final Integer userId,
+	public int add(final Integer companyId, final Integer userId,
 			final boolean primary, final Integer... supervisorIds)
 			throws DatabaseException;
 
@@ -60,12 +62,14 @@ public interface SupervisorDao {
 	 * @param supervisorIds
 	 *            the unique ids of the users that are to become supervisors
 	 * 
+	 * @return the number if records inserted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	public void add(final Integer companyId, final Integer userId,
+	public int add(final Integer companyId, final Integer userId,
 			final boolean primary, final Collection<Integer> supervisorIds)
 			throws DatabaseException;
 
@@ -80,12 +84,14 @@ public interface SupervisorDao {
 	 *            the unique ids of the users that are to be removed as
 	 *            supervisors
 	 * 
+	 * @return the number if records deleted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	public void delete(final Integer companyId, final Integer userId,
+	public int delete(final Integer companyId, final Integer userId,
 			final Integer... supervisorIds) throws DatabaseException;
 
 	/**
@@ -99,11 +105,13 @@ public interface SupervisorDao {
 	 *            the unique ids of the users that are to be removed as
 	 *            supervisors
 	 * 
+	 * @return the number if records deleted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	public void delete(final Integer companyId, final Integer userId,
+	public int delete(final Integer companyId, final Integer userId,
 			final Collection<Integer> supervisorIds) throws DatabaseException;
 }

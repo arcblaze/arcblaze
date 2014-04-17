@@ -99,83 +99,89 @@ public class JdbcRoleDao implements RoleDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(final Integer userId, final Role... roles)
+	public int add(final Integer userId, final Role... roles)
 			throws DatabaseException {
-		this.add(userId, roles == null ? null : Arrays.asList(roles));
+		return this.add(userId, roles == null ? null : Arrays.asList(roles));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(final Integer userId, final Collection<Role> roles)
+	public int add(final Integer userId, final Collection<Role> roles)
 			throws DatabaseException {
 		if (roles == null || roles.isEmpty())
-			return;
+			return 0;
 		notNull(userId, "Invalid null user id");
 
 		final String sql = "INSERT INTO roles (name, user_id) VALUES (?, ?)";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Role role : roles) {
 				ps.setString(1, role.getName());
 				ps.setInt(2, userId);
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Integer userId, final Role... roles)
+	public int delete(final Integer userId, final Role... roles)
 			throws DatabaseException {
-		this.delete(userId, roles == null ? null : Arrays.asList(roles));
+		return this.delete(userId, roles == null ? null : Arrays.asList(roles));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Integer userId, final Collection<Role> roles)
+	public int delete(final Integer userId, final Collection<Role> roles)
 			throws DatabaseException {
 		if (roles == null || roles.isEmpty())
-			return;
+			return 0;
 		notNull(userId, "Invalid null user id");
 
 		String sql = "DELETE FROM roles WHERE name = ? AND user_id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Role role : roles) {
 				ps.setString(1, role.getName());
 				ps.setInt(2, userId);
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Integer userId) throws DatabaseException {
+	public int delete(final Integer userId) throws DatabaseException {
 		notNull(userId, "Invalid null user id");
 
 		String sql = "DELETE FROM roles WHERE user_id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, userId);
-			ps.executeUpdate();
+			count += ps.executeUpdate();
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 }

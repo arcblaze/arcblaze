@@ -132,68 +132,80 @@ public interface TransactionDao {
 	 * @param transactions
 	 *            the new transactions to be added
 	 * 
+	 * @return the number of records inserted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided transactions are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void add(final Transaction... transactions) throws DatabaseException;
+	int add(final Transaction... transactions) throws DatabaseException;
 
 	/**
 	 * @param transactions
 	 *            the new transactions to be added
 	 * 
+	 * @return the number of records inserted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided transactions are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void add(final Collection<Transaction> transactions)
+	int add(final Collection<Transaction> transactions)
 			throws DatabaseException;
 
 	/**
 	 * @param transactions
 	 *            the transactions to be updated
 	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided transactions are invalid
-	 * @throws DatabaseException
-	 *             if there is a problem communicating with the database
-	 */
-	void update(final Transaction... transactions) throws DatabaseException;
-
-	/**
-	 * @param transactions
-	 *            the transactions to be updated
+	 * @return the number of records modified
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided transactions are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void update(final Collection<Transaction> transactions)
+	int update(final Transaction... transactions) throws DatabaseException;
+
+	/**
+	 * @param transactions
+	 *            the transactions to be updated
+	 * 
+	 * @return the number of records modified
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided transactions are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	int update(final Collection<Transaction> transactions)
 			throws DatabaseException;
 
 	/**
 	 * @param transactionIds
 	 *            the unique ids of the transactions to be deleted
 	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided ids are invalid
-	 * @throws DatabaseException
-	 *             if there is a problem communicating with the database
-	 */
-	void delete(final Integer... transactionIds) throws DatabaseException;
-
-	/**
-	 * @param transactionIds
-	 *            the unique ids of the transactions to be deleted
+	 * @return the number of records deleted
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Collection<Integer> transactionIds)
+	int delete(final Integer... transactionIds) throws DatabaseException;
+
+	/**
+	 * @param transactionIds
+	 *            the unique ids of the transactions to be deleted
+	 * 
+	 * @return the number of records deleted
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided ids are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	int delete(final Collection<Integer> transactionIds)
 			throws DatabaseException;
 }

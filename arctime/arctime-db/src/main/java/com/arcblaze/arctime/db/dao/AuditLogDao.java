@@ -30,46 +30,53 @@ public interface AuditLogDao {
 	 * @param auditLogs
 	 *            the new audit logs to be added
 	 * 
+	 * @return the number if records inserted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided audit logs are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void add(final AuditLog... auditLogs) throws DatabaseException;
+	int add(final AuditLog... auditLogs) throws DatabaseException;
 
 	/**
 	 * @param auditLogs
 	 *            the new audit logs to be added
 	 * 
+	 * @return the number if records inserted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided audit logs are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void add(final Collection<AuditLog> auditLogs) throws DatabaseException;
+	int add(final Collection<AuditLog> auditLogs) throws DatabaseException;
 
 	/**
 	 * @param timesheetIds
 	 *            the unique ids of the timesheets for which audit logs will be
 	 *            deleted
 	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided ids are invalid
-	 * @throws DatabaseException
-	 *             if there is a problem communicating with the database
-	 */
-	void delete(final Integer... timesheetIds) throws DatabaseException;
-
-	/**
-	 * @param timesheetIds
-	 *            the unique ids of the timesheets for which audit logs will be
-	 *            deleted
+	 * @return the number if records deleted
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Collection<Integer> timesheetIds)
-			throws DatabaseException;
+	int delete(final Integer... timesheetIds) throws DatabaseException;
+
+	/**
+	 * @param timesheetIds
+	 *            the unique ids of the timesheets for which audit logs will be
+	 *            deleted
+	 * 
+	 * @return the number if records deleted
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided ids are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	int delete(final Collection<Integer> timesheetIds) throws DatabaseException;
 }

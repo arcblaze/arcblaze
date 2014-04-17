@@ -55,13 +55,14 @@ public interface RoleDao {
 	 * @param roles
 	 *            the new roles to be given to the specified user
 	 * 
+	 * @return the number of records inserted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided id is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void add(final Integer userId, final Role... roles)
-			throws DatabaseException;
+	int add(final Integer userId, final Role... roles) throws DatabaseException;
 
 	/**
 	 * @param userId
@@ -69,12 +70,14 @@ public interface RoleDao {
 	 * @param roles
 	 *            the new roles to be given to the specified user
 	 * 
+	 * @return the number of records inserted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided id is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void add(final Integer userId, final Collection<Role> roles)
+	int add(final Integer userId, final Collection<Role> roles)
 			throws DatabaseException;
 
 	/**
@@ -83,12 +86,14 @@ public interface RoleDao {
 	 * @param roles
 	 *            the roles to be removed from the specified user
 	 * 
+	 * @return the number of records deleted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided id is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Integer userId, final Role... roles)
+	int delete(final Integer userId, final Role... roles)
 			throws DatabaseException;
 
 	/**
@@ -97,22 +102,26 @@ public interface RoleDao {
 	 * @param roles
 	 *            the roles to be removed from the specified user
 	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided id is invalid
-	 * @throws DatabaseException
-	 *             if there is a problem communicating with the database
-	 */
-	void delete(final Integer userId, final Collection<Role> roles)
-			throws DatabaseException;
-
-	/**
-	 * @param userId
-	 *            the unique id of the user for which roles will be removed
+	 * @return the number of records deleted
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided id is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Integer userId) throws DatabaseException;
+	int delete(final Integer userId, final Collection<Role> roles)
+			throws DatabaseException;
+
+	/**
+	 * @param userId
+	 *            the unique id of the user for which roles will be removed
+	 * 
+	 * @return the number of records deleted
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	int delete(final Integer userId) throws DatabaseException;
 }

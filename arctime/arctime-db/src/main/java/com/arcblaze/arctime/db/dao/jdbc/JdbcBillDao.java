@@ -141,21 +141,22 @@ public class JdbcBillDao implements BillDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(final Bill... bills) throws DatabaseException {
-		this.add(bills == null ? null : Arrays.asList(bills));
+	public int add(final Bill... bills) throws DatabaseException {
+		return this.add(bills == null ? null : Arrays.asList(bills));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(final Collection<Bill> bills) throws DatabaseException {
+	public int add(final Collection<Bill> bills) throws DatabaseException {
 		if (bills == null || bills.isEmpty())
-			return;
+			return 0;
 
 		final String sql = "INSERT INTO bills (assignment_id, task_id, "
 				+ "user_id, day, hours, timestamp) VALUES (?, ?, ?, ?, ?, ?)";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql,
 						Statement.RETURN_GENERATED_KEYS)) {
@@ -171,7 +172,7 @@ public class JdbcBillDao implements BillDao {
 				ps.setString(index++, bill.getHours().toPlainString());
 				ps.setTimestamp(index++, new Timestamp(bill.getTimestamp()
 						.getTime()));
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 
 				try (final ResultSet rs = ps.getGeneratedKeys()) {
 					if (rs.next())
@@ -181,28 +182,30 @@ public class JdbcBillDao implements BillDao {
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void update(final Bill... bills) throws DatabaseException {
-		this.update(bills == null ? null : Arrays.asList(bills));
+	public int update(final Bill... bills) throws DatabaseException {
+		return this.update(bills == null ? null : Arrays.asList(bills));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void update(final Collection<Bill> bills) throws DatabaseException {
+	public int update(final Collection<Bill> bills) throws DatabaseException {
 		if (bills == null || bills.isEmpty())
-			return;
+			return 0;
 
 		final String sql = "UPDATE bills SET assignment_id = ?, task_id = ?, "
 				+ "user_id = ?, day = ?, hours = ?, timestamp = ? "
 				+ "WHERE id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Bill bill : bills) {
@@ -218,39 +221,42 @@ public class JdbcBillDao implements BillDao {
 				ps.setTimestamp(index++, new Timestamp(bill.getTimestamp()
 						.getTime()));
 				ps.setInt(index++, bill.getId());
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Integer... ids) throws DatabaseException {
-		this.delete(ids == null ? null : Arrays.asList(ids));
+	public int delete(final Integer... ids) throws DatabaseException {
+		return this.delete(ids == null ? null : Arrays.asList(ids));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Collection<Integer> ids) throws DatabaseException {
+	public int delete(final Collection<Integer> ids) throws DatabaseException {
 		if (ids == null || ids.isEmpty())
-			return;
+			return 0;
 
 		final String sql = "DELETE FROM bills WHERE id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Integer id : ids) {
 				ps.setInt(1, id);
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 }

@@ -43,65 +43,77 @@ public interface BillDao {
 	 * @param bills
 	 *            the new bills to be added
 	 * 
+	 * @return the number if records inserted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided bills are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void add(final Bill... bills) throws DatabaseException;
+	int add(final Bill... bills) throws DatabaseException;
 
 	/**
 	 * @param bills
 	 *            the new bills to be added
 	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided bills are invalid
-	 * @throws DatabaseException
-	 *             if there is a problem communicating with the database
-	 */
-	void add(final Collection<Bill> bills) throws DatabaseException;
-
-	/**
-	 * @param bills
-	 *            the bills to be updated
+	 * @return the number if records inserted
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided bills are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void update(final Bill... bills) throws DatabaseException;
+	int add(final Collection<Bill> bills) throws DatabaseException;
 
 	/**
 	 * @param bills
 	 *            the bills to be updated
+	 * 
+	 * @return the number if records modified
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided bills are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void update(final Collection<Bill> bills) throws DatabaseException;
+	int update(final Bill... bills) throws DatabaseException;
+
+	/**
+	 * @param bills
+	 *            the bills to be updated
+	 * 
+	 * @return the number if records modified
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided bills are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	int update(final Collection<Bill> bills) throws DatabaseException;
 
 	/**
 	 * @param billIds
 	 *            the unique ids of the bills to be deleted
+	 * 
+	 * @return the number if records deleted
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Integer... billIds) throws DatabaseException;
+	int delete(final Integer... billIds) throws DatabaseException;
 
 	/**
 	 * @param billIds
 	 *            the unique ids of the bills to be deleted
+	 * 
+	 * @return the number if records deleted
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Collection<Integer> billIds) throws DatabaseException;
+	int delete(final Collection<Integer> billIds) throws DatabaseException;
 }

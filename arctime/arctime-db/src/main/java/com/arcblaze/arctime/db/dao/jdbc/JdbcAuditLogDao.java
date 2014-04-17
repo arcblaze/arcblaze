@@ -109,22 +109,23 @@ public class JdbcAuditLogDao implements AuditLogDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(AuditLog... auditLogs) throws DatabaseException {
-		this.add(auditLogs == null ? null : Arrays.asList(auditLogs));
+	public int add(AuditLog... auditLogs) throws DatabaseException {
+		return this.add(auditLogs == null ? null : Arrays.asList(auditLogs));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(final Collection<AuditLog> auditLogs)
+	public int add(final Collection<AuditLog> auditLogs)
 			throws DatabaseException {
 		if (auditLogs == null || auditLogs.isEmpty())
-			return;
+			return 0;
 
 		String sql = "INSERT INTO audit_logs (company_id, timesheet_id, log, "
 				+ "timestamp) VALUES (?, ?, ?, ?)";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final AuditLog auditLog : auditLogs) {
@@ -134,40 +135,44 @@ public class JdbcAuditLogDao implements AuditLogDao {
 				ps.setString(index++, auditLog.getLog());
 				ps.setTimestamp(index++, new Timestamp(auditLog.getTimestamp()
 						.getTime()));
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Integer... timesheetIds) throws DatabaseException {
-		this.delete(timesheetIds == null ? null : Arrays.asList(timesheetIds));
+	public int delete(final Integer... timesheetIds) throws DatabaseException {
+		return this.delete(timesheetIds == null ? null : Arrays
+				.asList(timesheetIds));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Collection<Integer> timesheetIds)
+	public int delete(final Collection<Integer> timesheetIds)
 			throws DatabaseException {
 		if (timesheetIds == null || timesheetIds.isEmpty())
-			return;
+			return 0;
 
 		final String sql = "DELETE FROM audit_logs WHERE timesheet_id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Integer timesheetId : timesheetIds) {
 				ps.setInt(1, timesheetId);
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 }

@@ -72,67 +72,86 @@ public interface AssignmentDao {
 	 * @param assignments
 	 *            the new assignments to be added
 	 * 
+	 * @return the number if records inserted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided assignments are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void add(final Assignment... assignments) throws DatabaseException;
+	int add(final Assignment... assignments) throws DatabaseException;
 
 	/**
 	 * @param assignments
 	 *            the new assignments to be added
 	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided assignments are invalid
-	 * @throws DatabaseException
-	 *             if there is a problem communicating with the database
-	 */
-	void add(final Collection<Assignment> assignments) throws DatabaseException;
-
-	/**
-	 * @param assignments
-	 *            the assignments to be updated
+	 * @return the number if records inserted
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided assignments are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void update(final Assignment... assignments) throws DatabaseException;
+	int add(final Collection<Assignment> assignments) throws DatabaseException;
 
 	/**
 	 * @param assignments
 	 *            the assignments to be updated
+	 * 
+	 * @return the number if records modified
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided assignments are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void update(final Collection<Assignment> assignments)
+	int update(final Assignment... assignments) throws DatabaseException;
+
+	/**
+	 * @param assignments
+	 *            the assignments to be updated
+	 * 
+	 * @return the number if records modified
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided assignments are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	int update(final Collection<Assignment> assignments)
 			throws DatabaseException;
 
 	/**
+	 * @param companyId
+	 *            the unique id of the company for which assignments should be
+	 *            deleted
 	 * @param assignmentIds
 	 *            the unique ids of the assignments to be deleted
+	 * 
+	 * @return the number if records deleted
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Integer... assignmentIds) throws DatabaseException;
+	int delete(final Integer companyId, final Integer... assignmentIds)
+			throws DatabaseException;
 
 	/**
+	 * @param companyId
+	 *            the unique id of the company for which assignments should be
+	 *            deleted
 	 * @param assignmentIds
 	 *            the unique ids of the assignments to be deleted
+	 * 
+	 * @return the number if records deleted
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Collection<Integer> assignmentIds)
+	int delete(final Integer companyId, final Collection<Integer> assignmentIds)
 			throws DatabaseException;
 }

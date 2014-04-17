@@ -205,23 +205,27 @@ public interface TimesheetDao {
 	 * @param timesheets
 	 *            the new timesheets to be added
 	 * 
+	 * @return the number if records inserted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided timesheets are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void add(final Timesheet... timesheets) throws DatabaseException;
+	int add(final Timesheet... timesheets) throws DatabaseException;
 
 	/**
 	 * @param timesheets
 	 *            the new timesheets to be added
+	 * 
+	 * @return the number if records inserted
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void add(final Collection<Timesheet> timesheets) throws DatabaseException;
+	int add(final Collection<Timesheet> timesheets) throws DatabaseException;
 
 	/**
 	 * @param companyId
@@ -233,12 +237,14 @@ public interface TimesheetDao {
 	 *            the unique ids of the timesheets for which completion status
 	 *            will be updated
 	 * 
+	 * @return the number if records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void complete(final Integer companyId, final boolean completed,
+	int complete(final Integer companyId, final boolean completed,
 			final Integer... timesheetIds) throws DatabaseException;
 
 	/**
@@ -251,12 +257,14 @@ public interface TimesheetDao {
 	 *            the unique ids of the timesheets for which completion status
 	 *            will be updated
 	 * 
+	 * @return the number if records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void complete(final Integer companyId, final boolean completed,
+	int complete(final Integer companyId, final boolean completed,
 			final Collection<Integer> timesheetIds) throws DatabaseException;
 
 	/**
@@ -272,12 +280,14 @@ public interface TimesheetDao {
 	 *            the unique ids of the timesheets for which approval status
 	 *            will be updated
 	 * 
+	 * @return the number if records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void approve(final Integer companyId, final Integer approverId,
+	int approve(final Integer companyId, final Integer approverId,
 			final boolean approved, final Integer... timesheetIds)
 			throws DatabaseException;
 
@@ -294,12 +304,14 @@ public interface TimesheetDao {
 	 *            the unique ids of the timesheets for which approval status
 	 *            will be updated
 	 * 
+	 * @return the number if records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void approve(final Integer companyId, final Integer approverId,
+	int approve(final Integer companyId, final Integer approverId,
 			final boolean approved, final Collection<Integer> timesheetIds)
 			throws DatabaseException;
 
@@ -315,12 +327,14 @@ public interface TimesheetDao {
 	 *            the unique ids of the timesheets for which verification status
 	 *            will be updated
 	 * 
+	 * @return the number if records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void verify(final Integer companyId, final Integer verifierId,
+	int verify(final Integer companyId, final Integer verifierId,
 			final boolean verified, final Integer... timesheetIds)
 			throws DatabaseException;
 
@@ -336,12 +350,14 @@ public interface TimesheetDao {
 	 *            the unique ids of the timesheets for which verification status
 	 *            will be updated
 	 * 
+	 * @return the number if records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void verify(final Integer companyId, final Integer verifierId,
+	int verify(final Integer companyId, final Integer verifierId,
 			final boolean verified, final Collection<Integer> timesheetIds)
 			throws DatabaseException;
 
@@ -357,12 +373,14 @@ public interface TimesheetDao {
 	 *            the unique ids of the timesheets for which export status will
 	 *            be updated
 	 * 
+	 * @return the number if records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void export(final Integer companyId, final Integer exporterId,
+	int export(final Integer companyId, final Integer exporterId,
 			final boolean exported, final Integer... timesheetIds)
 			throws DatabaseException;
 
@@ -378,12 +396,14 @@ public interface TimesheetDao {
 	 *            the unique ids of the timesheets for which export status will
 	 *            be updated
 	 * 
+	 * @return the number if records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void export(final Integer companyId, final Integer exporterId,
+	int export(final Integer companyId, final Integer exporterId,
 			final boolean exported, final Collection<Integer> timesheetIds)
 			throws DatabaseException;
 
@@ -394,12 +414,14 @@ public interface TimesheetDao {
 	 * @param timesheetIds
 	 *            the unique ids of the timesheets to be deleted
 	 * 
+	 * @return the number if records deleted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Integer companyId, final Integer... timesheetIds)
+	int delete(final Integer companyId, final Integer... timesheetIds)
 			throws DatabaseException;
 
 	/**
@@ -409,11 +431,13 @@ public interface TimesheetDao {
 	 * @param timesheetIds
 	 *            the unique ids of the timesheets to be deleted
 	 * 
+	 * @return the number if records deleted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Integer companyId, final Collection<Integer> timesheetIds)
+	int delete(final Integer companyId, final Collection<Integer> timesheetIds)
 			throws DatabaseException;
 }

@@ -257,23 +257,24 @@ public class JdbcTimesheetDao implements TimesheetDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(final Timesheet... timesheets) throws DatabaseException {
-		this.add(timesheets == null ? null : Arrays.asList(timesheets));
+	public int add(final Timesheet... timesheets) throws DatabaseException {
+		return this.add(timesheets == null ? null : Arrays.asList(timesheets));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(final Collection<Timesheet> timesheets)
+	public int add(final Collection<Timesheet> timesheets)
 			throws DatabaseException {
 		if (timesheets == null || timesheets.isEmpty())
-			return;
+			return 0;
 
 		final String sql = "INSERT INTO timesheets (company_id, user_id, "
 				+ "pp_begin, completed, approved, verified, exported) VALUES "
 				+ "(?, ?, ?, ?, ?, ?, ?)";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql,
 						Statement.RETURN_GENERATED_KEYS)) {
@@ -286,7 +287,7 @@ public class JdbcTimesheetDao implements TimesheetDao {
 				ps.setBoolean(index++, timesheet.isApproved());
 				ps.setBoolean(index++, timesheet.isVerified());
 				ps.setBoolean(index++, timesheet.isExported());
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 
 				try (final ResultSet rs = ps.getGeneratedKeys()) {
 					if (rs.next())
@@ -296,15 +297,16 @@ public class JdbcTimesheetDao implements TimesheetDao {
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void complete(final Integer companyId, final boolean completed,
+	public int complete(final Integer companyId, final boolean completed,
 			final Integer... timesheetIds) throws DatabaseException {
-		this.complete(companyId, completed, timesheetIds == null ? null
+		return this.complete(companyId, completed, timesheetIds == null ? null
 				: Arrays.asList(timesheetIds));
 	}
 
@@ -312,15 +314,16 @@ public class JdbcTimesheetDao implements TimesheetDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void complete(final Integer companyId, final boolean completed,
+	public int complete(final Integer companyId, final boolean completed,
 			final Collection<Integer> timesheetIds) throws DatabaseException {
 		if (timesheetIds == null || timesheetIds.isEmpty())
-			return;
+			return 0;
 		notNull(companyId, "Invalid null company id");
 
 		final String sql = "UPDATE timesheets SET completed = ? "
 				+ "WHERE id = ? AND company_id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Integer timesheetId : timesheetIds) {
@@ -328,21 +331,22 @@ public class JdbcTimesheetDao implements TimesheetDao {
 				ps.setBoolean(index++, completed);
 				ps.setInt(index++, timesheetId);
 				ps.setInt(index++, companyId);
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void approve(final Integer companyId, final Integer approverId,
+	public int approve(final Integer companyId, final Integer approverId,
 			final boolean approved, final Integer... timesheetIds)
 			throws DatabaseException {
-		this.approve(companyId, approverId, approved,
+		return this.approve(companyId, approverId, approved,
 				timesheetIds == null ? null : Arrays.asList(timesheetIds));
 	}
 
@@ -350,17 +354,18 @@ public class JdbcTimesheetDao implements TimesheetDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void approve(final Integer companyId, final Integer approverId,
+	public int approve(final Integer companyId, final Integer approverId,
 			final boolean approved, final Collection<Integer> timesheetIds)
 			throws DatabaseException {
 		if (timesheetIds == null || timesheetIds.isEmpty())
-			return;
+			return 0;
 		notNull(companyId, "Invalid null company id");
 		isTrue(!approved || approverId != null, "Invalid null approver id");
 
 		final String sql = "UPDATE timesheets SET approved = ?, approver_id = ? "
 				+ "WHERE id = ? AND company_id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Integer timesheetId : timesheetIds) {
@@ -374,21 +379,22 @@ public class JdbcTimesheetDao implements TimesheetDao {
 					ps.setNull(index++, Types.INTEGER);
 				ps.setInt(index++, timesheetId);
 				ps.setInt(index++, companyId);
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void verify(final Integer companyId, final Integer verifierId,
+	public int verify(final Integer companyId, final Integer verifierId,
 			final boolean verified, final Integer... timesheetIds)
 			throws DatabaseException {
-		this.verify(companyId, verifierId, verified,
+		return this.verify(companyId, verifierId, verified,
 				timesheetIds == null ? null : Arrays.asList(timesheetIds));
 	}
 
@@ -396,17 +402,18 @@ public class JdbcTimesheetDao implements TimesheetDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void verify(final Integer companyId, final Integer verifierId,
+	public int verify(final Integer companyId, final Integer verifierId,
 			final boolean verified, final Collection<Integer> timesheetIds)
 			throws DatabaseException {
 		if (timesheetIds == null || timesheetIds.isEmpty())
-			return;
+			return 0;
 		notNull(companyId, "Invalid null company id");
 		isTrue(!verified || verifierId != null, "Invalid null verifier id");
 
 		final String sql = "UPDATE timesheets SET verified = ?, verifier_id = ? "
 				+ "WHERE id = ? AND company_id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Integer timesheetId : timesheetIds) {
@@ -420,21 +427,22 @@ public class JdbcTimesheetDao implements TimesheetDao {
 					ps.setNull(index++, Types.INTEGER);
 				ps.setInt(index++, timesheetId);
 				ps.setInt(index++, companyId);
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void export(final Integer companyId, final Integer exporterId,
+	public int export(final Integer companyId, final Integer exporterId,
 			final boolean exported, final Integer... timesheetIds)
 			throws DatabaseException {
-		this.export(companyId, exporterId, exported,
+		return this.export(companyId, exporterId, exported,
 				timesheetIds == null ? null : Arrays.asList(timesheetIds));
 	}
 
@@ -442,17 +450,18 @@ public class JdbcTimesheetDao implements TimesheetDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void export(final Integer companyId, final Integer exporterId,
+	public int export(final Integer companyId, final Integer exporterId,
 			final boolean exported, final Collection<Integer> timesheetIds)
 			throws DatabaseException {
 		if (timesheetIds == null || timesheetIds.isEmpty())
-			return;
+			return 0;
 		notNull(companyId, "Invalid null company id");
 		isTrue(!exported || exporterId != null, "Invalid null exporter id");
 
 		final String sql = "UPDATE timesheets SET exported = ?, exporter_id = ? "
 				+ "WHERE id = ? AND company_id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Integer timesheetId : timesheetIds) {
@@ -466,20 +475,21 @@ public class JdbcTimesheetDao implements TimesheetDao {
 					ps.setNull(index++, Types.INTEGER);
 				ps.setInt(index++, timesheetId);
 				ps.setInt(index++, companyId);
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Integer companyId, final Integer... timesheetIds)
+	public int delete(final Integer companyId, final Integer... timesheetIds)
 			throws DatabaseException {
-		this.delete(companyId,
+		return this.delete(companyId,
 				timesheetIds == null ? null : Arrays.asList(timesheetIds));
 	}
 
@@ -487,25 +497,27 @@ public class JdbcTimesheetDao implements TimesheetDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Integer companyId,
+	public int delete(final Integer companyId,
 			final Collection<Integer> timesheetIds) throws DatabaseException {
 		if (timesheetIds == null || timesheetIds.isEmpty())
-			return;
+			return 0;
 		notNull(companyId, "Invalid null company id");
 
 		final String sql = "DELETE FROM timesheets WHERE company_id = ? "
 				+ " AND id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Integer timesheetId : timesheetIds) {
 				ps.setInt(1, companyId);
 				ps.setInt(2, timesheetId);
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	protected void enrich(final Connection conn, final Integer companyId,

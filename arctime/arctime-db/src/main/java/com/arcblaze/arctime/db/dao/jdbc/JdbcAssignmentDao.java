@@ -231,31 +231,33 @@ public class JdbcAssignmentDao implements AssignmentDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(final Assignment... assignments) throws DatabaseException {
-		this.add(assignments == null ? null : Arrays.asList(assignments));
+	public int add(final Assignment... assignments) throws DatabaseException {
+		return this
+				.add(assignments == null ? null : Arrays.asList(assignments));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(final Collection<Assignment> assignments)
+	public int add(final Collection<Assignment> assignments)
 			throws DatabaseException {
 		if (assignments == null || assignments.isEmpty())
-			return;
+			return 0;
 
-		final String sql = "INSERT INTO assignments (company_id, task_id, "
-				+ "user_id, labor_cat, item_name, begin, end) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
+		final StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO assignments (company_id, task_id, user_id, ");
+		sql.append("labor_cat, item_name, begin, end) ");
+		sql.append("SELECT u.company_id, t.id, u.id, ?, ?, ?, ? ");
+		sql.append("FROM users u JOIN tasks t ON (u.company_id = t.company_id) ");
+		sql.append("WHERE u.company_id = ? AND t.id = ? AND u.id = ?");
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
-				final PreparedStatement ps = conn.prepareStatement(sql,
-						Statement.RETURN_GENERATED_KEYS)) {
+				final PreparedStatement ps = conn.prepareStatement(
+						sql.toString(), Statement.RETURN_GENERATED_KEYS)) {
 			for (final Assignment assignment : assignments) {
 				int index = 1;
-				ps.setInt(index++, assignment.getCompanyId());
-				ps.setInt(index++, assignment.getTaskId());
-				ps.setInt(index++, assignment.getUserId());
 				ps.setString(index++, assignment.getLaborCat());
 				ps.setString(index++, assignment.getItemName());
 				if (assignment.getBegin() == null)
@@ -268,7 +270,10 @@ public class JdbcAssignmentDao implements AssignmentDao {
 				else
 					ps.setTimestamp(index++, new Timestamp(assignment.getEnd()
 							.getTime()));
-				ps.executeUpdate();
+				ps.setInt(index++, assignment.getCompanyId());
+				ps.setInt(index++, assignment.getTaskId());
+				ps.setInt(index++, assignment.getUserId());
+				count += ps.executeUpdate();
 
 				try (final ResultSet rs = ps.getGeneratedKeys()) {
 					if (rs.next())
@@ -278,30 +283,32 @@ public class JdbcAssignmentDao implements AssignmentDao {
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void update(final Assignment... assignments)
-			throws DatabaseException {
-		this.update(assignments == null ? null : Arrays.asList(assignments));
+	public int update(final Assignment... assignments) throws DatabaseException {
+		return this.update(assignments == null ? null : Arrays
+				.asList(assignments));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void update(final Collection<Assignment> assignments)
+	public int update(final Collection<Assignment> assignments)
 			throws DatabaseException {
 		if (assignments == null || assignments.isEmpty())
-			return;
+			return 0;
 
 		final String sql = "UPDATE assignments SET task_id = ?, user_id = ?, "
 				+ "labor_cat = ?, item_name = ?, begin = ?, end = ? "
 				+ "WHERE id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Assignment assignment : assignments) {
@@ -321,39 +328,46 @@ public class JdbcAssignmentDao implements AssignmentDao {
 					ps.setTimestamp(index++, new Timestamp(assignment.getEnd()
 							.getTime()));
 				ps.setInt(index++, assignment.getId());
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Integer... ids) throws DatabaseException {
-		this.delete(ids == null ? null : Arrays.asList(ids));
+	public int delete(final Integer companyId, final Integer... ids)
+			throws DatabaseException {
+		return this.delete(companyId, ids == null ? null : Arrays.asList(ids));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Collection<Integer> ids) throws DatabaseException {
+	public int delete(final Integer companyId, final Collection<Integer> ids)
+			throws DatabaseException {
 		if (ids == null || ids.isEmpty())
-			return;
+			return 0;
 
-		final String sql = "DELETE FROM assignments WHERE id = ?";
+		final String sql = "DELETE FROM assignments "
+				+ "WHERE company_id = ? AND id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Integer id : ids) {
-				ps.setInt(1, id);
-				ps.executeUpdate();
+				ps.setInt(1, companyId);
+				ps.setInt(2, id);
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 }

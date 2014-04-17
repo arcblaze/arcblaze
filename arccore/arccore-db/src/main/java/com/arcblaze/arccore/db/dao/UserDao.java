@@ -118,20 +118,7 @@ public interface UserDao {
 	 * @param users
 	 *            the new users to be added
 	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided parameter is invalid
-	 * @throws DatabaseUniqueConstraintException
-	 *             if there is a problem adding the user due to a unique
-	 *             constraint violation
-	 * @throws DatabaseException
-	 *             if there is a problem communicating with the database
-	 */
-	void add(final User... users) throws DatabaseUniqueConstraintException,
-			DatabaseException;
-
-	/**
-	 * @param users
-	 *            the new users to be added
+	 * @return the number of records inserted
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameter is invalid
@@ -141,7 +128,24 @@ public interface UserDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void add(final Collection<User> users)
+	int add(final User... users) throws DatabaseUniqueConstraintException,
+			DatabaseException;
+
+	/**
+	 * @param users
+	 *            the new users to be added
+	 * 
+	 * @return the number of records inserted
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided parameter is invalid
+	 * @throws DatabaseUniqueConstraintException
+	 *             if there is a problem adding the user due to a unique
+	 *             constraint violation
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	int add(final Collection<User> users)
 			throws DatabaseUniqueConstraintException, DatabaseException;
 
 	/**
@@ -150,12 +154,14 @@ public interface UserDao {
 	 * @param userIds
 	 *            the unique ids of the users to make active
 	 * 
+	 * @return the number of records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if either of the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void activate(final Integer companyId, final Integer... userIds)
+	int activate(final Integer companyId, final Integer... userIds)
 			throws DatabaseException;
 
 	/**
@@ -164,12 +170,14 @@ public interface UserDao {
 	 * @param userIds
 	 *            the unique ids of the users to make active
 	 * 
+	 * @return the number of records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if either of the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void activate(final Integer companyId, final Collection<Integer> userIds)
+	int activate(final Integer companyId, final Collection<Integer> userIds)
 			throws DatabaseException;
 
 	/**
@@ -179,12 +187,14 @@ public interface UserDao {
 	 * @param userIds
 	 *            the unique ids of the users to make inactive
 	 * 
+	 * @return the number of records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if either of the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void deactivate(final Integer companyId, final Integer... userIds)
+	int deactivate(final Integer companyId, final Integer... userIds)
 			throws DatabaseException;
 
 	/**
@@ -194,12 +204,14 @@ public interface UserDao {
 	 * @param userIds
 	 *            the unique ids of the users to make inactive
 	 * 
+	 * @return the number of records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if either of the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void deactivate(final Integer companyId, final Collection<Integer> userIds)
+	int deactivate(final Integer companyId, final Collection<Integer> userIds)
 			throws DatabaseException;
 
 	/**
@@ -210,6 +222,8 @@ public interface UserDao {
 	 * @param users
 	 *            the users to be updated
 	 * 
+	 * @return the number of records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameter is invalid
 	 * @throws DatabaseUniqueConstraintException
@@ -218,7 +232,7 @@ public interface UserDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void update(final User... users) throws DatabaseUniqueConstraintException,
+	int update(final User... users) throws DatabaseUniqueConstraintException,
 			DatabaseException;
 
 	/**
@@ -229,6 +243,8 @@ public interface UserDao {
 	 * @param users
 	 *            the users to be updated
 	 * 
+	 * @return the number of records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameter is invalid
 	 * @throws DatabaseUniqueConstraintException
@@ -237,7 +253,7 @@ public interface UserDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void update(final Collection<User> users)
+	int update(final Collection<User> users)
 			throws DatabaseUniqueConstraintException, DatabaseException;
 
 	/**
@@ -251,35 +267,41 @@ public interface UserDao {
 	 * @param salt
 	 *            the salt value to use when hashing the user's password
 	 * 
+	 * @return the number of records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameters are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void setPassword(final Integer userId, final String hashedPass,
+	int setPassword(final Integer userId, final String hashedPass,
 			final String salt) throws DatabaseException;
 
 	/**
 	 * @param userIds
 	 *            the unique ids of the users to be deleted
 	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided parameter is invalid
-	 * @throws DatabaseException
-	 *             if there is a problem communicating with the database
-	 */
-	void delete(final Integer... userIds) throws DatabaseException;
-
-	/**
-	 * @param userIds
-	 *            the unique ids of the users to be deleted
+	 * @return the number of records modified
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameter is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Collection<Integer> userIds) throws DatabaseException;
+	int delete(final Integer... userIds) throws DatabaseException;
+
+	/**
+	 * @param userIds
+	 *            the unique ids of the users to be deleted
+	 * 
+	 * @return the number of records deleted
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided parameter is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	int delete(final Collection<Integer> userIds) throws DatabaseException;
 
 	/**
 	 * @param companyId
@@ -287,11 +309,13 @@ public interface UserDao {
 	 * @param userIds
 	 *            the unique ids of the users to be deleted
 	 * 
+	 * @return the number of records deleted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameter is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Integer companyId, final Collection<Integer> userIds)
+	int delete(final Integer companyId, final Collection<Integer> userIds)
 			throws DatabaseException;
 }

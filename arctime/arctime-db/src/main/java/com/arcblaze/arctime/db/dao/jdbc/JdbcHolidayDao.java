@@ -145,22 +145,22 @@ public class JdbcHolidayDao implements HolidayDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(final Holiday... holidays) throws DatabaseException {
-		this.add(holidays == null ? null : Arrays.asList(holidays));
+	public int add(final Holiday... holidays) throws DatabaseException {
+		return this.add(holidays == null ? null : Arrays.asList(holidays));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(final Collection<Holiday> holidays)
-			throws DatabaseException {
+	public int add(final Collection<Holiday> holidays) throws DatabaseException {
 		if (holidays == null || holidays.isEmpty())
-			return;
+			return 0;
 
 		final String sql = "INSERT INTO holidays (company_id, description, "
 				+ "config) VALUES (?, ?, ?)";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql,
 						Statement.RETURN_GENERATED_KEYS)) {
@@ -169,7 +169,7 @@ public class JdbcHolidayDao implements HolidayDao {
 				ps.setInt(index++, holiday.getCompanyId());
 				ps.setString(index++, holiday.getDescription());
 				ps.setString(index++, holiday.getConfig());
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 
 				try (final ResultSet rs = ps.getGeneratedKeys()) {
 					if (rs.next())
@@ -179,28 +179,30 @@ public class JdbcHolidayDao implements HolidayDao {
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void update(final Holiday... holidays) throws DatabaseException {
-		this.update(holidays == null ? null : Arrays.asList(holidays));
+	public int update(final Holiday... holidays) throws DatabaseException {
+		return this.update(holidays == null ? null : Arrays.asList(holidays));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void update(final Collection<Holiday> holidays)
+	public int update(final Collection<Holiday> holidays)
 			throws DatabaseException {
 		if (holidays == null || holidays.isEmpty())
-			return;
+			return 0;
 
 		final String sql = "UPDATE holidays SET company_id = ?, "
 				+ "description = ?, config = ? WHERE id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Holiday holiday : holidays) {
@@ -209,44 +211,47 @@ public class JdbcHolidayDao implements HolidayDao {
 				ps.setString(index++, holiday.getDescription());
 				ps.setString(index++, holiday.getConfig());
 				ps.setInt(index++, holiday.getId());
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Integer companyId, final Integer... ids)
+	public int delete(final Integer companyId, final Integer... ids)
 			throws DatabaseException {
-		this.delete(companyId, ids == null ? null : Arrays.asList(ids));
+		return this.delete(companyId, ids == null ? null : Arrays.asList(ids));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(final Integer companyId, final Collection<Integer> ids)
+	public int delete(final Integer companyId, final Collection<Integer> ids)
 			throws DatabaseException {
 		if (ids == null || ids.isEmpty())
-			return;
+			return 0;
 		notNull(companyId, "Invalid null company id");
 
 		final String sql = "DELETE FROM holidays "
 				+ "WHERE company_id = ? AND id = ?";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final Integer id : ids) {
 				ps.setInt(1, companyId);
 				ps.setInt(2, id);
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 }

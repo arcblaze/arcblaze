@@ -89,45 +89,53 @@ public interface HolidayDao {
 	 * @param holidays
 	 *            the new holidays to be added
 	 * 
+	 * @return the number if records inserted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided holidays are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void add(final Holiday... holidays) throws DatabaseException;
+	int add(final Holiday... holidays) throws DatabaseException;
 
 	/**
 	 * @param holidays
 	 *            the new holidays to be added
 	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided holidays are invalid
-	 * @throws DatabaseException
-	 *             if there is a problem communicating with the database
-	 */
-	void add(final Collection<Holiday> holidays) throws DatabaseException;
-
-	/**
-	 * @param holidays
-	 *            the holidays to be updated
+	 * @return the number if records inserted
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided holidays are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void update(final Holiday... holidays) throws DatabaseException;
+	int add(final Collection<Holiday> holidays) throws DatabaseException;
 
 	/**
 	 * @param holidays
 	 *            the holidays to be updated
+	 * 
+	 * @return the number if records updated
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided holidays are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void update(final Collection<Holiday> holidays) throws DatabaseException;
+	int update(final Holiday... holidays) throws DatabaseException;
+
+	/**
+	 * @param holidays
+	 *            the holidays to be updated
+	 * 
+	 * @return the number if records updated
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided holidays are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	int update(final Collection<Holiday> holidays) throws DatabaseException;
 
 	/**
 	 * @param companyId
@@ -136,12 +144,14 @@ public interface HolidayDao {
 	 * @param holidayIds
 	 *            the unique ids of the holidays to be deleted
 	 * 
+	 * @return the number if records deleted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Integer companyId, final Integer... holidayIds)
+	int delete(final Integer companyId, final Integer... holidayIds)
 			throws DatabaseException;
 
 	/**
@@ -151,11 +161,13 @@ public interface HolidayDao {
 	 * @param holidayIds
 	 *            the unique ids of the holidays to be deleted
 	 * 
+	 * @return the number if records deleted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Integer companyId, final Collection<Integer> holidayIds)
+	int delete(final Integer companyId, final Collection<Integer> holidayIds)
 			throws DatabaseException;
 }

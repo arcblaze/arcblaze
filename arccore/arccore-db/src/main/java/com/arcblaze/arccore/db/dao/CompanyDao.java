@@ -61,6 +61,8 @@ public interface CompanyDao {
 	 * @param companies
 	 *            the new companies to be added
 	 * 
+	 * @return the number of records inserted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameter is invalid
 	 * @throws DatabaseUniqueConstraintException
@@ -69,13 +71,15 @@ public interface CompanyDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void add(final Company... companies)
+	int add(final Company... companies)
 			throws DatabaseUniqueConstraintException, DatabaseException;
 
 	/**
 	 * @param companies
 	 *            the new companies to be added
 	 * 
+	 * @return the number of records inserted
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameter is invalid
 	 * @throws DatabaseUniqueConstraintException
@@ -84,7 +88,7 @@ public interface CompanyDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void add(final Collection<Company> companies)
+	int add(final Collection<Company> companies)
 			throws DatabaseUniqueConstraintException, DatabaseException;
 
 	/**
@@ -93,6 +97,8 @@ public interface CompanyDao {
 	 * @param companies
 	 *            the companies to be updated
 	 * 
+	 * @return the number of records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameter is invalid
 	 * @throws DatabaseUniqueConstraintException
@@ -101,7 +107,7 @@ public interface CompanyDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void update(final Company... companies)
+	int update(final Company... companies)
 			throws DatabaseUniqueConstraintException, DatabaseException;
 
 	/**
@@ -110,6 +116,8 @@ public interface CompanyDao {
 	 * @param companies
 	 *            the companies to be updated
 	 * 
+	 * @return the number of records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameter is invalid
 	 * @throws DatabaseUniqueConstraintException
@@ -118,74 +126,85 @@ public interface CompanyDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void update(final Collection<Company> companies)
+	int update(final Collection<Company> companies)
 			throws DatabaseUniqueConstraintException, DatabaseException;
 
 	/**
 	 * @param companyIds
 	 *            the unique ids of the companies to make active
 	 * 
+	 * @return the number of records modified
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameter is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void activate(final Integer... companyIds) throws DatabaseException;
+	int activate(final Integer... companyIds) throws DatabaseException;
 
 	/**
 	 * @param companyIds
 	 *            the unique ids of the companies to make active
 	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided parameter is invalid
-	 * @throws DatabaseException
-	 *             if there is a problem communicating with the database
-	 */
-	void activate(final Collection<Integer> companyIds)
-			throws DatabaseException;
-
-	/**
-	 * @param companyIds
-	 *            the unique ids of the companies to make inactive
+	 * @return the number of records modified
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameter is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void deactivate(final Integer... companyIds) throws DatabaseException;
+	int activate(final Collection<Integer> companyIds) throws DatabaseException;
 
 	/**
 	 * @param companyIds
 	 *            the unique ids of the companies to make inactive
+	 * 
+	 * @return the number of records modified
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameter is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void deactivate(final Collection<Integer> companyIds)
+	int deactivate(final Integer... companyIds) throws DatabaseException;
+
+	/**
+	 * @param companyIds
+	 *            the unique ids of the companies to make inactive
+	 * 
+	 * @return the number of records modified
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided parameter is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	int deactivate(final Collection<Integer> companyIds)
 			throws DatabaseException;
 
 	/**
 	 * @param companyIds
 	 *            the unique ids of the companies to be deleted
 	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided parameter is invalid
-	 * @throws DatabaseException
-	 *             if there is a problem communicating with the database
-	 */
-	void delete(final Integer... companyIds) throws DatabaseException;
-
-	/**
-	 * @param companyIds
-	 *            the unique ids of the companies to be deleted
+	 * @return the number of records deleted
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided parameter is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	void delete(final Collection<Integer> companyIds) throws DatabaseException;
+	int delete(final Integer... companyIds) throws DatabaseException;
+
+	/**
+	 * @param companyIds
+	 *            the unique ids of the companies to be deleted
+	 * 
+	 * @return the number of records deleted
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided parameter is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	int delete(final Collection<Integer> companyIds) throws DatabaseException;
 }

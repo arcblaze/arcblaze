@@ -283,22 +283,23 @@ public class JdbcPayPeriodDao implements PayPeriodDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(final PayPeriod... payPeriods) throws DatabaseException {
-		this.add(payPeriods == null ? null : Arrays.asList(payPeriods));
+	public int add(final PayPeriod... payPeriods) throws DatabaseException {
+		return this.add(payPeriods == null ? null : Arrays.asList(payPeriods));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(final Collection<PayPeriod> payPeriods)
+	public int add(final Collection<PayPeriod> payPeriods)
 			throws DatabaseException {
 		if (payPeriods == null || payPeriods.isEmpty())
-			return;
+			return 0;
 
 		final String sql = "INSERT INTO pay_periods (company_id, begin, end, "
 				+ "type) VALUES (?, ?, ?, ?)";
 
+		int count = 0;
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (final PayPeriod payPeriod : payPeriods) {
@@ -309,10 +310,11 @@ public class JdbcPayPeriodDao implements PayPeriodDao {
 				ps.setDate(index++, new java.sql.Date(payPeriod.getEnd()
 						.getTime()));
 				ps.setString(index++, payPeriod.getType().name());
-				ps.executeUpdate();
+				count += ps.executeUpdate();
 			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+		return count;
 	}
 }
