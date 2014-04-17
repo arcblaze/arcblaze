@@ -16,10 +16,10 @@ data.store.manager.TaskUserStore = Ext.extend(Ext.data.JsonStore, {
 				reader: {
 					type: 'json',
 					root: 'users'
+				},
+				extraParams: {
+					day: c.day
 				}
-			},
-			params: {
-				day: c.day
 			}
 		});
 
@@ -29,7 +29,7 @@ data.store.manager.TaskUserStore = Ext.extend(Ext.data.JsonStore, {
 	setAsOf: function(newDate) {
 		this.reload({
 			params: {
-				day: newDate.format('Y-m-d')
+				day: Ext.Date.format(newDate, 'Y-m-d')
 			}
 		});
 	}

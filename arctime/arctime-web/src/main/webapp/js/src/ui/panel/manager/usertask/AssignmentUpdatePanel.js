@@ -21,7 +21,7 @@ ui.panel.manager.usertask.AssignmentUpdatePanel = Ext.extend(Ext.form.FormPanel,
 				}, {
 					xtype: 'hidden',
 					name:  'userId',
-					value: c.user.id
+					value: c.user.data.id
 				}, {
 					xtype: 'hidden',
 					name:  'taskId'

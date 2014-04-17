@@ -35,23 +35,23 @@ public class TaskResource extends BaseResource {
 	@XmlRootElement
 	static class DeleteResponse {
 		@XmlElement
-		public final boolean success = true;
+		public boolean success = true;
 
 		@XmlElement
-		public final String title = "User Deleted";
+		public String title = "User Deleted";
 
 		@XmlElement
-		public final String msg = "The specified tasks have been deleted "
+		public String msg = "The specified tasks have been deleted "
 				+ "successfully.";
 	}
 
 	@XmlRootElement
 	static class AddResponse {
 		@XmlElement
-		public final boolean success = true;
+		public boolean success = true;
 
 		@XmlElement
-		public final String msg = "The task was added successfully.";
+		public String msg = "The task was added successfully.";
 
 		@XmlElement
 		public Task task;
@@ -60,28 +60,28 @@ public class TaskResource extends BaseResource {
 	@XmlRootElement
 	static class ActivateResponse {
 		@XmlElement
-		public final boolean success = true;
+		public boolean success = true;
 
 		@XmlElement
-		public final String msg = "The specified tasks were activated successfully.";
+		public String msg = "The specified tasks were activated successfully.";
 	}
 
 	@XmlRootElement
 	static class DeactivateResponse {
 		@XmlElement
-		public final boolean success = true;
+		public boolean success = true;
 
 		@XmlElement
-		public final String msg = "The specified tasks were deactivated successfully.";
+		public String msg = "The specified tasks were deactivated successfully.";
 	}
 
 	@XmlRootElement
 	static class UpdateResponse {
 		@XmlElement
-		public final boolean success = true;
+		public boolean success = true;
 
 		@XmlElement
-		public final String msg = "The task was modified successfully.";
+		public String msg = "The task was modified successfully.";
 
 		@XmlElement
 		public Task task;
@@ -182,9 +182,13 @@ public class TaskResource extends BaseResource {
 			if (task == null)
 				throw badRequest("A task must be provided.");
 			task.setCompanyId(currentUser.getCompanyId());
-			daoFactory.getTaskDao().add(task);
+			final int added = daoFactory.getTaskDao().add(task);
 			final AddResponse response = new AddResponse();
-			response.task = task;
+			if (added == 0) {
+				response.success = false;
+				response.msg = "Failed to add the new task.";
+			} else
+				response.task = task;
 			return response;
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
@@ -216,9 +220,14 @@ public class TaskResource extends BaseResource {
 		try (final Timer.Context timerContext = timer.time()) {
 			if (taskIds == null || taskIds.isEmpty())
 				throw badRequest("No user ids provided");
-			daoFactory.getTaskDao().activate(currentUser.getCompanyId(),
-					taskIds);
-			return new ActivateResponse();
+			final int updated = daoFactory.getTaskDao().activate(
+					currentUser.getCompanyId(), taskIds);
+			final ActivateResponse response = new ActivateResponse();
+			if (updated == 0) {
+				response.success = false;
+				response.msg = "Failed to activate specified users.";
+			}
+			return response;
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
 		}
@@ -250,9 +259,14 @@ public class TaskResource extends BaseResource {
 		try (final Timer.Context timerContext = timer.time()) {
 			if (taskIds == null || taskIds.isEmpty())
 				throw badRequest("No user ids provided");
-			daoFactory.getTaskDao().deactivate(currentUser.getCompanyId(),
-					taskIds);
-			return new DeactivateResponse();
+			final int updated = daoFactory.getTaskDao().deactivate(
+					currentUser.getCompanyId(), taskIds);
+			final DeactivateResponse response = new DeactivateResponse();
+			if (updated == 0) {
+				response.success = false;
+				response.msg = "Failed to deactivate requested tasks.";
+			}
+			return response;
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
 		}
@@ -283,9 +297,13 @@ public class TaskResource extends BaseResource {
 			if (task == null || task.getId() == null)
 				throw badRequest("A user with id must be provided.");
 			task.setCompanyId(currentUser.getCompanyId());
-			daoFactory.getTaskDao().update(task);
+			final int updated = daoFactory.getTaskDao().update(task);
 			final UpdateResponse response = new UpdateResponse();
-			response.task = task;
+			if (updated == 0) {
+				response.success = false;
+				response.msg = "Failed to save the provided task.";
+			} else
+				response.task = task;
 			return response;
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
@@ -316,8 +334,14 @@ public class TaskResource extends BaseResource {
 		try (final Timer.Context timerContext = timer.time()) {
 			if (taskIds == null || taskIds.isEmpty())
 				throw badRequest("No user ids provided");
-			daoFactory.getTaskDao().delete(currentUser.getCompanyId(), taskIds);
-			return new DeleteResponse();
+			final int deleted = daoFactory.getTaskDao().delete(
+					currentUser.getCompanyId(), taskIds);
+			final DeleteResponse response = new DeleteResponse();
+			if (deleted == 0) {
+				response.success = false;
+				response.msg = "Failed to delete specified tasks.";
+			}
+			return response;
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
 		}

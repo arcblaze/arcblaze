@@ -95,16 +95,6 @@ Ext.define('data.model.TaskUser', {
 			width:     60,
 			sortable:  true,
 			hidden:    true
-		}, {
-			name:      'active',
-			dataIndex: 'active',
-			header:    'Active',
-			width:     60,
-			hidden:    true,
-			sortable:  true,
-			renderer:  function(val) {
-				return val ? "Yes" : "No";
-			}
 		}
 	],
 

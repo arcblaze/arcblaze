@@ -32,23 +32,23 @@ public class SupervisorResource extends BaseResource {
 	@XmlRootElement
 	static class DeleteResponse {
 		@XmlElement
-		public final boolean success = true;
+		public boolean success = true;
 
 		@XmlElement
-		public final String title = "Supervisor Deleted";
+		public String title = "Supervisor Deleted";
 
 		@XmlElement
-		public final String msg = "The specified supervisors have been deleted "
+		public String msg = "The specified supervisors have been deleted "
 				+ "successfully.";
 	}
 
 	@XmlRootElement
 	static class AddResponse {
 		@XmlElement
-		public final boolean success = true;
+		public boolean success = true;
 
 		@XmlElement
-		public final String msg = "The supervisor was added successfully.";
+		public String msg = "The supervisor was added successfully.";
 	}
 
 	/**
@@ -121,9 +121,14 @@ public class SupervisorResource extends BaseResource {
 				throw badRequest("A supervisor id must be provided.");
 			if (primary == null)
 				throw badRequest("The primary value must be provided.");
-			daoFactory.getSupervisorDao().add(currentUser.getCompanyId(),
-					userId, primary, supervisorId);
-			return new AddResponse();
+			final int added = daoFactory.getSupervisorDao().add(
+					currentUser.getCompanyId(), userId, primary, supervisorId);
+			final AddResponse response = new AddResponse();
+			if (added == 0) {
+				response.success = false;
+				response.msg = "Failed to add the requested supervisor.";
+			}
+			return response;
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
 		}
@@ -160,9 +165,14 @@ public class SupervisorResource extends BaseResource {
 				throw badRequest("A user id must be provided.");
 			if (supervisorIds == null)
 				throw badRequest("Supervisor ids must be provided.");
-			daoFactory.getSupervisorDao().delete(currentUser.getCompanyId(),
-					userId, supervisorIds);
-			return new DeleteResponse();
+			final int deleted = daoFactory.getSupervisorDao().delete(
+					currentUser.getCompanyId(), userId, supervisorIds);
+			final DeleteResponse response = new DeleteResponse();
+			if (deleted == 0) {
+				response.success = false;
+				response.msg = "Failed to delete the requested supervisors.";
+			}
+			return response;
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
 		}

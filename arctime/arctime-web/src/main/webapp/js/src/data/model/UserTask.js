@@ -67,26 +67,6 @@ Ext.define('data.model.UserTask', {
 			renderer:  function(value) {
 				return Ext.Date.format(new Date(value), 'm/d/Y');
 			}
-		}, {
-			name:      'admin',
-			dataIndex: 'admin',
-			header:    'Administrative',
-			width:     100,
-			hidden:    true,
-			sortable:  true,
-			renderer:  function(val) {
-				return val ? "Yes" : "No";
-			}
-		}, {
-			name:      'active',
-			dataIndex: 'active',
-			header:    'Active',
-			width:     60,
-			hidden:    true,
-			sortable:  true,
-			renderer:  function(val) {
-				return val ? "Yes" : "No";
-			}
 		}
 	],
 

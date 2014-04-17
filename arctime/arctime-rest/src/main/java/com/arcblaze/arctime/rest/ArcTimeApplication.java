@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arcblaze.arccore.rest.BaseApplication;
+import com.arcblaze.arctime.rest.factory.AssignmentFactory;
 import com.arcblaze.arctime.rest.factory.DaoFactoryFactory;
 import com.arcblaze.arctime.rest.factory.HolidayFactory;
 import com.arcblaze.arctime.rest.factory.TaskFactory;
@@ -27,6 +28,7 @@ public class ArcTimeApplication extends BaseApplication {
 		// trouble finding the resources when Tomcat is run as an embedded app.
 		registerPackage(ArcTimeApplication.class.getPackage().getName());
 
+		register(AssignmentFactory.getBinder());
 		register(DaoFactoryFactory.getBinder());
 		register(HolidayFactory.getBinder());
 		register(TaskFactory.getBinder());

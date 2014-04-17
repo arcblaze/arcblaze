@@ -39,13 +39,13 @@ public class HolidayResource extends BaseResource {
 	@XmlRootElement
 	static class DeleteResponse {
 		@XmlElement
-		public final boolean success = true;
+		public boolean success = true;
 
 		@XmlElement
-		public final String title = "Holiday Deleted";
+		public String title = "Holiday Deleted";
 
 		@XmlElement
-		public final String msg = "The specified holidays have been deleted "
+		public String msg = "The specified holidays have been deleted "
 				+ "successfully.";
 	}
 
@@ -67,10 +67,10 @@ public class HolidayResource extends BaseResource {
 	@XmlRootElement
 	static class AddResponse {
 		@XmlElement
-		public final boolean success = true;
+		public boolean success = true;
 
 		@XmlElement
-		public final String msg = "The holiday was added successfully.";
+		public String msg = "The holiday was added successfully.";
 
 		@XmlElement
 		public Holiday holiday;
@@ -79,10 +79,10 @@ public class HolidayResource extends BaseResource {
 	@XmlRootElement
 	static class UpdateResponse {
 		@XmlElement
-		public final boolean success = true;
+		public boolean success = true;
 
 		@XmlElement
-		public final String msg = "The holiday was saved successfully.";
+		public String msg = "The holiday was saved successfully.";
 
 		@XmlElement
 		public Holiday holiday;
@@ -244,10 +244,13 @@ public class HolidayResource extends BaseResource {
 		final User currentUser = (User) security.getUserPrincipal();
 		try (final Timer.Context timerContext = timer.time()) {
 			holiday.setCompanyId(currentUser.getCompanyId());
-			daoFactory.getHolidayDao().add(holiday);
-
+			final int added = daoFactory.getHolidayDao().add(holiday);
 			final AddResponse response = new AddResponse();
-			response.holiday = holiday;
+			if (added == 0) {
+				response.success = false;
+				response.msg = "Failed to add the new holiday.";
+			} else
+				response.holiday = holiday;
 			return response;
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
@@ -278,12 +281,14 @@ public class HolidayResource extends BaseResource {
 		try (final Timer.Context timerContext = timer.time()) {
 			if (holiday == null || holiday.getId() == null)
 				throw badRequest("A holiday with an id must be provided.");
-
 			holiday.setCompanyId(currentUser.getCompanyId());
-			daoFactory.getHolidayDao().update(holiday);
-
+			final int updated = daoFactory.getHolidayDao().update(holiday);
 			final UpdateResponse response = new UpdateResponse();
-			response.holiday = holiday;
+			if (updated == 0) {
+				response.success = false;
+				response.msg = "Failed to save the updated holiday.";
+			} else
+				response.holiday = holiday;
 			return response;
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
@@ -320,9 +325,14 @@ public class HolidayResource extends BaseResource {
 		try (final Timer.Context timerContext = timer.time()) {
 			if (holidayIds == null || holidayIds.isEmpty())
 				throw badRequest("No holiday ids provided");
-			daoFactory.getHolidayDao().delete(currentUser.getCompanyId(),
-					holidayIds);
-			return new DeleteResponse();
+			final int deleted = daoFactory.getHolidayDao().delete(
+					currentUser.getCompanyId(), holidayIds);
+			final DeleteResponse response = new DeleteResponse();
+			if (deleted == 0) {
+				response.success = false;
+				response.msg = "Failed to delete the specified holidays.";
+			}
+			return response;
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
 		}

@@ -39,23 +39,23 @@ public class UserResource extends BaseResource {
 	@XmlRootElement
 	static class DeleteResponse {
 		@XmlElement
-		public final boolean success = true;
+		public boolean success = true;
 
 		@XmlElement
-		public final String title = "User Deleted";
+		public String title = "User Deleted";
 
 		@XmlElement
-		public final String msg = "The specified users have been deleted "
+		public String msg = "The specified users have been deleted "
 				+ "successfully.";
 	}
 
 	@XmlRootElement
 	static class AddResponse {
 		@XmlElement
-		public final boolean success = true;
+		public boolean success = true;
 
 		@XmlElement
-		public final String msg = "The user was added successfully.";
+		public String msg = "The user was added successfully.";
 
 		@XmlElement
 		public User user;
@@ -64,28 +64,28 @@ public class UserResource extends BaseResource {
 	@XmlRootElement
 	static class ActivateResponse {
 		@XmlElement
-		public final boolean success = true;
+		public boolean success = true;
 
 		@XmlElement
-		public final String msg = "The specified users were activated successfully.";
+		public String msg = "The specified users were activated successfully.";
 	}
 
 	@XmlRootElement
 	static class DeactivateResponse {
 		@XmlElement
-		public final boolean success = true;
+		public boolean success = true;
 
 		@XmlElement
-		public final String msg = "The specified users were deactivated successfully.";
+		public String msg = "The specified users were deactivated successfully.";
 	}
 
 	@XmlRootElement
 	static class UpdateResponse {
 		@XmlElement
-		public final boolean success = true;
+		public boolean success = true;
 
 		@XmlElement
-		public final String msg = "The user was modified successfully.";
+		public String msg = "The user was modified successfully.";
 
 		@XmlElement
 		public User user;
@@ -189,15 +189,19 @@ public class UserResource extends BaseResource {
 			if (user == null)
 				throw badRequest("A user must be provided.");
 			user.setCompanyId(currentUser.getCompanyId());
-			daoFactory.getUserDao().add(user);
+			int added = daoFactory.getUserDao().add(user);
 
 			final Set<Role> roles = new TreeSet<>(user.getRoles());
 			roles.retainAll(currentUser.getRoles());
 			user.setRoles(roles);
-			daoFactory.getRoleDao().add(user.getId(), user.getRoles());
+			added += daoFactory.getRoleDao().add(user.getId(), user.getRoles());
 
 			final AddResponse response = new AddResponse();
-			response.user = user;
+			if (added == 0) {
+				response.success = false;
+				response.msg = "Failed to add new user.";
+			} else
+				response.user = user;
 			return response;
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
@@ -228,9 +232,14 @@ public class UserResource extends BaseResource {
 		try (final Timer.Context timerContext = timer.time()) {
 			if (userIds == null || userIds.isEmpty())
 				throw badRequest("No user ids provided");
-			daoFactory.getUserDao().activate(currentUser.getCompanyId(),
-					userIds);
-			return new ActivateResponse();
+			final int updated = daoFactory.getUserDao().activate(
+					currentUser.getCompanyId(), userIds);
+			final ActivateResponse response = new ActivateResponse();
+			if (updated == 0) {
+				response.success = false;
+				response.msg = "Failed to deactivate specified users.";
+			}
+			return response;
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
 		}
@@ -261,9 +270,14 @@ public class UserResource extends BaseResource {
 		try (final Timer.Context timerContext = timer.time()) {
 			if (userIds == null || userIds.isEmpty())
 				throw badRequest("No user ids provided");
-			daoFactory.getUserDao().deactivate(currentUser.getCompanyId(),
-					userIds);
-			return new DeactivateResponse();
+			final int updated = daoFactory.getUserDao().deactivate(
+					currentUser.getCompanyId(), userIds);
+			final DeactivateResponse response = new DeactivateResponse();
+			if (updated == 0) {
+				response.success = false;
+				response.msg = "Failed to deactivate specified users.";
+			}
+			return response;
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
 		}
@@ -293,20 +307,25 @@ public class UserResource extends BaseResource {
 			if (user == null || user.getId() == null)
 				throw badRequest("A user with id must be provided.");
 			user.setCompanyId(currentUser.getCompanyId());
-			daoFactory.getUserDao().update(user);
+			int updated = daoFactory.getUserDao().update(user);
 			if (StringUtils.isNotBlank(user.getHashedPass()))
-				daoFactory.getUserDao().setPassword(user.getId(),
+				updated += daoFactory.getUserDao().setPassword(user.getId(),
 						user.getHashedPass(), user.getSalt());
 
 			final Set<Role> rolesToAdd = new TreeSet<>(user.getRoles());
 			rolesToAdd.retainAll(currentUser.getRoles());
 			user.setRoles(rolesToAdd);
-			daoFactory.getRoleDao()
-					.delete(user.getId(), currentUser.getRoles());
-			daoFactory.getRoleDao().add(user.getId(), user.getRoles());
+			updated += daoFactory.getRoleDao().delete(user.getId(),
+					currentUser.getRoles());
+			updated += daoFactory.getRoleDao().add(user.getId(),
+					user.getRoles());
 
 			final UpdateResponse response = new UpdateResponse();
-			response.user = user;
+			if (updated == 0) {
+				response.success = false;
+				response.msg = "Failed to update the specified user.";
+			} else
+				response.user = user;
 			return response;
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
@@ -336,8 +355,14 @@ public class UserResource extends BaseResource {
 		try (final Timer.Context timerContext = timer.time()) {
 			if (userIds == null || userIds.isEmpty())
 				throw badRequest("No user ids provided");
-			daoFactory.getUserDao().delete(currentUser.getCompanyId(), userIds);
-			return new DeleteResponse();
+			final int deleted = daoFactory.getUserDao().delete(
+					currentUser.getCompanyId(), userIds);
+			final DeleteResponse response = new DeleteResponse();
+			if (deleted == 0) {
+				response.success = false;
+				response.msg = "Failed to delete specified users.";
+			}
+			return response;
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
 		}

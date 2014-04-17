@@ -25,7 +25,7 @@ public class TaskFactory extends BaseFactory<Task> {
 	 * @param id
 	 *            the unique id of the user
 	 * @param companyId
-	 *            the unique id of the company associated with the user
+	 *            the unique id of the company associated with the task
 	 * @param description
 	 *            the task description
 	 * @param jobCode
@@ -33,7 +33,7 @@ public class TaskFactory extends BaseFactory<Task> {
 	 * @param administrative
 	 *            whether the task is administrative
 	 * @param active
-	 *            whether the user is active or not
+	 *            whether the task is active or not
 	 */
 	public TaskFactory(@FormParam("id") final Integer id,
 			@FormParam("companyId") final Integer companyId,

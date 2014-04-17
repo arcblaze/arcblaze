@@ -120,7 +120,7 @@ public class UserResourceTest {
 
 			final UserResource resource = new UserResource();
 			final Set<User> users = resource.all(securityContext, config,
-					daoFactory, timer, null, null);
+					daoFactory, timer, true, false);
 
 			assertNotNull(users);
 			assertTrue(users.isEmpty());
@@ -161,7 +161,7 @@ public class UserResourceTest {
 
 			final UserResource resource = new UserResource();
 			final Set<User> users = resource.all(securityContext, config,
-					daoFactory, timer, null, null);
+					daoFactory, timer, true, false);
 
 			assertNotNull(users);
 			assertEquals(1, users.size());
@@ -214,7 +214,7 @@ public class UserResourceTest {
 
 			final UserResource resource = new UserResource();
 			Set<User> users = resource.all(securityContext, config, daoFactory,
-					timer, true, null);
+					timer, true, false);
 
 			assertNotNull(users);
 			assertEquals(2, users.size());
@@ -222,7 +222,7 @@ public class UserResourceTest {
 			assertTrue(users.contains(inactive));
 
 			users = resource.all(securityContext, config, daoFactory, timer,
-					false, null);
+					false, false);
 
 			assertNotNull(users);
 			assertEquals(1, users.size());
@@ -273,7 +273,7 @@ public class UserResourceTest {
 
 			final UserResource resource = new UserResource();
 			Set<User> users = resource.all(securityContext, config, daoFactory,
-					timer, null, false);
+					timer, true, false);
 
 			assertNotNull(users);
 			assertEquals(2, users.size());
@@ -281,7 +281,7 @@ public class UserResourceTest {
 			assertTrue(users.contains(other));
 
 			users = resource.all(securityContext, config, daoFactory, timer,
-					null, true);
+					true, true);
 
 			assertNotNull(users);
 			assertEquals(1, users.size());
