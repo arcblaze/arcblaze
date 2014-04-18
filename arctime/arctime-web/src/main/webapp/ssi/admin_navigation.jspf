@@ -1,0 +1,10 @@
+
+<div id="admin-navigation">
+  <% if (request.isUserInRole("ADMIN")) { %>
+    <li><a href="/admin/companies/">Companies</a></li>
+    <li><a href="/admin/users/">User Accounts</a></li>
+    <li><a href="/admin/transactions/">Transactions</a></li>
+  <% } else { %>
+    &nbsp;
+  <% } %>
+</div>

@@ -17,7 +17,7 @@ ui.grid.admin.CompanyGrid = Ext.extend(Ext.grid.GridPanel, {
 			multiSelect: true,
 			stripeRows:  true,
 			autoWidth:   true,
-			height:      400,
+			autoHeight:  true,
 			tbar:        grid.toolbar,
 			columns:     company.getColumnModel(),
 			loadMask:    true

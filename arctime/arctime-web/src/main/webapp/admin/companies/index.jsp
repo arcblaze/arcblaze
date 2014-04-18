@@ -10,6 +10,8 @@
     <%@ include file="/ssi/scripts.jspf" %>
 
     <div id="container-maxwidth">
+      <%@ include file="/ssi/admin_navigation.jspf" %>
+
 	  <div id="company-management-grid"></div>
 	  <div id="company-add-panel"></div>
 	  <div id="company-update-panel"></div>

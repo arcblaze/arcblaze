@@ -10,6 +10,8 @@
     <%@ include file="/ssi/scripts.jspf" %>
 
     <div id="container-maxwidth">
+      <%@ include file="/ssi/admin_navigation.jspf" %>
+
       <!-- This is where the UI components will be injected into the page. -->
       <div id="system-stats"></div>
 
