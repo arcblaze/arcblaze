@@ -20,7 +20,7 @@ ui.tbar.manager.TaskUserToolbar = Ext.extend(Ext.Toolbar, {
 				'->',
 
 				new Ext.form.Label({
-					text: 'As of',
+					text: 'Active on:',
 					style: 'padding-right:10px;'
 				}),
 				new Ext.form.DateField({
