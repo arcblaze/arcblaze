@@ -19,7 +19,7 @@
           <li><a href="/manage.jsp">Manage</a></li>
         <% } %>
         <li><a href="/user/">Timesheet</a></li>
-        <li><a href="/user/profile.jsp">Profile</a></li>
+        <li><a href="/user/profile/">Profile</a></li>
         <li><a href="/rest/logout">Logout</a></li>
       <% } else { %>
         &nbsp;

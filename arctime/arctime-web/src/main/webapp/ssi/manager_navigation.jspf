@@ -10,9 +10,9 @@
       <li><a href="/supervisor/">Timesheets</a></li>
     <% } %>
     <% if (request.isUserInRole("MANAGER")) { %>
-      <li><a href="/manager/users.jsp">User Accounts</a></li>
-      <li><a href="/manager/tasks.jsp">Tasks</a></li>
-      <li><a href="/manager/holidays.jsp">Holidays</a></li>
+      <li><a href="/manager/users/">User Accounts</a></li>
+      <li><a href="/manager/tasks/">Tasks</a></li>
+      <li><a href="/manager/holidays/">Holidays</a></li>
     <% } %>
   <% } else { %>
     &nbsp;
