@@ -1,2 +1,3 @@
 
 - Add ability to send notifications when an assignment is about to end.
+- Run jslint on the UI JS.

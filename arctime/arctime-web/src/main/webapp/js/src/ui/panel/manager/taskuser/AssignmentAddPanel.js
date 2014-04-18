@@ -65,7 +65,7 @@ ui.panel.manager.taskuser.AssignmentAddPanel = Ext.extend(Ext.form.FormPanel, {
                     xtype:      'textfield',
                     fieldLabel: 'Labor Category',
                     name:       'laborCat',
-                    width:      300,
+                    width:      340,
                     allowBlank: false
                 }, {
                     xtype: 'label',
@@ -80,7 +80,7 @@ ui.panel.manager.taskuser.AssignmentAddPanel = Ext.extend(Ext.form.FormPanel, {
                     xtype:      'textfield',
                     fieldLabel: 'Item Name',
                     name:       'itemName',
-                    width:      300,
+                    width:      340,
                     allowBlank: false
                 }
             ],

@@ -29,32 +29,55 @@ ui.panel.manager.taskuser.AssignmentUpdatePanel = Ext.extend(Ext.form.FormPanel,
 					xtype:      'textfield',
 					name:       'task',
 					fieldLabel: 'Task',
-					width:      250,
+					width:      400,
 					disabled:   true
 				}, {
 					xtype:      'textfield',
 					name:       'user',
 					fieldLabel: 'User',
-					width:      250,
+					width:      400,
 					disabled:   true
+                }, {
+		            xtype: 'label',
+		            html:  '<div style="padding:0px 5px 6px 104px;">Choose ' +
+		                   'a date range during which the user can bill hours ' +
+		                   'to the above task.' +
+		                   '</div>'
 				}, {
 					xtype:      'datefield',
 					fieldLabel: 'Assignment Start',
-					name:       'start'
+					name:       'begin',
+					width:      220
 				}, {
 					xtype:      'datefield',
 					fieldLabel: 'Assignment End',
-					name:       'end'
+					name:       'end',
+					width:      220
+                }, {
+                    xtype: 'label',
+                    html:  '<div style="padding:0px 5px 6px 104px;">Provide ' +
+                           'the labor category used to describe the type of ' +
+                           'work being performed on the task.' +
+                           '</div>'
 				}, {
 					xtype:      'textfield',
 					fieldLabel: 'Labor Category',
 					name:       'laborCat',
-					width:      300
+					width:      400
+                }, {
+                    xtype: 'label',
+                    html:  '<div style="padding:0px 5px 6px 104px;">Provide ' +
+                           'the name of the item associated with this ' +
+                           'assignment in the accounting system. (See ' +
+                           'information on <a href="/integration/">Integration' +
+                           '</a> for more information.) Example: ' +
+                           '<li>John Doe:Example Task</li>' +
+                           '</div>'
 				}, {
 					xtype:      'textfield',
 					fieldLabel: 'Item Name',
 					name:       'itemName',
-					width:      300
+					width:      400
 				}
 			],
 			buttons: [
@@ -67,7 +90,7 @@ ui.panel.manager.taskuser.AssignmentUpdatePanel = Ext.extend(Ext.form.FormPanel,
 	},
 
 	setInitialFocus: function() {
-		this.getForm().findField('start').focus();
+		this.getForm().findField('begin').focus();
 	},
 
 	setValues: function(assignment) {
@@ -79,11 +102,17 @@ ui.panel.manager.taskuser.AssignmentUpdatePanel = Ext.extend(Ext.form.FormPanel,
 		this.getForm().findField('userId').
 			setValue(assignment.data.userId);
 		this.getForm().findField('task').
-			setValue(this.task.data.description);
+			setValue(this.task.data.description + ' (' +
+					this.task.data.jobCode + ')');
 		this.getForm().findField('user').
-			setValue(assignment.data.fullName);
-		this.getForm().findField('start').setValue(assignment.data.start);
-		this.getForm().findField('end').setValue(assignment.data.end);
+			setValue(assignment.data.fullName + ' (' +
+					assignment.data.login + ')');
+		console.log("Setting begin");
+		console.log(assignment.data.begin);
+		this.getForm().findField('begin').setValue(
+				new Date(assignment.data.begin));
+		this.getForm().findField('end').setValue(
+				new Date(assignment.data.end));
 		this.getForm().findField('laborCat').
 			setValue(assignment.data.laborCat);
 		this.getForm().findField('itemName').
