@@ -14,8 +14,8 @@ action.manager.usertask.ShowUserTaskGrid = function() {
 				Ext.getCmp('ui.panel.manager.usertask.assignmentupdatepanel');
 
 			// Hide the panels.
-			if (assignmentAddPanel) assignmentAddPanel.hide();
-			if (assignmentUpdPanel) assignmentUpdPanel.hide();
+			if (assignmentAddPanel) assignmentAddPanel.destroy();
+			if (assignmentUpdPanel) assignmentUpdPanel.destroy();
 
 			// Show the grid.
 			Ext.getCmp('ui.grid.manager.usertaskgrid').show();

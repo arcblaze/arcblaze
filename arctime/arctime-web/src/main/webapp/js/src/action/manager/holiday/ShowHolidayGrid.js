@@ -14,8 +14,8 @@ action.manager.holiday.ShowHolidayGrid = function() {
 				Ext.getCmp('ui.panel.manager.holiday.holidayupdatepanel');
 
 			// Hide the panels.
-			if (holidayAddPanel) holidayAddPanel.hide();
-			if (holidayUpdPanel) holidayUpdPanel.hide();
+			if (holidayAddPanel) holidayAddPanel.destroy();
+			if (holidayUpdPanel) holidayUpdPanel.destroy();
 
 			// Show the grid.
 			Ext.getCmp('ui.grid.manager.holidaygrid').show();
