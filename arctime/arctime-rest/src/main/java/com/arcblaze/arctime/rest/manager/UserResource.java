@@ -85,7 +85,7 @@ public class UserResource extends BaseResource {
 		public boolean success = true;
 
 		@XmlElement
-		public String msg = "The user was modified successfully.";
+		public String msg = "The user was saved successfully.";
 
 		@XmlElement
 		public User user;

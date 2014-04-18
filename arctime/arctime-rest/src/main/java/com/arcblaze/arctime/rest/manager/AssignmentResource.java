@@ -57,7 +57,7 @@ public class AssignmentResource extends BaseResource {
 		public boolean success = true;
 
 		@XmlElement
-		public String msg = "The assignment was added successfully.";
+		public String msg = "The assignment was saved successfully.";
 
 		@XmlElement
 		public Assignment assignment;

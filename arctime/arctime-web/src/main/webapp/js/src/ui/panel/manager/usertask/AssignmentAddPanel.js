@@ -8,7 +8,7 @@ ui.panel.manager.usertask.AssignmentAddPanel = Ext.extend(Ext.form.FormPanel, {
 
         var config = Ext.applyIf(c || {}, {
             id:         'ui.panel.manager.usertask.assignmentaddpanel',
-            title:      'Add a new Task Assignment for ' + c.user.data.fullName,
+            title:      'Add Assignment for ' + c.user.data.fullName,
             width:      470,
             autoHeight: true,
             bodyStyle:  'padding: 10px;',
@@ -65,7 +65,7 @@ ui.panel.manager.usertask.AssignmentAddPanel = Ext.extend(Ext.form.FormPanel, {
                     xtype:      'textfield',
                     fieldLabel: 'Labor Category',
                     name:       'laborCat',
-                    width:      300,
+                    width:      400,
                     allowBlank: false
                 }, {
                     xtype: 'label',
@@ -80,7 +80,7 @@ ui.panel.manager.usertask.AssignmentAddPanel = Ext.extend(Ext.form.FormPanel, {
                     xtype:      'textfield',
                     fieldLabel: 'Item Name',
                     name:       'itemName',
-                    width:      300,
+                    width:      400,
                     allowBlank: false
                 }
             ],

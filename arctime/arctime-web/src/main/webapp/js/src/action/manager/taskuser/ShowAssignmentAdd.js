@@ -9,7 +9,7 @@ action.manager.taskuser.ShowAssignmentAdd = function(task) {
 		handler: function() {
 			var taskUserGrid = Ext.getCmp('ui.grid.manager.taskusergrid');
 
-			var assignmentAddPanel = new ui.panel.taskuser.AssignmentAddPanel({
+			var assignmentAddPanel = new ui.panel.manager.taskuser.AssignmentAddPanel({
 				task: task,
 				renderTo: 'assignment-add-panel'
 			});

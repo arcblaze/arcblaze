@@ -81,7 +81,7 @@ public class TaskResource extends BaseResource {
 		public boolean success = true;
 
 		@XmlElement
-		public String msg = "The task was modified successfully.";
+		public String msg = "The task was saved successfully.";
 
 		@XmlElement
 		public Task task;

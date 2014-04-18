@@ -52,19 +52,19 @@ Ext.define('data.model.TaskUser', {
 			name:      'fullName',
 			dataIndex: 'fullName',
 			header:    'Full Name',
-			width:     130,
+			width:     175,
 			sortable:  true
 		}, {
 			name:      'laborCat',
 			dataIndex: 'laborCat',
 			header:    'Labor Category',
-			width:     130,
+			width:     240,
 			sortable:  true
 		}, {
 			name:      'itemName',
 			dataIndex: 'itemName',
 			header:    'Item Name',
-			width:     220,
+			width:     280,
 			sortable:  true
 		}, {
 			name:      'begin',
@@ -88,7 +88,7 @@ Ext.define('data.model.TaskUser', {
 			name:      'email',
 			dataIndex: 'email',
 			header:    'Email',
-			width:     160,
+			width:     240,
 			sortable:  true,
 			hidden:    true
 		}, {

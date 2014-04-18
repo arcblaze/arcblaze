@@ -107,8 +107,6 @@ ui.panel.manager.taskuser.AssignmentUpdatePanel = Ext.extend(Ext.form.FormPanel,
 		this.getForm().findField('user').
 			setValue(assignment.data.fullName + ' (' +
 					assignment.data.login + ')');
-		console.log("Setting begin");
-		console.log(assignment.data.begin);
 		this.getForm().findField('begin').setValue(
 				new Date(assignment.data.begin));
 		this.getForm().findField('end').setValue(

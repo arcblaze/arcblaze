@@ -24,6 +24,7 @@
       <script src="/js/src/util/io/ServerIO.js"></script>
       <script src="/js/src/data/model/Task.js"></script>
       <script src="/js/src/data/model/TaskUser.js"></script>
+      <script src="/js/src/data/model/User.js"></script>
       <script src="/js/src/action/manager/task/DoTaskActivate.js"></script>
       <script src="/js/src/action/manager/task/DoTaskAdd.js"></script>
       <script src="/js/src/action/manager/task/DoTaskDeactivate.js"></script>
@@ -43,6 +44,7 @@
       <script src="/js/src/action/manager/taskuser/ShowTaskUserGrid.js"></script>
       <script src="/js/src/data/store/manager/TaskStore.js"></script>
       <script src="/js/src/data/store/manager/TaskUserStore.js"></script>
+      <script src="/js/src/data/store/manager/UserStore.js"></script>
       <script src="/js/src/ui/grid/manager/TaskGrid.js"></script>
       <script src="/js/src/ui/grid/manager/TaskUserGrid.js"></script>
       <script src="/js/src/ui/panel/manager/task/TaskAddPanel.js"></script>

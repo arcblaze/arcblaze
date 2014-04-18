@@ -8,7 +8,7 @@ ui.panel.manager.taskuser.AssignmentAddPanel = Ext.extend(Ext.form.FormPanel, {
 
         var config = Ext.applyIf(c || {}, {
             id:         'ui.panel.manager.taskuser.assignmentaddpanel',
-            title:      'Add a new User Assignment for ' +
+            title:      'Add Assignment for ' +
                         c.task.data.description + ' (' + c.task.data.jobCode + ')',
             width:      450,
             autoHeight: true,
@@ -34,7 +34,7 @@ ui.panel.manager.taskuser.AssignmentAddPanel = Ext.extend(Ext.form.FormPanel, {
                     forceSelection: true,
                     triggerAction:  'all',
                     selectOnFocus:  true,
-                    width:          210,
+                    width:          400,
                     allowBlank:     false,
                     store: new data.store.manager.UserStore({
                         includeInactive: false
@@ -65,7 +65,7 @@ ui.panel.manager.taskuser.AssignmentAddPanel = Ext.extend(Ext.form.FormPanel, {
                     xtype:      'textfield',
                     fieldLabel: 'Labor Category',
                     name:       'laborCat',
-                    width:      340,
+                    width:      400,
                     allowBlank: false
                 }, {
                     xtype: 'label',
@@ -80,7 +80,7 @@ ui.panel.manager.taskuser.AssignmentAddPanel = Ext.extend(Ext.form.FormPanel, {
                     xtype:      'textfield',
                     fieldLabel: 'Item Name',
                     name:       'itemName',
-                    width:      340,
+                    width:      400,
                     allowBlank: false
                 }
             ],
