@@ -13,7 +13,7 @@ ui.grid.manager.UserGrid = Ext.extend(Ext.grid.GridPanel, {
 			stripeRows:       true,
 			autoExpandColumn: 'fullName',
 			autoWidth:        true,
-			height:           300,
+			autoHeight:       true,
 			tbar:             new ui.tbar.manager.UserToolbar(),
 			columns:          user.getColumnModel(),
 			loadMask:         true

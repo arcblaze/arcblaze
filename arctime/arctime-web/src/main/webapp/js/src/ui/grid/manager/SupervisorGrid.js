@@ -15,7 +15,7 @@ ui.grid.manager.SupervisorGrid = Ext.extend(Ext.grid.GridPanel, {
 			id:          'ui.grid.manager.supervisorgrid',
 			stripeRows:  true,
 			width:       320,
-			height:      285,
+			autoHeight:  true,
 			loadMask:    true,
 			multiSelect: true,
 			columns:     supervisor.getColumnModel(),
