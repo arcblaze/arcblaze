@@ -42,23 +42,33 @@ public class JdbcUserDaoTest {
 			companyDao.add(company);
 			assertNotNull(company.getId());
 
-			Set<User> users = userDao.getAll();
+			Set<User> users = userDao.getAll(null, null);
 			assertNotNull(users);
 			assertEquals(0, users.size());
 
 			assertEquals(0, userDao.count(true));
 
-			final User user = new User();
-			user.setCompanyId(company.getId());
-			user.setLogin("user");
-			user.setHashedPass("hashed");
-			user.setSalt("salt");
-			user.setEmail("email");
-			user.setFirstName("first");
-			user.setLastName("last");
+			final User user1 = new User();
+			user1.setCompanyId(company.getId());
+			user1.setLogin("user1");
+			user1.setHashedPass("hashed");
+			user1.setSalt("salt");
+			user1.setEmail("email1");
+			user1.setFirstName("first");
+			user1.setLastName("last");
+			final User user2 = new User();
+			user2.setCompanyId(company.getId());
+			user2.setLogin("user2");
+			user2.setHashedPass("hashed");
+			user2.setSalt("salt");
+			user2.setEmail("email2");
+			user2.setFirstName("first");
+			user2.setLastName("last");
+			user2.setActive(false);
 
-			userDao.add(user);
-			assertNotNull(user.getId());
+			userDao.add(user1, user2);
+			assertNotNull(user1.getId());
+			assertNotNull(user2.getId());
 
 			try {
 				final User bad = new User();
@@ -88,69 +98,91 @@ public class JdbcUserDaoTest {
 				// Expected
 			}
 
-			assertEquals(1, userDao.count(true));
-
-			users = userDao.getAll();
-			assertNotNull(users);
-			assertEquals(1, users.size());
-			assertTrue(users.contains(user));
-
-			users = userDao.getAll(company.getId(), true);
-			assertNotNull(users);
-			assertEquals(1, users.size());
-			assertTrue(users.contains(user));
-
-			User getAllUser = null;
-			for (final User fromDb : users)
-				if (fromDb.getId() == user.getId())
-					getAllUser = fromDb;
-			assertNotNull(getAllUser);
-			assertEquals(user, getAllUser);
-
-			User getUser = userDao.get(user.getId());
-			assertEquals(user, getUser);
-
-			User loginUser = userDao.getLogin(user.getLogin());
-			assertEquals(user, loginUser);
-
-			loginUser = userDao.getLogin(user.getEmail());
-			assertEquals(user, loginUser);
-
-			loginUser = userDao.getLogin(user.getEmail().toUpperCase());
-			assertEquals(user, loginUser);
-
-			user.setEmail("New Email");
-			userDao.update(user);
-			getUser = userDao.get(user.getId());
-			assertEquals(user, getUser);
-
-			user.setActive(false);
-			userDao.update(user);
-			getUser = userDao.get(user.getId());
-			assertEquals(user, getUser);
-
-			assertEquals(1, userDao.count(true));
-			assertEquals(0, userDao.count(false));
-			assertEquals(1, userDao.getAll(company.getId(), true).size());
-			assertEquals(0, userDao.getAll(company.getId(), false).size());
-
-			userDao.activate(company.getId(), user.getId());
-			assertEquals(1, userDao.count(true));
+			assertEquals(2, userDao.count(true));
 			assertEquals(1, userDao.count(false));
-			assertEquals(1, userDao.getAll(company.getId(), true).size());
-			assertEquals(1, userDao.getAll(company.getId(), false).size());
 
-			userDao.deactivate(company.getId(), user.getId());
-			assertEquals(1, userDao.count(true));
+			users = userDao.getAll(null, null);
+			assertNotNull(users);
+			assertEquals(2, users.size());
+			assertTrue(users.contains(user1));
+			assertTrue(users.contains(user2));
+
+			users = userDao.getAll(1, 0);
+			assertNotNull(users);
+			assertEquals(1, users.size());
+			assertTrue(users.contains(user1));
+
+			users = userDao.getAll(1, 1);
+			assertNotNull(users);
+			assertEquals(1, users.size());
+			assertTrue(users.contains(user2));
+
+			users = userDao.getAll(company.getId(), true, null, null);
+			assertNotNull(users);
+			assertEquals(2, users.size());
+			assertTrue(users.contains(user1));
+			assertTrue(users.contains(user2));
+
+			users = userDao.getAll(company.getId(), true, 1, 0);
+			assertNotNull(users);
+			assertEquals(1, users.size());
+			assertTrue(users.contains(user1));
+
+			users = userDao.getAll(company.getId(), true, 1, 1);
+			assertNotNull(users);
+			assertEquals(1, users.size());
+			assertTrue(users.contains(user2));
+
+			User getUser = userDao.get(user1.getId());
+			assertEquals(user1, getUser);
+
+			User loginUser = userDao.getLogin(user1.getLogin());
+			assertEquals(user1, loginUser);
+
+			loginUser = userDao.getLogin(user1.getEmail());
+			assertEquals(user1, loginUser);
+
+			loginUser = userDao.getLogin(user1.getEmail().toUpperCase());
+			assertEquals(user1, loginUser);
+
+			user1.setEmail("New Email");
+			userDao.update(user1);
+			getUser = userDao.get(user1.getId());
+			assertEquals(user1, getUser);
+
+			user1.setActive(false);
+			userDao.update(user1);
+			getUser = userDao.get(user1.getId());
+			assertEquals(user1, getUser);
+
+			assertEquals(2, userDao.count(true));
 			assertEquals(0, userDao.count(false));
-			assertEquals(1, userDao.getAll(company.getId(), true).size());
-			assertEquals(0, userDao.getAll(company.getId(), false).size());
+			assertEquals(2, userDao.getAll(company.getId(), true, null, null)
+					.size());
+			assertEquals(0, userDao.getAll(company.getId(), false, null, null)
+					.size());
 
-			userDao.delete(user.getId());
-			getUser = userDao.get(user.getId());
+			userDao.activate(company.getId(), user1.getId());
+			assertEquals(2, userDao.count(true));
+			assertEquals(1, userDao.count(false));
+			assertEquals(2, userDao.getAll(company.getId(), true, null, null)
+					.size());
+			assertEquals(1, userDao.getAll(company.getId(), false, null, null)
+					.size());
+
+			userDao.deactivate(company.getId(), user1.getId());
+			assertEquals(2, userDao.count(true));
+			assertEquals(0, userDao.count(false));
+			assertEquals(2, userDao.getAll(company.getId(), true, null, null)
+					.size());
+			assertEquals(0, userDao.getAll(company.getId(), false, null, null)
+					.size());
+
+			userDao.delete(user1.getId(), user2.getId());
+			getUser = userDao.get(user1.getId());
 			assertNull(getUser);
 
-			users = userDao.getAll();
+			users = userDao.getAll(null, null);
 			assertNotNull(users);
 			assertEquals(0, users.size());
 			assertEquals(0, userDao.count(true));

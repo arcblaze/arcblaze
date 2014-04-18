@@ -97,22 +97,32 @@ public interface UserDao {
 	 *            the unique id of the company for which users will be retrieved
 	 * @param includeInactive
 	 *            whether inactive users should be included in the response
+	 * @param limit
+	 *            the maximum number of items to be retrieved
+	 * @param offset
+	 *            the offset into the items to be retrieved
 	 * 
 	 * @return all available users, possibly empty but never {@code null}
 	 * 
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	Set<User> getAll(final Integer companyId, final boolean includeInactive)
-			throws DatabaseException;
+	Set<User> getAll(final Integer companyId, final boolean includeInactive,
+			final Integer limit, final Integer offset) throws DatabaseException;
 
 	/**
+	 * @param limit
+	 *            the maximum number of items to be retrieved
+	 * @param offset
+	 *            the offset into the items to be retrieved
+	 * 
 	 * @return all available users, possibly empty but never {@code null}
 	 * 
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	Set<User> getAll() throws DatabaseException;
+	Set<User> getAll(final Integer limit, final Integer offset)
+			throws DatabaseException;
 
 	/**
 	 * @param users

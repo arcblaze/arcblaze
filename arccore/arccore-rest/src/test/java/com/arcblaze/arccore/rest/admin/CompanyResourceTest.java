@@ -113,7 +113,7 @@ public class CompanyResourceTest {
 
 			final CompanyResource resource = new CompanyResource();
 			final Set<Company> companies = resource.all(securityContext,
-					config, daoFactory, timer);
+					config, daoFactory, timer, null, null);
 
 			assertNotNull(companies);
 			assertTrue(companies.isEmpty());
@@ -140,16 +140,28 @@ public class CompanyResourceTest {
 			final MetricRegistry metricRegistry = new MetricRegistry();
 			final Timer timer = metricRegistry.timer("test");
 
-			final Company company = new Company().setName("company");
-			daoFactory.getCompanyDao().add(company);
+			final Company company1 = new Company().setName("Company 1");
+			final Company company2 = new Company().setName("Company 2");
+			final Company company3 = new Company().setName("Company 3")
+					.setActive(false);
+			daoFactory.getCompanyDao().add(company1, company2, company3);
 
 			final CompanyResource resource = new CompanyResource();
-			final Set<Company> companies = resource.all(securityContext,
-					config, daoFactory, timer);
+			Set<Company> companies = resource.all(securityContext, config,
+					daoFactory, timer, null, null);
+
+			assertNotNull(companies);
+			assertEquals(3, companies.size());
+			assertTrue(companies.contains(company1));
+			assertTrue(companies.contains(company2));
+			assertTrue(companies.contains(company3));
+
+			companies = resource.all(securityContext, config, daoFactory,
+					timer, 1, 1);
 
 			assertNotNull(companies);
 			assertEquals(1, companies.size());
-			assertTrue(companies.contains(company));
+			assertTrue(companies.contains(company2));
 		}
 	}
 
@@ -184,7 +196,8 @@ public class CompanyResourceTest {
 			assertNotNull(response.company);
 			assertEquals(company, response.company);
 
-			assertEquals(1, daoFactory.getCompanyDao().getAll().size());
+			assertEquals(1, daoFactory.getCompanyDao().getAll(null, null)
+					.size());
 		}
 	}
 
@@ -436,7 +449,8 @@ public class CompanyResourceTest {
 			resource.delete(securityContext, config, daoFactory, timer,
 					new IdSet(company.getId()));
 
-			assertEquals(0, daoFactory.getCompanyDao().getAll().size());
+			assertEquals(0, daoFactory.getCompanyDao().getAll(null, null)
+					.size());
 		}
 	}
 }

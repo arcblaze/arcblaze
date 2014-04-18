@@ -73,6 +73,10 @@ public interface TaskDao {
 	 *            whether administrative tasks should be included
 	 * @param includeInactive
 	 *            whether inactive tasks should be included
+	 * @param limit
+	 *            the maximum number of items to be retrieved
+	 * @param offset
+	 *            the offset into the items to be retrieved
 	 * 
 	 * @return all available tasks, possibly empty but never {@code null}
 	 * 
@@ -82,7 +86,8 @@ public interface TaskDao {
 	 *             if there is a problem communicating with the database
 	 */
 	Set<Task> getAll(final Integer companyId, final boolean includeAdmin,
-			final boolean includeInactive) throws DatabaseException;
+			final boolean includeInactive, final Integer limit,
+			final Integer offset) throws DatabaseException;
 
 	/**
 	 * @param tasks

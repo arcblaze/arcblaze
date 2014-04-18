@@ -50,12 +50,18 @@ public interface CompanyDao {
 	Company getForUser(final Integer userId) throws DatabaseException;
 
 	/**
+	 * @param limit
+	 *            the maximum number of items to be retrieved
+	 * @param offset
+	 *            the offset into the items to be retrieved
+	 * 
 	 * @return all available companies, possibly empty but never {@code null}
 	 * 
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	Set<Company> getAll() throws DatabaseException;
+	Set<Company> getAll(final Integer limit, final Integer offset)
+			throws DatabaseException;
 
 	/**
 	 * @param companies

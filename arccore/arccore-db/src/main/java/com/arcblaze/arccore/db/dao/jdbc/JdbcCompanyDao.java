@@ -112,16 +112,28 @@ public class JdbcCompanyDao implements CompanyDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<Company> getAll() throws DatabaseException {
-		final String sql = "SELECT * FROM companies";
+	public Set<Company> getAll(final Integer limit, final Integer offset)
+			throws DatabaseException {
+		final StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM companies ORDER BY name");
+		if (limit != null)
+			sql.append(" LIMIT ?");
+		if (offset != null)
+			sql.append(" OFFSET ?");
 
 		final Set<Company> companies = new TreeSet<>();
 		try (final Connection conn = this.connectionManager.getConnection();
-				final PreparedStatement ps = conn.prepareStatement(sql);
-				final ResultSet rs = ps.executeQuery()) {
-			while (rs.next())
-				companies.add(fromResultSet(rs));
-
+				final PreparedStatement ps = conn.prepareStatement(sql
+						.toString())) {
+			int index = 1;
+			if (limit != null)
+				ps.setInt(index++, limit);
+			if (offset != null)
+				ps.setInt(index++, offset);
+			try (final ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					companies.add(fromResultSet(rs));
+			}
 			return companies;
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);

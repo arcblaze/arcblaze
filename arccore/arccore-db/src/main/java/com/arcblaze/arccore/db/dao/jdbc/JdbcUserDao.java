@@ -180,9 +180,9 @@ public class JdbcUserDao implements UserDao {
 
 		final String sql = "SELECT * FROM users WHERE id = ?";
 
-		final Map<Integer, User> userMap = new TreeMap<>();
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql)) {
+			final Map<Integer, User> userMap = new TreeMap<>();
 			for (final Integer id : ids) {
 				ps.setInt(1, id);
 				try (final ResultSet rs = ps.executeQuery()) {
@@ -190,11 +190,10 @@ public class JdbcUserDao implements UserDao {
 						userMap.put(id, fromResultSet(rs, false));
 				}
 			}
+			return userMap;
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
-
-		return userMap;
 	}
 
 	/**
@@ -202,20 +201,31 @@ public class JdbcUserDao implements UserDao {
 	 */
 	@Override
 	public Set<User> getAll(final Integer companyId,
-			final boolean includeInactive) throws DatabaseException {
+			final boolean includeInactive, final Integer limit,
+			final Integer offset) throws DatabaseException {
 		notNull(companyId, "Invalid null company id");
 
 		final StringBuilder sql = new StringBuilder();
-		sql.append("SELECT * FROM users WHERE company_id = ?");
+		sql.append("SELECT * FROM users WHERE company_id = ? ");
 		if (!includeInactive)
-			sql.append(" AND active = true");
+			sql.append("AND active = true ");
+		sql.append("ORDER BY last_name, first_name, login");
+		if (limit != null)
+			sql.append(" LIMIT ?");
+		if (offset != null)
+			sql.append(" OFFSET ?");
 
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql
 						.toString())) {
-			ps.setInt(1, companyId);
-			final Set<User> users = new TreeSet<>();
+			int index = 1;
+			ps.setInt(index++, companyId);
+			if (limit != null)
+				ps.setInt(index++, limit);
+			if (offset != null)
+				ps.setInt(index++, offset);
 			try (final ResultSet rs = ps.executeQuery()) {
+				final Set<User> users = new TreeSet<>();
 				while (rs.next())
 					users.add(fromResultSet(rs, false));
 				return users;
@@ -229,16 +239,30 @@ public class JdbcUserDao implements UserDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<User> getAll() throws DatabaseException {
-		final String sql = "SELECT * FROM users";
+	public Set<User> getAll(final Integer limit, final Integer offset)
+			throws DatabaseException {
+		final StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM users ");
+		sql.append("ORDER BY last_name, first_name, login");
+		if (limit != null)
+			sql.append(" LIMIT ?");
+		if (offset != null)
+			sql.append(" OFFSET ?");
 
 		try (final Connection conn = this.connectionManager.getConnection();
-				final PreparedStatement ps = conn.prepareStatement(sql);
-				final ResultSet rs = ps.executeQuery()) {
-			final Set<User> users = new TreeSet<>();
-			while (rs.next())
-				users.add(fromResultSet(rs, false));
-			return users;
+				final PreparedStatement ps = conn.prepareStatement(sql
+						.toString())) {
+			int index = 1;
+			if (limit != null)
+				ps.setInt(index++, limit);
+			if (offset != null)
+				ps.setInt(index++, offset);
+			try (final ResultSet rs = ps.executeQuery()) {
+				final Set<User> users = new TreeSet<>();
+				while (rs.next())
+					users.add(fromResultSet(rs, false));
+				return users;
+			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}

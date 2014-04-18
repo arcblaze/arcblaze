@@ -120,7 +120,7 @@ public class UserResourceTest {
 
 			final UserResource resource = new UserResource();
 			final Set<User> users = resource.all(securityContext, config,
-					daoFactory, timer, true, false);
+					daoFactory, timer, true, null, null);
 
 			assertNotNull(users);
 			assertTrue(users.isEmpty());
@@ -145,27 +145,58 @@ public class UserResourceTest {
 			final Company company = new Company().setName("company");
 			daoFactory.getCompanyDao().add(company);
 
-			final User user = new User();
-			user.setCompanyId(company.getId());
-			user.setLogin("user");
-			user.setHashedPass("hashed");
-			user.setSalt("salt");
-			user.setEmail("email");
-			user.setFirstName("first");
-			user.setLastName("last");
-			daoFactory.getUserDao().add(user);
+			final User user1 = new User();
+			user1.setCompanyId(company.getId());
+			user1.setLogin("user1");
+			user1.setHashedPass("hashed");
+			user1.setSalt("salt");
+			user1.setEmail("email1");
+			user1.setFirstName("first");
+			user1.setLastName("last");
+			final User user2 = new User();
+			user2.setCompanyId(company.getId());
+			user2.setLogin("user2");
+			user2.setHashedPass("hashed");
+			user2.setSalt("salt");
+			user2.setEmail("email2");
+			user2.setFirstName("first");
+			user2.setLastName("last");
+			daoFactory.getUserDao().add(user1, user2);
 
 			final SecurityContext securityContext = Mockito
 					.mock(SecurityContext.class);
-			Mockito.when(securityContext.getUserPrincipal()).thenReturn(user);
+			Mockito.when(securityContext.getUserPrincipal()).thenReturn(user1);
 
 			final UserResource resource = new UserResource();
-			final Set<User> users = resource.all(securityContext, config,
-					daoFactory, timer, true, false);
+			Set<User> users = resource.all(securityContext, config, daoFactory,
+					timer, true, null, null);
+
+			assertNotNull(users);
+			assertEquals(2, users.size());
+			assertTrue(users.contains(user1));
+			assertTrue(users.contains(user2));
+
+			users = resource.all(securityContext, config, daoFactory, timer,
+					true, 2, 0);
+
+			assertNotNull(users);
+			assertEquals(2, users.size());
+			assertTrue(users.contains(user1));
+			assertTrue(users.contains(user2));
+
+			users = resource.all(securityContext, config, daoFactory, timer,
+					true, 1, 0);
 
 			assertNotNull(users);
 			assertEquals(1, users.size());
-			assertTrue(users.contains(user));
+			assertTrue(users.contains(user1));
+
+			users = resource.all(securityContext, config, daoFactory, timer,
+					true, 1, 1);
+
+			assertNotNull(users);
+			assertEquals(1, users.size());
+			assertTrue(users.contains(user2));
 		}
 	}
 
@@ -214,7 +245,7 @@ public class UserResourceTest {
 
 			final UserResource resource = new UserResource();
 			Set<User> users = resource.all(securityContext, config, daoFactory,
-					timer, true, false);
+					timer, true, null, null);
 
 			assertNotNull(users);
 			assertEquals(2, users.size());
@@ -222,70 +253,11 @@ public class UserResourceTest {
 			assertTrue(users.contains(inactive));
 
 			users = resource.all(securityContext, config, daoFactory, timer,
-					false, false);
+					false, null, null);
 
 			assertNotNull(users);
 			assertEquals(1, users.size());
 			assertTrue(users.contains(active));
-		}
-	}
-
-	/**
-	 * Test how the resource responds to retrieving all users, with the filter
-	 * me parameter specified.
-	 * 
-	 * @throws DatabaseException
-	 *             if there is a database problem
-	 */
-	@Test
-	public void testAllWithFilterMe() throws DatabaseException {
-		final Config config = new Config();
-		try (final TestDatabase testDatabase = new TestDatabase()) {
-			testDatabase.load("hsqldb/arctime-db.sql");
-			final ArcTimeDaoFactory daoFactory = testDatabase.getDaoFactory();
-			final MetricRegistry metricRegistry = new MetricRegistry();
-			final Timer timer = metricRegistry.timer("test");
-
-			final Company company = new Company().setName("company");
-			daoFactory.getCompanyDao().add(company);
-
-			final User me = new User();
-			me.setCompanyId(company.getId());
-			me.setLogin("me");
-			me.setHashedPass("hashed");
-			me.setSalt("salt");
-			me.setEmail("me");
-			me.setFirstName("first");
-			me.setLastName("last");
-			final User other = new User();
-			other.setCompanyId(company.getId());
-			other.setLogin("other");
-			other.setHashedPass("hashed");
-			other.setSalt("salt");
-			other.setEmail("other");
-			other.setFirstName("first");
-			other.setLastName("last");
-			daoFactory.getUserDao().add(me, other);
-
-			final SecurityContext securityContext = Mockito
-					.mock(SecurityContext.class);
-			Mockito.when(securityContext.getUserPrincipal()).thenReturn(me);
-
-			final UserResource resource = new UserResource();
-			Set<User> users = resource.all(securityContext, config, daoFactory,
-					timer, true, false);
-
-			assertNotNull(users);
-			assertEquals(2, users.size());
-			assertTrue(users.contains(me));
-			assertTrue(users.contains(other));
-
-			users = resource.all(securityContext, config, daoFactory, timer,
-					true, true);
-
-			assertNotNull(users);
-			assertEquals(1, users.size());
-			assertTrue(users.contains(other));
 		}
 	}
 
@@ -329,9 +301,10 @@ public class UserResourceTest {
 			assertNotNull(response.user);
 			assertEquals(user, response.user);
 
-			assertEquals(1,
-					daoFactory.getUserDao().getAll(company.getId(), true)
-							.size());
+			assertEquals(
+					1,
+					daoFactory.getUserDao()
+							.getAll(company.getId(), true, null, null).size());
 		}
 	}
 
@@ -539,9 +512,10 @@ public class UserResourceTest {
 			resource.delete(securityContext, config, daoFactory, timer,
 					new IdSet(user.getId()));
 
-			assertEquals(0,
-					daoFactory.getUserDao().getAll(company.getId(), true)
-							.size());
+			assertEquals(
+					0,
+					daoFactory.getUserDao()
+							.getAll(company.getId(), true, null, null).size());
 		}
 	}
 }

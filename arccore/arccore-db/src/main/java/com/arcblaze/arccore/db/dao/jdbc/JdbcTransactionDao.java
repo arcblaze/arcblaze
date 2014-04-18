@@ -190,15 +190,26 @@ public class JdbcTransactionDao implements TransactionDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<Transaction> getForCompany(final Integer companyId)
-			throws DatabaseException {
+	public Set<Transaction> getForCompany(final Integer companyId,
+			final Integer limit, final Integer offset) throws DatabaseException {
 		notNull(companyId, "Invalid null company id");
 
-		final String sql = "SELECT * FROM transactions WHERE company_id = ?";
+		final StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM transactions WHERE company_id = ?");
+		if (limit != null)
+			sql.append(" LIMIT ?");
+		if (offset != null)
+			sql.append(" OFFSET ?");
 
 		try (final Connection conn = this.connectionManager.getConnection();
-				final PreparedStatement ps = conn.prepareStatement(sql)) {
-			ps.setInt(1, companyId);
+				final PreparedStatement ps = conn.prepareStatement(sql
+						.toString())) {
+			int index = 1;
+			ps.setInt(index++, companyId);
+			if (limit != null)
+				ps.setInt(index++, limit);
+			if (offset != null)
+				ps.setInt(index++, offset);
 			final Set<Transaction> transactions = new TreeSet<>();
 			try (final ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
@@ -215,19 +226,31 @@ public class JdbcTransactionDao implements TransactionDao {
 	 */
 	@Override
 	public Set<Transaction> getForCompany(final Integer companyId,
-			final Date begin, final Date end) throws DatabaseException {
+			final Date begin, final Date end, final Integer limit,
+			final Integer offset) throws DatabaseException {
 		notNull(companyId, "Invalid null company id");
 		notNull(begin, "Invalid null begin");
 		notNull(end, "Invalid null end");
 
-		final String sql = "SELECT * FROM transactions WHERE company_id = ? AND "
-				+ "timestamp >= ? AND timestamp < ?";
+		final StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM transactions WHERE company_id = ? AND ");
+		sql.append("timestamp >= ? AND timestamp <= ? ORDER BY timestamp DESC");
+		if (limit != null)
+			sql.append(" LIMIT ?");
+		if (offset != null)
+			sql.append(" OFFSET ?");
 
 		try (final Connection conn = this.connectionManager.getConnection();
-				final PreparedStatement ps = conn.prepareStatement(sql)) {
-			ps.setInt(1, companyId);
-			ps.setTimestamp(2, new Timestamp(begin.getTime()));
-			ps.setTimestamp(3, new Timestamp(end.getTime()));
+				final PreparedStatement ps = conn.prepareStatement(sql
+						.toString())) {
+			int index = 1;
+			ps.setInt(index++, companyId);
+			ps.setTimestamp(index++, new Timestamp(begin.getTime()));
+			ps.setTimestamp(index++, new Timestamp(end.getTime()));
+			if (limit != null)
+				ps.setInt(index++, limit);
+			if (offset != null)
+				ps.setInt(index++, offset);
 			final Set<Transaction> transactions = new TreeSet<>();
 			try (final ResultSet rs = ps.executeQuery()) {
 				while (rs.next())

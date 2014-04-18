@@ -2,9 +2,11 @@ package com.arcblaze.arctime.rest.finance;
 
 import java.util.Set;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
@@ -31,6 +33,10 @@ public class TransactionResource extends BaseResource {
 	 *            used to communicate with the back-end database
 	 * @param timer
 	 *            tracks performance metrics of this REST end-point
+	 * @param limit
+	 *            the maximum number of items to be retrieved
+	 * @param offset
+	 *            the offset into the items to be retrieved
 	 * 
 	 * @return the transactions available for the current user's company
 	 * 
@@ -41,11 +47,14 @@ public class TransactionResource extends BaseResource {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Set<Transaction> get(@Context final SecurityContext security,
 			@Context final Config config, @Context final DaoFactory daoFactory,
-			@Context final Timer timer) throws DatabaseException {
+			@Context final Timer timer,
+			@QueryParam("limit") @DefaultValue("100") final Integer limit,
+			@QueryParam("start") @DefaultValue("0") final Integer offset)
+			throws DatabaseException {
 		final User currentUser = (User) security.getUserPrincipal();
 		try (final Timer.Context timerContext = timer.time()) {
 			return daoFactory.getTransactionDao().getForCompany(
-					currentUser.getCompanyId());
+					currentUser.getCompanyId(), limit, offset);
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
 		}

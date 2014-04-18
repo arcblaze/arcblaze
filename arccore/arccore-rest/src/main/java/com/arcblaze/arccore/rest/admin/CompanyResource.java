@@ -3,6 +3,7 @@ package com.arcblaze.arccore.rest.admin;
 import java.util.Set;
 
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -10,6 +11,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
@@ -129,6 +131,10 @@ public class CompanyResource extends BaseResource {
 	 *            used to communicate with the back-end database
 	 * @param timer
 	 *            tracks performance metrics on this REST end-point
+	 * @param limit
+	 *            the maximum number of items to be retrieved
+	 * @param offset
+	 *            the offset into the items to be retrieved
 	 * 
 	 * @return all of the available companies
 	 * 
@@ -139,10 +145,13 @@ public class CompanyResource extends BaseResource {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Set<Company> all(@Context final SecurityContext security,
 			@Context final Config config, @Context final DaoFactory daoFactory,
-			@Context final Timer timer) throws DatabaseException {
+			@Context final Timer timer,
+			@QueryParam("limit") @DefaultValue("100") final Integer limit,
+			@QueryParam("start") @DefaultValue("0") final Integer offset)
+			throws DatabaseException {
 		final User currentUser = (User) security.getUserPrincipal();
 		try (Timer.Context timerContext = timer.time()) {
-			return daoFactory.getCompanyDao().getAll();
+			return daoFactory.getCompanyDao().getAll(limit, offset);
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
 		}

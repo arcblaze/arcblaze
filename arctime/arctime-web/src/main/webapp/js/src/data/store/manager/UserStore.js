@@ -14,8 +14,7 @@ data.store.manager.UserStore = Ext.extend(Ext.data.JsonStore, {
 					root: 'users'
 				},
 				extraParams: {
-					includeInactive: c ? c.includeInactive : true,
-					filterMe: c ? c.filterMe : false
+					includeInactive: c ? c.includeInactive : true
 				}
 			},
 			listeners: {

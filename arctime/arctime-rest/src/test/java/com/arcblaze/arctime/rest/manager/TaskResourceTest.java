@@ -119,7 +119,7 @@ public class TaskResourceTest {
 
 			final TaskResource resource = new TaskResource();
 			final Set<Task> tasks = resource.all(securityContext, config,
-					daoFactory, timer, true, true);
+					daoFactory, timer, true, true, null, null);
 
 			assertNotNull(tasks);
 			assertTrue(tasks.isEmpty());
@@ -146,18 +146,18 @@ public class TaskResourceTest {
 
 			final Task active = new Task();
 			active.setCompanyId(company.getId());
-			active.setDescription("active");
+			active.setDescription("a");
 			active.setJobCode("active");
 			active.setAdministrative(false);
 			final Task inactive = new Task();
 			inactive.setCompanyId(company.getId());
-			inactive.setDescription("inactive");
+			inactive.setDescription("b");
 			inactive.setJobCode("inactive");
 			inactive.setAdministrative(false);
 			inactive.setActive(false);
 			final Task admin = new Task();
 			admin.setCompanyId(company.getId());
-			admin.setDescription("admin");
+			admin.setDescription("c");
 			admin.setJobCode("admin");
 			admin.setAdministrative(true);
 			daoFactory.getTaskDao().add(active, inactive, admin);
@@ -170,7 +170,7 @@ public class TaskResourceTest {
 
 			final TaskResource resource = new TaskResource();
 			Set<Task> tasks = resource.all(securityContext, config, daoFactory,
-					timer, true, true);
+					timer, true, true, null, null);
 			assertNotNull(tasks);
 			assertEquals(3, tasks.size());
 			assertTrue(tasks.contains(active));
@@ -178,7 +178,21 @@ public class TaskResourceTest {
 			assertTrue(tasks.contains(admin));
 
 			tasks = resource.all(securityContext, config, daoFactory, timer,
-					true, false);
+					true, true, 5, 0);
+			assertNotNull(tasks);
+			assertEquals(3, tasks.size());
+			assertTrue(tasks.contains(active));
+			assertTrue(tasks.contains(inactive));
+			assertTrue(tasks.contains(admin));
+
+			tasks = resource.all(securityContext, config, daoFactory, timer,
+					true, true, 1, 1);
+			assertNotNull(tasks);
+			assertEquals(1, tasks.size());
+			assertTrue(tasks.contains(inactive));
+
+			tasks = resource.all(securityContext, config, daoFactory, timer,
+					true, false, null, null);
 			assertNotNull(tasks);
 			assertEquals(2, tasks.size());
 			assertTrue(tasks.contains(active));
@@ -186,7 +200,7 @@ public class TaskResourceTest {
 			assertTrue(tasks.contains(admin));
 
 			tasks = resource.all(securityContext, config, daoFactory, timer,
-					false, true);
+					false, true, null, null);
 			assertNotNull(tasks);
 			assertEquals(2, tasks.size());
 			assertTrue(tasks.contains(active));
@@ -194,7 +208,7 @@ public class TaskResourceTest {
 			assertFalse(tasks.contains(admin));
 
 			tasks = resource.all(securityContext, config, daoFactory, timer,
-					false, false);
+					false, false, null, null);
 			assertNotNull(tasks);
 			assertEquals(1, tasks.size());
 			assertTrue(tasks.contains(active));
@@ -241,8 +255,10 @@ public class TaskResourceTest {
 			assertNotNull(response.task);
 			assertEquals(task, response.task);
 
-			assertEquals(1,
-					daoFactory.getTaskDao().getAll(company.getId(), true, true)
+			assertEquals(
+					1,
+					daoFactory.getTaskDao()
+							.getAll(company.getId(), true, true, null, null)
 							.size());
 		}
 	}
@@ -443,8 +459,10 @@ public class TaskResourceTest {
 			resource.delete(securityContext, config, daoFactory, timer,
 					new IdSet(task.getId()));
 
-			assertEquals(0,
-					daoFactory.getTaskDao().getAll(company.getId(), true, true)
+			assertEquals(
+					0,
+					daoFactory.getTaskDao()
+							.getAll(company.getId(), true, true, null, null)
 							.size());
 		}
 	}

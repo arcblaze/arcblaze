@@ -136,9 +136,10 @@ public class UserResource extends BaseResource {
 	 * @param includeInactive
 	 *            whether inactive user accounts should be included in the
 	 *            response
-	 * @param filterMe
-	 *            whether the current user should be excluded from the returned
-	 *            results
+	 * @param limit
+	 *            the maximum number of items to be retrieved
+	 * @param offset
+	 *            the offset into the items to be retrieved
 	 * 
 	 * @return all of the available users in the same company as the current
 	 *         user
@@ -151,13 +152,12 @@ public class UserResource extends BaseResource {
 			@Context final ArcTimeDaoFactory daoFactory,
 			@Context final Timer timer,
 			@QueryParam("includeInactive") @DefaultValue("true") final Boolean includeInactive,
-			@QueryParam("filterMe") @DefaultValue("false") final Boolean filterMe) {
+			@QueryParam("limit") @DefaultValue("100") final Integer limit,
+			@QueryParam("start") @DefaultValue("0") final Integer offset) {
 		final User currentUser = (User) security.getUserPrincipal();
 		try (final Timer.Context timerContext = timer.time()) {
 			final Set<User> users = daoFactory.getUserDao().getAll(
-					currentUser.getCompanyId(), includeInactive);
-			if (filterMe)
-				users.remove(currentUser);
+					currentUser.getCompanyId(), includeInactive, limit, offset);
 			daoFactory.getRoleDao().populateUsers(users);
 			return users;
 		} catch (final DatabaseException dbException) {

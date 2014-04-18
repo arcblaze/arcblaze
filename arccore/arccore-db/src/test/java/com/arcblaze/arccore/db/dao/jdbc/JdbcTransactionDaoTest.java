@@ -59,15 +59,15 @@ public class JdbcTransactionDaoTest {
 			user.setLastName("last");
 			userDao.add(user);
 
-			Set<Transaction> transactions = transactionDao
-					.getForCompany(company.getId());
+			Set<Transaction> transactions = transactionDao.getForCompany(
+					company.getId(), null, null);
 			assertNotNull(transactions);
 			assertEquals(0, transactions.size());
 
 			final Transaction t1 = new Transaction();
 			t1.setCompanyId(company.getId());
 			t1.setUserId(user.getId());
-			t1.setTimestamp(new Date());
+			t1.setTimestamp(DateUtils.addDays(new Date(), -5));
 			t1.setTransactionType(TransactionType.PAYMENT);
 			t1.setDescription("Received payment");
 			t1.setAmount("30.00");
@@ -75,7 +75,7 @@ public class JdbcTransactionDaoTest {
 			final Transaction t2 = new Transaction();
 			t2.setCompanyId(company.getId());
 			t2.setUserId(user.getId());
-			t2.setTimestamp(new Date());
+			t2.setTimestamp(DateUtils.addDays(new Date(), -10));
 			t2.setTransactionType(TransactionType.REFUND);
 			t2.setDescription("Refunded some money");
 			t2.setAmount("-10.00");
@@ -85,11 +85,29 @@ public class JdbcTransactionDaoTest {
 			assertNotNull(t1.getId());
 			assertNotNull(t2.getId());
 
-			transactions = transactionDao.getForCompany(company.getId());
+			transactions = transactionDao.getForCompany(company.getId(), null,
+					null);
 			assertNotNull(transactions);
 			assertEquals(2, transactions.size());
 			assertTrue(transactions.contains(t1));
 			assertTrue(transactions.contains(t2));
+
+			transactions = transactionDao.getForCompany(company.getId(), 1, 0);
+			assertNotNull(transactions);
+			assertEquals(1, transactions.size());
+			assertTrue(transactions.contains(t1));
+
+			transactions = transactionDao.getForCompany(company.getId(), null,
+					1);
+			assertNotNull(transactions);
+			assertEquals(1, transactions.size());
+			assertTrue(transactions.contains(t2));
+
+			transactions = transactionDao.getForCompany(company.getId(), 1,
+					null);
+			assertNotNull(transactions);
+			assertEquals(1, transactions.size());
+			assertTrue(transactions.contains(t1));
 
 			final Date threeMonthsAgo = DateUtils.addMonths(
 					DateUtils.truncate(new Date(), Calendar.MONTH), -2);
@@ -123,7 +141,8 @@ public class JdbcTransactionDaoTest {
 			getTransaction = transactionDao.get(t1.getId());
 			assertNull(getTransaction);
 
-			transactions = transactionDao.getForCompany(company.getId());
+			transactions = transactionDao.getForCompany(company.getId(), null,
+					null);
 			assertNotNull(transactions);
 			assertEquals(0, transactions.size());
 		}

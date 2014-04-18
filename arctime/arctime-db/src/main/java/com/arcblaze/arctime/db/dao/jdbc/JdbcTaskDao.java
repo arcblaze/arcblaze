@@ -82,8 +82,8 @@ public class JdbcTaskDao implements TaskDao {
 	 */
 	@Override
 	public Set<Task> getAll(final Integer companyId,
-			final boolean includeAdmin, final boolean includeInactive)
-			throws DatabaseException {
+			final boolean includeAdmin, final boolean includeInactive,
+			final Integer limit, final Integer offset) throws DatabaseException {
 		notNull(companyId, "Invalid null company id");
 
 		final StringBuilder sql = new StringBuilder();
@@ -92,17 +92,27 @@ public class JdbcTaskDao implements TaskDao {
 			sql.append(" AND admin = false");
 		if (!includeInactive)
 			sql.append(" AND active = true");
+		sql.append(" ORDER BY description, job_code");
+		if (limit != null)
+			sql.append(" LIMIT ?");
+		if (offset != null)
+			sql.append(" OFFSET ?");
 
 		try (final Connection conn = this.connectionManager.getConnection();
 				final PreparedStatement ps = conn.prepareStatement(sql
 						.toString())) {
-			ps.setInt(1, companyId);
-			final Set<Task> tasks = new TreeSet<>();
+			int index = 1;
+			ps.setInt(1, index++);
+			if (limit != null)
+				ps.setInt(index++, limit);
+			if (offset != null)
+				ps.setInt(index++, offset);
 			try (final ResultSet rs = ps.executeQuery()) {
+				final Set<Task> tasks = new TreeSet<>();
 				while (rs.next())
 					tasks.add(fromResultSet(rs));
+				return tasks;
 			}
-			return tasks;
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}

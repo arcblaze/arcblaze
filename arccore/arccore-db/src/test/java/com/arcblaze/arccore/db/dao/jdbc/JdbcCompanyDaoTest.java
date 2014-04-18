@@ -3,6 +3,7 @@ package com.arcblaze.arccore.db.dao.jdbc;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 
@@ -33,33 +34,42 @@ public class JdbcCompanyDaoTest {
 			final UserDao userDao = new JdbcUserDao(
 					database.getConnectionManager());
 
-			Set<Company> companies = companyDao.getAll();
+			Set<Company> companies = companyDao.getAll(null, null);
 			assertNotNull(companies);
 			assertEquals(0, companies.size());
 
 			assertEquals(0, companyDao.count(true));
 
-			final Company company = new Company();
-			company.setName("Company");
-			company.setActive(true);
+			final Company company1 = new Company().setName("Company 1");
+			final Company company2 = new Company().setName("Company 2");
+			final Company company3 = new Company().setName("Company 3")
+					.setActive(false);
 
-			companyDao.add(company);
-			assertNotNull(company.getId());
+			companyDao.add(company1, company2, company3);
+			assertNotNull(company1.getId());
+			assertNotNull(company2.getId());
+			assertNotNull(company3.getId());
 
-			assertEquals(1, companyDao.count(true));
-			assertEquals(1, companyDao.count(false));
+			assertEquals(3, companyDao.count(true));
+			assertEquals(2, companyDao.count(false));
 
-			companies = companyDao.getAll();
+			companies = companyDao.getAll(null, null);
+			assertNotNull(companies);
+			assertEquals(3, companies.size());
+			assertTrue(companies.contains(company1));
+			assertTrue(companies.contains(company2));
+			assertTrue(companies.contains(company3));
+
+			companies = companyDao.getAll(1, 1);
 			assertNotNull(companies);
 			assertEquals(1, companies.size());
-			final Company getAllCompany = companies.iterator().next();
-			assertEquals(company, getAllCompany);
+			assertTrue(companies.contains(company2));
 
-			Company getCompany = companyDao.get(company.getId());
-			assertEquals(company, getCompany);
+			Company getCompany = companyDao.get(company1.getId());
+			assertEquals(company1, getCompany);
 
 			final User user = new User();
-			user.setCompanyId(company.getId());
+			user.setCompanyId(company1.getId());
 			user.setLogin("user");
 			user.setHashedPass("hashed");
 			user.setSalt("salt");
@@ -70,34 +80,41 @@ public class JdbcCompanyDaoTest {
 			assertNotNull(user.getId());
 
 			getCompany = companyDao.getForUser(user.getId());
-			assertEquals(company, getCompany);
+			assertEquals(company1, getCompany);
 
-			company.setName("New Name");
-			companyDao.update(company);
-			getCompany = companyDao.get(company.getId());
-			assertEquals(company, getCompany);
+			company1.setName("New Name");
+			companyDao.update(company1);
+			getCompany = companyDao.get(company1.getId());
+			assertEquals(company1, getCompany);
 
-			company.setActive(false);
-			companyDao.update(company);
-			getCompany = companyDao.get(company.getId());
-			assertEquals(company, getCompany);
+			company1.setActive(false);
+			companyDao.update(company1);
+			getCompany = companyDao.get(company1.getId());
+			assertEquals(company1, getCompany);
 
-			assertEquals(1, companyDao.count(true));
-			assertEquals(0, companyDao.count(false));
-
-			companyDao.activate(company.getId());
-			assertEquals(1, companyDao.count(true));
+			assertEquals(3, companyDao.count(true));
 			assertEquals(1, companyDao.count(false));
 
-			companyDao.deactivate(company.getId());
-			assertEquals(1, companyDao.count(true));
-			assertEquals(0, companyDao.count(false));
+			companyDao.activate(company1.getId());
+			assertEquals(3, companyDao.count(true));
+			assertEquals(2, companyDao.count(false));
 
-			companyDao.delete(company.getId());
-			getCompany = companyDao.get(company.getId());
+			companyDao.deactivate(company1.getId());
+			assertEquals(3, companyDao.count(true));
+			assertEquals(1, companyDao.count(false));
+
+			companyDao.delete(company1.getId());
+			getCompany = companyDao.get(company1.getId());
 			assertNull(getCompany);
 
-			companies = companyDao.getAll();
+			companies = companyDao.getAll(null, null);
+			assertNotNull(companies);
+			assertEquals(2, companies.size());
+			assertEquals(2, companyDao.count(true));
+
+			companyDao.delete(company2.getId(), company3.getId());
+
+			companies = companyDao.getAll(null, null);
 			assertNotNull(companies);
 			assertEquals(0, companies.size());
 			assertEquals(0, companyDao.count(true));

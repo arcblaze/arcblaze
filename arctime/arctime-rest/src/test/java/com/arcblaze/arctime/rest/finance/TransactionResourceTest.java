@@ -51,7 +51,7 @@ public class TransactionResourceTest {
 
 			final TransactionResource resource = new TransactionResource();
 			final Set<Transaction> transactions = resource.get(securityContext,
-					config, daoFactory, timer);
+					config, daoFactory, timer, null, null);
 
 			assertNotNull(transactions);
 			assertTrue(transactions.isEmpty());
@@ -97,7 +97,7 @@ public class TransactionResourceTest {
 			final Transaction tx2 = new Transaction();
 			tx2.setCompanyId(company.getId());
 			tx2.setUserId(user.getId());
-			tx1.setTimestamp(DateUtils.addDays(new Date(), -50));
+			tx1.setTimestamp(DateUtils.addDays(new Date(), -10));
 			tx2.setTransactionType(TransactionType.REFUND);
 			tx2.setDescription("description");
 			tx2.setAmount("-5.00");
@@ -108,8 +108,30 @@ public class TransactionResourceTest {
 			Mockito.when(securityContext.getUserPrincipal()).thenReturn(user);
 
 			final TransactionResource resource = new TransactionResource();
-			final Set<Transaction> transactions = resource.get(securityContext,
-					config, daoFactory, timer);
+			Set<Transaction> transactions = resource.get(securityContext,
+					config, daoFactory, timer, null, null);
+
+			assertNotNull(transactions);
+			assertEquals(2, transactions.size());
+			assertTrue(transactions.contains(tx1));
+			assertTrue(transactions.contains(tx2));
+
+			transactions = resource.get(securityContext, config, daoFactory,
+					timer, 1, null);
+
+			assertNotNull(transactions);
+			assertEquals(1, transactions.size());
+			assertTrue(transactions.contains(tx1));
+
+			transactions = resource.get(securityContext, config, daoFactory,
+					timer, null, 1);
+
+			assertNotNull(transactions);
+			assertEquals(1, transactions.size());
+			assertTrue(transactions.contains(tx2));
+
+			transactions = resource.get(securityContext, config, daoFactory,
+					timer, 2, 0);
 
 			assertNotNull(transactions);
 			assertEquals(2, transactions.size());

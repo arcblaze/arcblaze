@@ -135,6 +135,10 @@ public class TaskResource extends BaseResource {
 	 * @param includeInactive
 	 *            whether inactive tasks should be included in the returned
 	 *            tasks
+	 * @param limit
+	 *            the maximum number of items to be retrieved
+	 * @param offset
+	 *            the offset into the items to be retrieved
 	 * 
 	 * @return all of the available tasks in the same company as the current
 	 *         user
@@ -147,11 +151,13 @@ public class TaskResource extends BaseResource {
 			@Context final ArcTimeDaoFactory daoFactory,
 			@Context final Timer timer,
 			@QueryParam("includeAdministrative") @DefaultValue("true") final Boolean includeAdministrative,
-			@QueryParam("includeInactive") @DefaultValue("true") final Boolean includeInactive) {
+			@QueryParam("includeInactive") @DefaultValue("true") final Boolean includeInactive,
+			@QueryParam("limit") @DefaultValue("100") final Integer limit,
+			@QueryParam("start") @DefaultValue("0") final Integer offset) {
 		final User currentUser = (User) security.getUserPrincipal();
 		try (final Timer.Context timerContext = timer.time()) {
 			return daoFactory.getTaskDao().getAll(currentUser.getCompanyId(),
-					includeAdministrative, includeInactive);
+					includeAdministrative, includeInactive, limit, offset);
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
 		}

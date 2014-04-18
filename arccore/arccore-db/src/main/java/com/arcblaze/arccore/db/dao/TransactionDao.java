@@ -94,6 +94,10 @@ public interface TransactionDao {
 	 * @param companyId
 	 *            the unique id of the company for which the transactions will
 	 *            be retrieved
+	 * @param limit
+	 *            the maximum number of items to be retrieved
+	 * @param offset
+	 *            the offset into the items to be retrieved
 	 * 
 	 * @return all available transactions associated with the specified company,
 	 *         possibly empty but never {@code null}
@@ -103,8 +107,8 @@ public interface TransactionDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	Set<Transaction> getForCompany(final Integer companyId)
-			throws DatabaseException;
+	Set<Transaction> getForCompany(final Integer companyId,
+			final Integer limit, final Integer offset) throws DatabaseException;
 
 	/**
 	 * @param companyId
@@ -116,6 +120,10 @@ public interface TransactionDao {
 	 * @param end
 	 *            the ending boundary of the time frame where transactions
 	 *            should be retrieved (exclusive)
+	 * @param limit
+	 *            the maximum number of items to be retrieved
+	 * @param offset
+	 *            the offset into the items to be retrieved
 	 * 
 	 * @return all available transactions associated with the specified company,
 	 *         possibly empty but never {@code null}
@@ -126,7 +134,8 @@ public interface TransactionDao {
 	 *             if there is a problem communicating with the database
 	 */
 	Set<Transaction> getForCompany(final Integer companyId, final Date begin,
-			final Date end) throws DatabaseException;
+			final Date end, final Integer limit, final Integer offset)
+			throws DatabaseException;
 
 	/**
 	 * @param transactions
