@@ -11,7 +11,8 @@ Ext.define('data.model.Supervisor', {
 			width:     40,
 			hidden:    true,
 			sortable:  true,
-			type:      'int'
+			type:      'int',
+			visible:   false
 		}, {
 			name:      'fullName',
 			dataIndex: 'fullName',
@@ -35,15 +36,17 @@ Ext.define('data.model.Supervisor', {
 	getColumnModel: function() {
 		var flds = [ ];
 		this.fields.each(function(field) {
-			flds.push({
-				dataIndex: field.dataIndex,
-				hidden:    field.hidden,
-				renderer:  field.renderer,
-				sortable:  field.sortable,
-				text:      field.header,
-				type:      field.type,
-				width:     field.width
-			});
+			if (typeof(field.visible) == "undefined" || field.visible) {
+				flds.push({
+					dataIndex: field.dataIndex,
+					hidden:    field.hidden,
+					renderer:  field.renderer,
+					sortable:  field.sortable,
+					text:      field.header,
+					type:      field.type,
+					width:     field.width
+				});
+			}
 		});
 		return flds;
 	}

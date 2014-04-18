@@ -10,21 +10,24 @@ Ext.define('data.model.TaskUser', {
 			header:    'ID',
 			width:     40,
 			hidden:    true,
-			sortable:  true
+			sortable:  true,
+			visible:   false
 		}, {
 			name:      'userId',
 			dataIndex: 'userId',
 			header:    'User ID',
 			width:     40,
 			hidden:    true,
-			sortable:  true
+			sortable:  true,
+			visible:   false
 		}, {
 			name:      'taskId',
 			dataIndex: 'taskId',
 			header:    'Task ID',
 			width:     40,
 			hidden:    true,
-			sortable:  true
+			sortable:  true,
+			visible:   false
 		}, {
 			name:      'login',
 			dataIndex: 'login',
@@ -101,15 +104,17 @@ Ext.define('data.model.TaskUser', {
 	getColumnModel: function() {
 		var flds = [ ];
 		this.fields.each(function(field) {
-			flds.push({
-				dataIndex: field.dataIndex,
-				hidden:    field.hidden,
-				renderer:  field.renderer,
-				sortable:  field.sortable,
-				text:      field.header,
-				type:      field.type,
-				width:     field.width
-			});
+			if (typeof(field.visible) == "undefined" || field.visible) {
+				flds.push({
+					dataIndex: field.dataIndex,
+					hidden:    field.hidden,
+					renderer:  field.renderer,
+					sortable:  field.sortable,
+					text:      field.header,
+					type:      field.type,
+					width:     field.width
+				});
+			}
 		});
 		return flds;
 	}
