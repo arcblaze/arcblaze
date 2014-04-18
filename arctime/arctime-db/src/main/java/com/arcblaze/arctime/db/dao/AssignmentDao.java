@@ -34,6 +34,10 @@ public interface AssignmentDao {
 	 * @param day
 	 *            the day for which assignments must be valid, may be
 	 *            {@code null} if date is not important
+	 * @param includeInactive
+	 *            whether assignments for inactive tasks should be included in
+	 *            the return data
+	 * 
 	 * 
 	 * @return all available assignments for the user during the specified day,
 	 *         possibly empty but never {@code null}
@@ -44,7 +48,8 @@ public interface AssignmentDao {
 	 *             if there is a problem communicating with the database
 	 */
 	Set<Assignment> getForUser(final Integer companyId, final Integer userId,
-			final Date day) throws DatabaseException;
+			final Date day, final boolean includeInactive)
+			throws DatabaseException;
 
 	/**
 	 * @param companyId
@@ -56,6 +61,9 @@ public interface AssignmentDao {
 	 * @param day
 	 *            the day for which assignments must be valid, may be
 	 *            {@code null} if date is not important
+	 * @param includeInactive
+	 *            whether assignments for inactive users should be included in
+	 *            the return data
 	 * 
 	 * @return all available assignments for the user during the specified day,
 	 *         possibly empty but never {@code null}
@@ -66,7 +74,8 @@ public interface AssignmentDao {
 	 *             if there is a problem communicating with the database
 	 */
 	Set<Assignment> getForTask(final Integer companyId, final Integer taskId,
-			final Date day) throws DatabaseException;
+			final Date day, final boolean includeInactive)
+			throws DatabaseException;
 
 	/**
 	 * @param assignments

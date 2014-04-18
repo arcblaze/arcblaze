@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -86,18 +87,22 @@ public class AssignmentResource extends BaseResource {
 	 * @param daystr
 	 *            the day for which assignments should be retrieved, possibly
 	 *            {@code null}
+	 * @param includeInactive
+	 *            whether assignments for inactive users should be included
 	 * 
 	 * @return the requested assignments
 	 */
 	@GET
 	@Path("/task/{taskId:\\d+}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Set<Assignment> getForTask(@Context final SecurityContext security,
+	public Set<Assignment> getForTask(
+			@Context final SecurityContext security,
 			@Context final Config config,
 			@Context final ArcTimeDaoFactory daoFactory,
 			@Context final Timer timer,
 			@PathParam("taskId") final Integer taskId,
-			@QueryParam("day") final String daystr) {
+			@QueryParam("day") final String daystr,
+			@QueryParam("includeInactive") @DefaultValue("false") final Boolean includeInactive) {
 		final User currentUser = (User) security.getUserPrincipal();
 		try (final Timer.Context timerContext = timer.time()) {
 			if (taskId == null)
@@ -106,7 +111,7 @@ public class AssignmentResource extends BaseResource {
 			if (StringUtils.isNotBlank(daystr))
 				day = DateUtils.parseDate(daystr, FMT);
 			return daoFactory.getAssignmentDao().getForTask(
-					currentUser.getCompanyId(), taskId, day);
+					currentUser.getCompanyId(), taskId, day, includeInactive);
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
 		} catch (final ParseException badDate) {
@@ -129,18 +134,22 @@ public class AssignmentResource extends BaseResource {
 	 * @param daystr
 	 *            the day for which assignments should be retrieved, possibly
 	 *            {@code null}
+	 * @param includeInactive
+	 *            whether assignments for inactive tasks should be included
 	 * 
 	 * @return the requested assignments
 	 */
 	@GET
 	@Path("/user/{userId:\\d+}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Set<Assignment> getForUser(@Context final SecurityContext security,
+	public Set<Assignment> getForUser(
+			@Context final SecurityContext security,
 			@Context final Config config,
 			@Context final ArcTimeDaoFactory daoFactory,
 			@Context final Timer timer,
 			@PathParam("userId") final Integer userId,
-			@QueryParam("day") final String daystr) {
+			@QueryParam("day") final String daystr,
+			@QueryParam("includeInactive") @DefaultValue("false") final Boolean includeInactive) {
 		final User currentUser = (User) security.getUserPrincipal();
 		try (final Timer.Context timerContext = timer.time()) {
 			if (userId == null)
@@ -149,7 +158,7 @@ public class AssignmentResource extends BaseResource {
 			if (StringUtils.isNotBlank(daystr))
 				day = DateUtils.parseDate(daystr, FMT);
 			return daoFactory.getAssignmentDao().getForUser(
-					currentUser.getCompanyId(), userId, day);
+					currentUser.getCompanyId(), userId, day, includeInactive);
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
 		} catch (final ParseException badDate) {

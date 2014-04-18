@@ -165,7 +165,7 @@ public class SupervisorResourceTest {
 					daoFactory, timer, user.getId(), 1234, true);
 
 			assertNotNull(response);
-			assertTrue(response.success);
+			assertFalse(response.success);
 
 			final Set<Supervisor> supervisors = daoFactory.getSupervisorDao()
 					.getSupervisors(company.getId(), user.getId());
@@ -267,7 +267,7 @@ public class SupervisorResourceTest {
 					Collections.singleton(1234));
 
 			assertNotNull(response);
-			assertTrue(response.success);
+			assertFalse(response.success);
 
 			final Set<Supervisor> supervisors = daoFactory.getSupervisorDao()
 					.getSupervisors(company.getId(), user.getId());

@@ -63,7 +63,13 @@ public class AssignmentDaoTest {
 			task2.setJobCode("job code 2");
 			task2.setAdministrative(false);
 			task2.setActive(true);
-			taskDao.add(task1, task2);
+			final Task task3 = new Task();
+			task3.setCompanyId(company.getId());
+			task3.setDescription("Task 3");
+			task3.setJobCode("job code 3");
+			task3.setAdministrative(false);
+			task3.setActive(false);
+			taskDao.add(task1, task2, task3);
 
 			final User user1 = new User();
 			user1.setCompanyId(company.getId());
@@ -81,10 +87,11 @@ public class AssignmentDaoTest {
 			user2.setEmail("email2");
 			user2.setFirstName("first");
 			user2.setLastName("last");
+			user2.setActive(false);
 			userDao.add(user1, user2);
 
 			Set<Assignment> assignments = assignmentDao.getForUser(
-					company.getId(), user1.getId(), null);
+					company.getId(), user1.getId(), null, true);
 			assertNotNull(assignments);
 			assertEquals(0, assignments.size());
 
@@ -132,7 +139,18 @@ public class AssignmentDaoTest {
 			assmnt4.setEnd(DateUtils.truncate(
 					DateUtils.addDays(new Date(), 10), Calendar.DATE));
 
-			assignmentDao.add(assmnt1, assmnt2, assmnt3, assmnt4);
+			final Assignment assmnt5 = new Assignment();
+			assmnt5.setCompanyId(company.getId());
+			assmnt5.setTaskId(task3.getId());
+			assmnt5.setUserId(user1.getId());
+			assmnt5.setLaborCat("labor cat");
+			assmnt5.setItemName("item name");
+			assmnt5.setBegin(DateUtils.truncate(
+					DateUtils.addDays(new Date(), -10), Calendar.DATE));
+			assmnt5.setEnd(DateUtils.truncate(
+					DateUtils.addDays(new Date(), 10), Calendar.DATE));
+
+			assignmentDao.add(assmnt1, assmnt2, assmnt3, assmnt4, assmnt5);
 			assertNotNull(assmnt1.getId());
 			assertEquals(company.getId(), assmnt1.getCompanyId());
 			assertNotNull(assmnt2.getId());
@@ -141,80 +159,110 @@ public class AssignmentDaoTest {
 			assertEquals(company.getId(), assmnt3.getCompanyId());
 			assertNotNull(assmnt4.getId());
 			assertEquals(company.getId(), assmnt4.getCompanyId());
+			assertNotNull(assmnt5.getId());
+			assertEquals(company.getId(), assmnt5.getCompanyId());
 
 			assignments = assignmentDao.getForUser(company.getId(),
-					user1.getId(), null);
+					user1.getId(), null, true);
+			assertNotNull(assignments);
+			assertEquals(3, assignments.size());
+			assertTrue(assignments.contains(assmnt1));
+			assertTrue(assignments.contains(assmnt3));
+			assertTrue(assignments.contains(assmnt5));
+
+			assignments = assignmentDao.getForUser(company.getId(),
+					user1.getId(), null, false);
 			assertNotNull(assignments);
 			assertEquals(2, assignments.size());
 			assertTrue(assignments.contains(assmnt1));
 			assertTrue(assignments.contains(assmnt3));
 
 			assignments = assignmentDao.getForUser(company.getId(),
-					user1.getId(), new Date());
+					user1.getId(), new Date(), true);
+			assertNotNull(assignments);
+			assertEquals(3, assignments.size());
+			assertTrue(assignments.contains(assmnt1));
+			assertTrue(assignments.contains(assmnt3));
+			assertTrue(assignments.contains(assmnt5));
+
+			assignments = assignmentDao.getForUser(company.getId(),
+					user1.getId(), new Date(), false);
 			assertNotNull(assignments);
 			assertEquals(2, assignments.size());
 			assertTrue(assignments.contains(assmnt1));
 			assertTrue(assignments.contains(assmnt3));
 
 			assignments = assignmentDao.getForUser(company.getId(),
-					user2.getId(), null);
+					user2.getId(), null, true);
 			assertNotNull(assignments);
 			assertEquals(2, assignments.size());
 			assertTrue(assignments.contains(assmnt2));
 			assertTrue(assignments.contains(assmnt4));
 
 			assignments = assignmentDao.getForUser(company.getId(),
-					user2.getId(), new Date());
+					user2.getId(), new Date(), true);
 			assertNotNull(assignments);
 			assertEquals(2, assignments.size());
 			assertTrue(assignments.contains(assmnt2));
 			assertTrue(assignments.contains(assmnt4));
 
 			assignments = assignmentDao.getForTask(company.getId(),
-					task1.getId(), null);
+					task1.getId(), null, true);
 			assertNotNull(assignments);
 			assertEquals(2, assignments.size());
 			assertTrue(assignments.contains(assmnt1));
 			assertTrue(assignments.contains(assmnt2));
 
 			assignments = assignmentDao.getForTask(company.getId(),
-					task1.getId(), new Date());
+					task1.getId(), null, false);
+			assertNotNull(assignments);
+			assertEquals(1, assignments.size());
+			assertTrue(assignments.contains(assmnt1));
+
+			assignments = assignmentDao.getForTask(company.getId(),
+					task1.getId(), new Date(), true);
 			assertNotNull(assignments);
 			assertEquals(2, assignments.size());
 			assertTrue(assignments.contains(assmnt1));
 			assertTrue(assignments.contains(assmnt2));
 
 			assignments = assignmentDao.getForTask(company.getId(),
-					task2.getId(), null);
+					task1.getId(), new Date(), false);
+			assertNotNull(assignments);
+			assertEquals(1, assignments.size());
+			assertTrue(assignments.contains(assmnt1));
+
+			assignments = assignmentDao.getForTask(company.getId(),
+					task2.getId(), null, true);
 			assertNotNull(assignments);
 			assertEquals(2, assignments.size());
 			assertTrue(assignments.contains(assmnt3));
 			assertTrue(assignments.contains(assmnt4));
 
 			assignments = assignmentDao.getForTask(company.getId(),
-					task2.getId(), new Date());
+					task2.getId(), new Date(), true);
 			assertNotNull(assignments);
 			assertEquals(2, assignments.size());
 			assertTrue(assignments.contains(assmnt3));
 			assertTrue(assignments.contains(assmnt4));
 
 			assignments = assignmentDao.getForUser(company.getId(),
-					user1.getId(), DateUtils.addDays(new Date(), -15));
+					user1.getId(), DateUtils.addDays(new Date(), -15), true);
 			assertNotNull(assignments);
 			assertEquals(0, assignments.size());
 
 			assignments = assignmentDao.getForUser(company.getId(),
-					user1.getId(), DateUtils.addDays(new Date(), 15));
+					user1.getId(), DateUtils.addDays(new Date(), 15), true);
 			assertNotNull(assignments);
 			assertEquals(0, assignments.size());
 
 			assignments = assignmentDao.getForTask(company.getId(),
-					task1.getId(), DateUtils.addDays(new Date(), -15));
+					task1.getId(), DateUtils.addDays(new Date(), -15), true);
 			assertNotNull(assignments);
 			assertEquals(0, assignments.size());
 
 			assignments = assignmentDao.getForTask(company.getId(),
-					task1.getId(), DateUtils.addDays(new Date(), 15));
+					task1.getId(), DateUtils.addDays(new Date(), 15), true);
 			assertNotNull(assignments);
 			assertEquals(0, assignments.size());
 
@@ -232,22 +280,22 @@ public class AssignmentDaoTest {
 			assertNull(getAssignment);
 
 			assignments = assignmentDao.getForTask(company.getId(),
-					task1.getId(), null);
+					task1.getId(), null, true);
 			assertNotNull(assignments);
 			assertEquals(0, assignments.size());
 
 			assignments = assignmentDao.getForTask(company.getId(),
-					task2.getId(), null);
+					task2.getId(), null, true);
 			assertNotNull(assignments);
 			assertEquals(2, assignments.size());
 
 			assignments = assignmentDao.getForUser(company.getId(),
-					user1.getId(), null);
+					user1.getId(), null, true);
 			assertNotNull(assignments);
-			assertEquals(1, assignments.size());
+			assertEquals(2, assignments.size());
 
 			assignments = assignmentDao.getForUser(company.getId(),
-					user2.getId(), null);
+					user2.getId(), null, true);
 			assertNotNull(assignments);
 			assertEquals(1, assignments.size());
 
@@ -255,22 +303,22 @@ public class AssignmentDaoTest {
 			assignmentDao.delete(company.getId(), assmnt4.getId());
 
 			assignments = assignmentDao.getForTask(company.getId(),
-					task1.getId(), null);
+					task1.getId(), null, true);
 			assertNotNull(assignments);
 			assertEquals(0, assignments.size());
 
 			assignments = assignmentDao.getForTask(company.getId(),
-					task2.getId(), null);
+					task2.getId(), null, true);
 			assertNotNull(assignments);
 			assertEquals(0, assignments.size());
 
 			assignments = assignmentDao.getForUser(company.getId(),
-					user1.getId(), null);
+					user1.getId(), null, true);
 			assertNotNull(assignments);
-			assertEquals(0, assignments.size());
+			assertEquals(1, assignments.size());
 
 			assignments = assignmentDao.getForUser(company.getId(),
-					user2.getId(), null);
+					user2.getId(), null, true);
 			assertNotNull(assignments);
 			assertEquals(0, assignments.size());
 		}

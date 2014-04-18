@@ -114,7 +114,8 @@ public class JdbcAssignmentDao implements AssignmentDao {
 	 */
 	@Override
 	public Set<Assignment> getForUser(final Integer companyId,
-			final Integer userId, final Date day) throws DatabaseException {
+			final Integer userId, final Date day, final boolean includeInactive)
+			throws DatabaseException {
 		notNull(userId, "Invalid null user id");
 
 		final StringBuilder sql = new StringBuilder();
@@ -123,7 +124,9 @@ public class JdbcAssignmentDao implements AssignmentDao {
 		sql.append("t.description, t.job_code, t.admin FROM assignments a ");
 		sql.append("JOIN users u ON (a.user_id = u.id) ");
 		sql.append("JOIN tasks t ON (a.task_id = t.id) WHERE a.user_id = ? ");
-		sql.append("AND a.company_id = ? ");
+		sql.append("AND a.company_id = ?");
+		if (!includeInactive)
+			sql.append(" AND t.active = true");
 		if (day != null) {
 			sql.append(" AND (begin IS NULL OR begin <= ?)");
 			sql.append(" AND (end IS NULL OR end >= ?)");
@@ -156,7 +159,8 @@ public class JdbcAssignmentDao implements AssignmentDao {
 	 */
 	@Override
 	public Set<Assignment> getForTask(final Integer companyId,
-			final Integer taskId, final Date day) throws DatabaseException {
+			final Integer taskId, final Date day, final boolean includeInactive)
+			throws DatabaseException {
 		notNull(taskId, "Invalid null task id");
 
 		final StringBuilder sql = new StringBuilder();
@@ -165,7 +169,9 @@ public class JdbcAssignmentDao implements AssignmentDao {
 		sql.append("t.description, t.job_code, t.admin FROM assignments a ");
 		sql.append("JOIN users u ON (a.user_id = u.id) ");
 		sql.append("JOIN tasks t ON (a.task_id = t.id) WHERE a.task_id = ? ");
-		sql.append("AND a.company_id = ? ");
+		sql.append("AND a.company_id = ?");
+		if (!includeInactive)
+			sql.append(" AND u.active = true");
 		if (day != null) {
 			sql.append(" AND (begin IS NULL OR begin <= ?)");
 			sql.append(" AND (end IS NULL OR end >= ?)");
