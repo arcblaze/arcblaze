@@ -22,21 +22,20 @@ ui.panel.admin.company.CompanyAddPanel = Ext.extend(Ext.form.FormPanel, {
 					labelWidth: 60,
 					fieldLabel: 'Active',
 					name:       'active',
+					width:      240,
 					items: [
 						{
 							boxLabel:   'Yes',
 							name:       'active',
 							id:         'company-active-yes',
 							inputValue: "true",
-							checked:    true,
-							style:      'border: 0px;'
+							checked:    true
 						}, {
 							boxLabel:   'No',
 							name:       'active',
 							id:         'company-active-no',
 							inputValue: "false",
-							checked:    false,
-							style:      'border: 0px;'
+							checked:    false
 						}
 					]
 				}

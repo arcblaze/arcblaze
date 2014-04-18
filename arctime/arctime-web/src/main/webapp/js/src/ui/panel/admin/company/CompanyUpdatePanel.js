@@ -35,14 +35,12 @@ ui.panel.admin.company.CompanyUpdatePanel = Ext.extend(Ext.Panel, {
 							boxLabel:   'Yes',
 							name:       'active',
 							id:         'company-active-modify-yes',
-							inputValue: "true",
-							style:      'border: 0px;'
+							inputValue: "true"
 						}, {
 							boxLabel:   'No',
 							name:       'active',
 							id:         'company-active-modify-no',
-							inputValue: "false",
-							style:      'border: 0px;'
+							inputValue: "false"
 						}
 					]
 				}
