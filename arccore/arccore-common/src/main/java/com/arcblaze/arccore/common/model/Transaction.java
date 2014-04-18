@@ -40,9 +40,14 @@ public class Transaction implements Comparable<Transaction> {
 	private Integer userId;
 
 	/**
+	 * The user that invoked this transaction.
+	 */
+	private User user;
+
+	/**
 	 * The time stamp when this transaction took place.
 	 */
-	private Date timestamp;
+	private Date timestamp = new Date();
 
 	/**
 	 * The type of transaction that occurred.
@@ -86,6 +91,8 @@ public class Transaction implements Comparable<Transaction> {
 			setCompanyId(other.getCompanyId());
 		if (other.getUserId() != null)
 			setUserId(other.getUserId());
+		if (other.getUser() != null)
+			setUser(other.getUser());
 		if (other.getTimestamp() != null)
 			setTimestamp(other.getTimestamp());
 		if (other.getTransactionType() != null)
@@ -171,6 +178,28 @@ public class Transaction implements Comparable<Transaction> {
 
 		this.userId = userId;
 		return this;
+	}
+
+	/**
+	 * @return whether this transaction has an embedded user
+	 */
+	public boolean hasUser() {
+		return this.user != null;
+	}
+
+	/**
+	 * @return the user that invoked this transaction, possibly {@code null}
+	 */
+	public User getUser() {
+		return this.user;
+	}
+
+	/**
+	 * @param user
+	 *            the new user that invoked this transaction
+	 */
+	public void setUser(final User user) {
+		this.user = user == null ? null : new User(user);
 	}
 
 	/**

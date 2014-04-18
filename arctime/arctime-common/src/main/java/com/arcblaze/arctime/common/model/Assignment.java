@@ -238,7 +238,7 @@ public class Assignment implements Comparable<Assignment> {
 	}
 
 	/**
-	 * @return the task in the assignment
+	 * @return the task in the assignment, possibly {@code null}
 	 */
 	public Task getTask() {
 		return this.task;
@@ -249,7 +249,7 @@ public class Assignment implements Comparable<Assignment> {
 	 *            the new task in the assignment
 	 */
 	public void setTask(final Task task) {
-		this.task = new Task(task);
+		this.task = task == null ? null : new Task(task);
 	}
 
 	/**
@@ -286,7 +286,7 @@ public class Assignment implements Comparable<Assignment> {
 	}
 
 	/**
-	 * @return the user in the assignment
+	 * @return the user in the assignment, possibly {@code null}
 	 */
 	public User getUser() {
 		return this.user;
@@ -297,7 +297,7 @@ public class Assignment implements Comparable<Assignment> {
 	 *            the new user in the assignment
 	 */
 	public void setUser(final User user) {
-		this.user = new User(user);
+		this.user = user == null ? null : new User(user);
 	}
 
 	/**

@@ -58,8 +58,8 @@ Ext.define('data.model.UserTask', {
 			header:    'Begin',
 			width:     80,
 			sortable:  true,
-			renderer:  function(value) {
-				return Ext.Date.format(new Date(value), 'm/d/Y');
+			renderer:  function(val) {
+				return val ? Ext.Date.format(new Date(val), 'm/d/Y') : "";
 			}
 		}, {
 			name:      'end',
@@ -67,8 +67,8 @@ Ext.define('data.model.UserTask', {
 			header:    'End',
 			width:     80,
 			sortable:  true,
-			renderer:  function(value) {
-				return Ext.Date.format(new Date(value), 'm/d/Y');
+			renderer:  function(val) {
+				return val ? Ext.Date.format(new Date(val), 'm/d/Y') : "";
 			}
 		}
 	],

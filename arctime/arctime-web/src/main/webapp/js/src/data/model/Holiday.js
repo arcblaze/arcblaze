@@ -29,8 +29,8 @@ Ext.define('data.model.Holiday', {
 			header:    'Day',
 			width:     140,
 			sortable:  true,
-			renderer:  function(value) {
-				return Ext.Date.format(new Date(value), 'D, M j, Y');
+			renderer:  function(val) {
+				return val ? Ext.Date.format(new Date(val), 'D, M j, Y') : "";
 			}
 		}
 	],
