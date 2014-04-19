@@ -23,6 +23,21 @@ public interface CompanyDao {
 	int count(final boolean includeInactive) throws DatabaseException;
 
 	/**
+	 * @param filter
+	 *            the search filter to use when counting results, possibly
+	 *            {@code null} to retrieve all companies
+	 * @param includeInactive
+	 *            whether inactive companies should be included in the count
+	 * 
+	 * @return the total number of companies in the system
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	int count(final String filter, final boolean includeInactive)
+			throws DatabaseException;
+
+	/**
 	 * @param companyId
 	 *            the unique id of the company to retrieve
 	 * 
@@ -50,12 +65,31 @@ public interface CompanyDao {
 	Company getForUser(final Integer userId) throws DatabaseException;
 
 	/**
+	 * @param filter
+	 *            the search filter to use to restrict results, possibly
+	 *            {@code null} to retrieve all companies
+	 * @param includeInactive
+	 *            whether inactive companies should be included in the response
 	 * @param limit
 	 *            the maximum number of items to be retrieved
 	 * @param offset
 	 *            the offset into the items to be retrieved
 	 * 
-	 * @return all available companies, possibly empty but never {@code null}
+	 * @return all matching companies, possibly empty but never {@code null}
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	Set<Company> search(final String filter, final boolean includeInactive,
+			final Integer limit, final Integer offset) throws DatabaseException;
+
+	/**
+	 * @param limit
+	 *            the maximum number of items to be retrieved
+	 * @param offset
+	 *            the offset into the items to be retrieved
+	 * 
+	 * @return all companies, possibly empty but never {@code null}
 	 * 
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database

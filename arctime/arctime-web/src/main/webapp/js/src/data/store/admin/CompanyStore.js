@@ -9,9 +9,11 @@ data.store.admin.CompanyStore = Ext.extend(Ext.data.JsonStore, {
 			proxy: {
 				type: 'ajax',
 				url: '/rest/admin/company',
+				pageParam: undefined, // we don't use this.
 				reader: {
 					type: 'json',
-					root: 'companies'
+					root: 'companies',
+					totalProperty: 'total'
 				}
 			},
 			listeners: {

@@ -8,7 +8,9 @@ ui.grid.admin.CompanyGrid = Ext.extend(Ext.grid.GridPanel, {
 		var grid = this;
 
 		this.store = new data.store.admin.CompanyStore();
-		this.toolbar = new ui.tbar.admin.CompanyToolbar();
+		this.toolbar = new ui.tbar.admin.CompanyToolbar({
+			store: grid.store
+		});
 
 		var config = Ext.applyIf(c || {}, {
 			title:       'Companies',
@@ -18,9 +20,17 @@ ui.grid.admin.CompanyGrid = Ext.extend(Ext.grid.GridPanel, {
 			stripeRows:  true,
 			autoWidth:   true,
 			autoHeight:  true,
+			maxHeight:   ((document.height !== undefined) ?
+					document.height : document.body.offsetHeight) - 145,
 			tbar:        grid.toolbar,
 			columns:     company.getColumnModel(),
-			loadMask:    true
+			loadMask:    true,
+	        bbar: Ext.create('Ext.PagingToolbar', {
+	            store:       grid.store,
+	            displayInfo: true,
+	            displayMsg:  'Displaying companies {0} - {1} of {2}',
+	            emptyMsg:    'No companies to display'
+	        })
 		});
 
 		ui.grid.admin.CompanyGrid.superclass.constructor.call(this, config);

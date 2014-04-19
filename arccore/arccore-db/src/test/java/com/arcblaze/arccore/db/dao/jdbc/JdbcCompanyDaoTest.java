@@ -65,6 +65,28 @@ public class JdbcCompanyDaoTest {
 			assertEquals(1, companies.size());
 			assertTrue(companies.contains(company2));
 
+			companies = companyDao.search(null, true, null, null);
+			assertNotNull(companies);
+			assertEquals(3, companies.size());
+			assertTrue(companies.contains(company1));
+			assertTrue(companies.contains(company2));
+			assertTrue(companies.contains(company3));
+
+			companies = companyDao.search("Company 2", true, null, null);
+			assertNotNull(companies);
+			assertEquals(1, companies.size());
+			assertTrue(companies.contains(company2));
+
+			companies = companyDao.search("company 2", true, null, null);
+			assertNotNull(companies);
+			assertEquals(1, companies.size());
+			assertTrue(companies.contains(company2));
+
+			companies = companyDao.search("Company 2", true, 1, 0);
+			assertNotNull(companies);
+			assertEquals(1, companies.size());
+			assertTrue(companies.contains(company2));
+
 			Company getCompany = companyDao.get(company1.getId());
 			assertEquals(company1, getCompany);
 

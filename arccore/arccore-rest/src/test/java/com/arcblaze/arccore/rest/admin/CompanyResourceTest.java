@@ -3,9 +3,8 @@ package com.arcblaze.arccore.rest.admin;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import java.util.Set;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.SecurityContext;
@@ -22,6 +21,7 @@ import com.arcblaze.arccore.db.DatabaseException;
 import com.arcblaze.arccore.db.util.TestDatabase;
 import com.arcblaze.arccore.rest.admin.CompanyResource.ActivateResponse;
 import com.arcblaze.arccore.rest.admin.CompanyResource.AddResponse;
+import com.arcblaze.arccore.rest.admin.CompanyResource.AllResponse;
 import com.arcblaze.arccore.rest.admin.CompanyResource.DeactivateResponse;
 import com.arcblaze.arccore.rest.admin.CompanyResource.UpdateResponse;
 import com.codahale.metrics.MetricRegistry;
@@ -98,7 +98,7 @@ public class CompanyResourceTest {
 	 *             if there is a database problem
 	 */
 	@Test
-	public void testAllNoneAvailable() throws DatabaseException {
+	public void testSearchNoneAvailable() throws DatabaseException {
 		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/db.sql");
@@ -112,11 +112,15 @@ public class CompanyResourceTest {
 			final Timer timer = metricRegistry.timer("test");
 
 			final CompanyResource resource = new CompanyResource();
-			final Set<Company> companies = resource.all(securityContext,
-					config, daoFactory, timer, null, null);
+			final AllResponse response = resource.search(securityContext,
+					config, daoFactory, timer, null, true, null, null);
 
-			assertNotNull(companies);
-			assertTrue(companies.isEmpty());
+			assertNotNull(response);
+			assertNotNull(response.companies);
+			assertTrue(response.companies.isEmpty());
+			assertNull(response.limit);
+			assertNull(response.offset);
+			assertEquals(new Integer(0), response.total);
 		}
 	}
 
@@ -127,7 +131,7 @@ public class CompanyResourceTest {
 	 *             if there is a database problem
 	 */
 	@Test
-	public void testAll() throws DatabaseException {
+	public void testSearch() throws DatabaseException {
 		final Config config = new Config();
 		try (final TestDatabase testDatabase = new TestDatabase()) {
 			testDatabase.load("hsqldb/db.sql");
@@ -147,21 +151,52 @@ public class CompanyResourceTest {
 			daoFactory.getCompanyDao().add(company1, company2, company3);
 
 			final CompanyResource resource = new CompanyResource();
-			Set<Company> companies = resource.all(securityContext, config,
-					daoFactory, timer, null, null);
+			AllResponse response = resource.search(securityContext, config,
+					daoFactory, timer, null, true, null, null);
 
-			assertNotNull(companies);
-			assertEquals(3, companies.size());
-			assertTrue(companies.contains(company1));
-			assertTrue(companies.contains(company2));
-			assertTrue(companies.contains(company3));
+			assertNotNull(response);
+			assertNull(response.limit);
+			assertNull(response.offset);
+			assertEquals(new Integer(3), response.total);
+			assertNotNull(response.companies);
+			assertEquals(3, response.companies.size());
+			assertTrue(response.companies.contains(company1));
+			assertTrue(response.companies.contains(company2));
+			assertTrue(response.companies.contains(company3));
 
-			companies = resource.all(securityContext, config, daoFactory,
-					timer, 1, 1);
+			response = resource.search(securityContext, config, daoFactory,
+					timer, null, true, 1, 1);
 
-			assertNotNull(companies);
-			assertEquals(1, companies.size());
-			assertTrue(companies.contains(company2));
+			assertNotNull(response);
+			assertEquals(new Integer(1), response.limit);
+			assertEquals(new Integer(1), response.offset);
+			assertEquals(new Integer(3), response.total);
+			assertNotNull(response.companies);
+			assertEquals(1, response.companies.size());
+			assertTrue(response.companies.contains(company2));
+
+			response = resource.search(securityContext, config, daoFactory,
+					timer, null, false, null, null);
+
+			assertNotNull(response);
+			assertNull(response.limit);
+			assertNull(response.offset);
+			assertEquals(new Integer(2), response.total);
+			assertNotNull(response.companies);
+			assertEquals(2, response.companies.size());
+			assertTrue(response.companies.contains(company1));
+			assertTrue(response.companies.contains(company2));
+
+			response = resource.search(securityContext, config, daoFactory,
+					timer, "company 2", true, null, null);
+
+			assertNotNull(response);
+			assertNull(response.limit);
+			assertNull(response.offset);
+			assertEquals(new Integer(1), response.total);
+			assertNotNull(response.companies);
+			assertEquals(1, response.companies.size());
+			assertTrue(response.companies.contains(company2));
 		}
 	}
 

@@ -33,16 +33,24 @@ import com.codahale.metrics.Timer;
 @Path("/admin/company")
 public class CompanyResource extends BaseResource {
 	@XmlRootElement
-	static class DeleteResponse {
+	static class AllResponse {
 		@XmlElement
 		public final boolean success = true;
 
 		@XmlElement
-		public final String title = "Company Deleted";
+		public final String msg = "The companies were retrieved successfully.";
 
 		@XmlElement
-		public final String msg = "The specified companies have been deleted "
-				+ "successfully.";
+		public Set<Company> companies;
+
+		@XmlElement
+		public Integer offset;
+
+		@XmlElement
+		public Integer limit;
+
+		@XmlElement
+		public Integer total;
 	}
 
 	@XmlRootElement
@@ -85,6 +93,19 @@ public class CompanyResource extends BaseResource {
 
 		@XmlElement
 		public Company company;
+	}
+
+	@XmlRootElement
+	static class DeleteResponse {
+		@XmlElement
+		public final boolean success = true;
+
+		@XmlElement
+		public final String title = "Company Deleted";
+
+		@XmlElement
+		public final String msg = "The specified companies have been deleted "
+				+ "successfully.";
 	}
 
 	/**
@@ -131,27 +152,42 @@ public class CompanyResource extends BaseResource {
 	 *            used to communicate with the back-end database
 	 * @param timer
 	 *            tracks performance metrics on this REST end-point
+	 * @param filter
+	 *            the search filter to use to restrict results
+	 * @param includeInactive
+	 *            whether inactive companies should be included in the response
 	 * @param limit
 	 *            the maximum number of items to be retrieved
 	 * @param offset
 	 *            the offset into the items to be retrieved
 	 * 
-	 * @return all of the available companies
+	 * @return all of the matching companies
 	 * 
 	 * @throws DatabaseException
 	 *             if there is an error communicating with the back-end
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Set<Company> all(@Context final SecurityContext security,
-			@Context final Config config, @Context final DaoFactory daoFactory,
+	public AllResponse search(
+			@Context final SecurityContext security,
+			@Context final Config config,
+			@Context final DaoFactory daoFactory,
 			@Context final Timer timer,
+			@QueryParam("filter") final String filter,
+			@QueryParam("includeInactive") @DefaultValue("true") final Boolean includeInactive,
 			@QueryParam("limit") @DefaultValue("100") final Integer limit,
 			@QueryParam("start") @DefaultValue("0") final Integer offset)
 			throws DatabaseException {
 		final User currentUser = (User) security.getUserPrincipal();
 		try (Timer.Context timerContext = timer.time()) {
-			return daoFactory.getCompanyDao().getAll(limit, offset);
+			final AllResponse response = new AllResponse();
+			response.companies = daoFactory.getCompanyDao().search(filter,
+					includeInactive, limit, offset);
+			response.total = daoFactory.getCompanyDao().count(filter,
+					includeInactive);
+			response.limit = limit;
+			response.offset = offset;
+			return response;
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
 		}

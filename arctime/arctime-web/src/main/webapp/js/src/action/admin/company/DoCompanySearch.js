@@ -12,11 +12,24 @@ action.admin.company.DoCompanySearch = function() {
 			if (txt != undefined && txt.length > 0) {
 				var r = new RegExp(txt, 'i');
 
-				grid.getStore().filterBy(function(rec, recId) {
-					return rec.data.name.match(r);
+				var store = grid.getStore();
+				store.reload({
+					params: {
+						limit: store.lastOptions.limit,
+						start: store.lastOptions.start,
+						filter: txt
+					}
 				});
-			} else
-				grid.getStore().clearFilter();
+			} else {
+				var store = grid.getStore();
+				store.reload({
+					params: {
+						limit: store.lastOptions.limit,
+						start: store.lastOptions.start,
+						filter: undefined
+					}
+				});
+			}
 		}
 	});
 }

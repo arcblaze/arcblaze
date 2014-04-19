@@ -12,6 +12,8 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.arcblaze.arccore.common.model.Company;
 import com.arcblaze.arccore.db.ConnectionManager;
 import com.arcblaze.arccore.db.DatabaseException;
@@ -63,6 +65,36 @@ public class JdbcCompanyDao implements CompanyDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public int count(final String filter, final boolean includeInactive)
+			throws DatabaseException {
+		final StringBuilder sql = new StringBuilder();
+		sql.append("SELECT COUNT(*) FROM companies");
+		if (StringUtils.isNotBlank(filter)) {
+			sql.append(" WHERE LOWER(name) LIKE LOWER(?)");
+			if (!includeInactive)
+				sql.append(" AND active = TRUE");
+		} else if (!includeInactive)
+			sql.append(" WHERE active = TRUE");
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql
+						.toString())) {
+			if (StringUtils.isNotBlank(filter))
+				ps.setString(1, "%" + filter + "%");
+			try (final ResultSet rs = ps.executeQuery()) {
+				if (rs.next())
+					return rs.getInt(1);
+				return 0;
+			}
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Company get(final Integer id) throws DatabaseException {
 		notNull(id, "Invalid null id");
 
@@ -103,6 +135,48 @@ public class JdbcCompanyDao implements CompanyDao {
 			}
 
 			return null;
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<Company> search(final String filter,
+			final boolean includeInactive, final Integer limit,
+			final Integer offset) throws DatabaseException {
+		final StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM companies");
+		if (StringUtils.isNotBlank(filter)) {
+			sql.append(" WHERE LOWER(name) LIKE LOWER(?)");
+			if (!includeInactive)
+				sql.append(" AND active = TRUE");
+		} else if (!includeInactive)
+			sql.append(" WHERE active = TRUE");
+		sql.append(" ORDER BY name");
+		if (limit != null)
+			sql.append(" LIMIT ?");
+		if (offset != null)
+			sql.append(" OFFSET ?");
+
+		final Set<Company> companies = new TreeSet<>();
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql
+						.toString())) {
+			int index = 1;
+			if (StringUtils.isNotBlank(filter))
+				ps.setString(index++, "%" + filter + "%");
+			if (limit != null)
+				ps.setInt(index++, limit);
+			if (offset != null)
+				ps.setInt(index++, offset);
+			try (final ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					companies.add(fromResultSet(rs));
+			}
+			return companies;
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
