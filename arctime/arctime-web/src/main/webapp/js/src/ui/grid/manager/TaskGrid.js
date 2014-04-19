@@ -14,6 +14,8 @@ ui.grid.manager.TaskGrid = Ext.extend(Ext.grid.GridPanel, {
 			autoExpandColumn: 'description',
 			autoWidth:        true,
 			autoHeight:       true,
+			maxHeight:   ((document.height !== undefined) ?
+					document.height : document.body.offsetHeight) - 145,
 			tbar:             new ui.tbar.manager.TaskToolbar(),
 			columns:          task.getColumnModel(),
 			loadMask:         true

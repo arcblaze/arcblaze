@@ -9,9 +9,11 @@ data.store.finance.TransactionStore = Ext.extend(Ext.data.JsonStore, {
 			proxy: {
 				type: 'ajax',
 				url: '/rest/finance/transaction',
+				pageParam: undefined, // we don't use this.
 				reader: {
 					type: 'json',
-					root: 'transactions'
+					root: 'transactions',
+					totalProperty: 'total'
 				}
 			}
 		});

@@ -64,6 +64,55 @@ public class JdbcTransactionDao implements TransactionDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public int count() throws DatabaseException {
+		final String sql = "SELECT COUNT(*) FROM transactions";
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql);
+				final ResultSet rs = ps.executeQuery()) {
+			if (rs.next())
+				return rs.getInt(1);
+			return 0;
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int count(final String filter) throws DatabaseException {
+		final StringBuilder sql = new StringBuilder();
+		sql.append("SELECT COUNT(*) FROM transactions");
+		if (StringUtils.isNotBlank(filter)) {
+			sql.append(" WHERE LOWER(type) LIKE LOWER(?)");
+			sql.append(" OR LOWER(description) LIKE LOWER(?)");
+			sql.append(" OR LOWER(notes) LIKE LOWER(?)");
+		}
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql
+						.toString())) {
+			if (StringUtils.isNotBlank(filter)) {
+				ps.setString(1, "%" + filter + "%");
+				ps.setString(2, "%" + filter + "%");
+				ps.setString(3, "%" + filter + "%");
+			}
+			try (final ResultSet rs = ps.executeQuery()) {
+				if (rs.next())
+					return rs.getInt(1);
+				return 0;
+			}
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public BigDecimal amountBetween(final Integer companyId, final Date begin,
 			final Date end) throws DatabaseException {
 		notNull(companyId, "Invalid null company id");
@@ -210,12 +259,12 @@ public class JdbcTransactionDao implements TransactionDao {
 				ps.setInt(index++, limit);
 			if (offset != null)
 				ps.setInt(index++, offset);
-			final Set<Transaction> transactions = new TreeSet<>();
 			try (final ResultSet rs = ps.executeQuery()) {
+				final Set<Transaction> transactions = new TreeSet<>();
 				while (rs.next())
 					transactions.add(fromResultSet(rs));
+				return transactions;
 			}
-			return transactions;
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
@@ -251,12 +300,102 @@ public class JdbcTransactionDao implements TransactionDao {
 				ps.setInt(index++, limit);
 			if (offset != null)
 				ps.setInt(index++, offset);
-			final Set<Transaction> transactions = new TreeSet<>();
 			try (final ResultSet rs = ps.executeQuery()) {
+				final Set<Transaction> transactions = new TreeSet<>();
 				while (rs.next())
 					transactions.add(fromResultSet(rs));
+				return transactions;
 			}
-			return transactions;
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<Transaction> searchForCompany(final Integer companyId,
+			final String filter, final Integer limit, final Integer offset)
+			throws DatabaseException {
+		notNull(companyId, "Invalid null company id");
+
+		final StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM transactions WHERE company_id = ?");
+		if (StringUtils.isNotBlank(filter)) {
+			sql.append(" AND (LOWER(type) LIKE LOWER(?) OR ");
+			sql.append("LOWER(description) LIKE LOWER(?) OR ");
+			sql.append("LOWER(notes) LIKE LOWER(?))");
+		}
+		sql.append(" ORDER BY timestamp DESC");
+		if (limit != null)
+			sql.append(" LIMIT ?");
+		if (offset != null)
+			sql.append(" OFFSET ?");
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql
+						.toString())) {
+			int index = 1;
+			ps.setInt(index++, companyId);
+			if (StringUtils.isNotBlank(filter)) {
+				ps.setString(index++, "%" + filter + "%");
+				ps.setString(index++, "%" + filter + "%");
+				ps.setString(index++, "%" + filter + "%");
+			}
+			if (limit != null)
+				ps.setInt(index++, limit);
+			if (offset != null)
+				ps.setInt(index++, offset);
+			try (final ResultSet rs = ps.executeQuery()) {
+				final Set<Transaction> transactions = new TreeSet<>();
+				while (rs.next())
+					transactions.add(fromResultSet(rs));
+				return transactions;
+			}
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<Transaction> search(final String filter, final Integer limit,
+			final Integer offset) throws DatabaseException {
+		final StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM transactions ");
+		if (StringUtils.isNotBlank(filter)) {
+			sql.append("WHERE LOWER(type) LIKE LOWER(?) OR ");
+			sql.append("LOWER(description) LIKE LOWER(?) OR ");
+			sql.append("LOWER(notes) LIKE LOWER(?) ");
+		}
+		sql.append("ORDER BY timestamp DESC");
+		if (limit != null)
+			sql.append(" LIMIT ?");
+		if (offset != null)
+			sql.append(" OFFSET ?");
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql
+						.toString())) {
+			int index = 1;
+			if (StringUtils.isNotBlank(filter)) {
+				ps.setString(index++, "%" + filter + "%");
+				ps.setString(index++, "%" + filter + "%");
+				ps.setString(index++, "%" + filter + "%");
+			}
+			if (limit != null)
+				ps.setInt(index++, limit);
+			if (offset != null)
+				ps.setInt(index++, offset);
+			try (final ResultSet rs = ps.executeQuery()) {
+				final Set<Transaction> transactions = new TreeSet<>();
+				while (rs.next())
+					transactions.add(fromResultSet(rs));
+				return transactions;
+			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}

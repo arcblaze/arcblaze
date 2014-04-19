@@ -18,6 +18,8 @@ ui.grid.manager.UserTaskGrid = Ext.extend(Ext.grid.GridPanel, {
 			autoExpandColumn: 'description',
 			autoWidth:        true,
 			autoHeight:       true,
+			maxHeight:   ((document.height !== undefined) ?
+					document.height : document.body.offsetHeight) - 145,
 			columns:          userTask.getColumnModel(),
 			loadMask:         true,
 			store: new data.store.manager.UserTaskStore({

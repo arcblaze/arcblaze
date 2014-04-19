@@ -14,6 +14,8 @@ ui.grid.manager.UserGrid = Ext.extend(Ext.grid.GridPanel, {
 			autoExpandColumn: 'fullName',
 			autoWidth:        true,
 			autoHeight:       true,
+			maxHeight:   ((document.height !== undefined) ?
+					document.height : document.body.offsetHeight) - 145,
 			tbar:             new ui.tbar.manager.UserToolbar(),
 			columns:          user.getColumnModel(),
 			loadMask:         true

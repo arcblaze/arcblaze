@@ -29,10 +29,10 @@ Ext.define('data.model.Transaction', {
 			name:      'timestamp',
 			dataIndex: 'timestamp',
 			header:    'Timestamp',
-			width:     140,
+			width:     155,
 			sortable:  true,
 			renderer:  function(val) {
-				return val ? Ext.Date.format(new Date(val), 'm/d/Y h:i:s') : "";
+				return val ? Ext.Date.format(new Date(val), 'm/d/Y h:i:s A') : "";
 			}
 		}, {
 			name:      'transactionType',

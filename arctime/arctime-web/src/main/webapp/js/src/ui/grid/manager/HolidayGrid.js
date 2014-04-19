@@ -13,6 +13,8 @@ ui.grid.manager.HolidayGrid = Ext.extend(Ext.grid.GridPanel, {
 			stripeRows:  true,
 			width:       660,
 			autoHeight:  true,
+			maxHeight:   ((document.height !== undefined) ?
+					document.height : document.body.offsetHeight) - 145,
 			tbar:        new ui.tbar.manager.HolidayToolbar(),
 			columns:     holiday.getColumnModel(),
 			loadMask:    true

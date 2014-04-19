@@ -12,17 +12,24 @@ action.finance.transaction.DoTransactionSearch = function() {
 			if (txt != undefined && txt.length > 0) {
 				var r = new RegExp(txt, 'i');
 
-				grid.getStore().filterBy(function(rec, recId) {
-					var day = Ext.Date.format(new Date(rec.data.timestamp), 'm/d/Y');
-					var notes = rec.data.notes;
-					return rec.data.description.match(r) ||
-						   rec.data.transactionType.match(r) ||
-						   rec.data.amount.match(r) ||
-						   (notes && notes.match(r)) ||
-						   day.match(r);
+				var store = grid.getStore();
+				store.reload({
+					params: {
+						limit: store.lastOptions.limit,
+						start: store.lastOptions.start,
+						filter: txt
+					}
 				});
-			} else
-				grid.getStore().clearFilter();
+			} else {
+				var store = grid.getStore();
+				store.reload({
+					params: {
+						limit: store.lastOptions.limit,
+						start: store.lastOptions.start,
+						filter: undefined
+					}
+				});
+			}
 		}
 	});
 }

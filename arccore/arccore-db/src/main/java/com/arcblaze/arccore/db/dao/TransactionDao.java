@@ -14,6 +14,26 @@ import com.arcblaze.arccore.db.DatabaseException;
  */
 public interface TransactionDao {
 	/**
+	 * @return the total number of transactions in the system
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	int count() throws DatabaseException;
+
+	/**
+	 * @param filter
+	 *            the search filter to use when counting results, possibly
+	 *            {@code null} to retrieve all transactions
+	 * 
+	 * @return the total number of transactions in the system
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	int count(final String filter) throws DatabaseException;
+
+	/**
 	 * @param companyId
 	 *            the unique id of the company for which the sum of amounts will
 	 *            be retrieved
@@ -136,6 +156,47 @@ public interface TransactionDao {
 	Set<Transaction> getForCompany(final Integer companyId, final Date begin,
 			final Date end, final Integer limit, final Integer offset)
 			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which the transactions will
+	 *            be retrieved
+	 * @param filter
+	 *            the search filter to use to restrict results
+	 * @param limit
+	 *            the maximum number of items to be retrieved
+	 * @param offset
+	 *            the offset into the items to be retrieved
+	 * 
+	 * @return all matching transactions associated with the specified company,
+	 *         possibly empty but never {@code null}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id or date range is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	Set<Transaction> searchForCompany(final Integer companyId,
+			final String filter, final Integer limit, final Integer offset)
+			throws DatabaseException;
+
+	/**
+	 * @param filter
+	 *            the search filter to use to restrict results
+	 * @param limit
+	 *            the maximum number of items to be retrieved
+	 * @param offset
+	 *            the offset into the items to be retrieved
+	 * 
+	 * @return all matching transactions, possibly empty but never {@code null}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id or date range is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	Set<Transaction> search(final String filter, final Integer limit,
+			final Integer offset) throws DatabaseException;
 
 	/**
 	 * @param transactions

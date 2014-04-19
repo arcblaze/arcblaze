@@ -109,6 +109,44 @@ public class JdbcTransactionDaoTest {
 			assertEquals(1, transactions.size());
 			assertTrue(transactions.contains(t1));
 
+			transactions = transactionDao.searchForCompany(company.getId(),
+					null, null, null);
+			assertNotNull(transactions);
+			assertEquals(2, transactions.size());
+			assertTrue(transactions.contains(t1));
+			assertTrue(transactions.contains(t2));
+
+			transactions = transactionDao.searchForCompany(company.getId(),
+					"payment", null, null);
+			assertNotNull(transactions);
+			assertEquals(1, transactions.size());
+			assertTrue(transactions.contains(t1));
+
+			transactions = transactionDao.searchForCompany(company.getId(),
+					"notes", null, null);
+			assertNotNull(transactions);
+			assertEquals(1, transactions.size());
+			assertTrue(transactions.contains(t2));
+
+			transactions = transactionDao.search("payment", null, null);
+			assertNotNull(transactions);
+			assertEquals(1, transactions.size());
+			assertTrue(transactions.contains(t1));
+
+			transactions = transactionDao.search("notes", null, null);
+			assertNotNull(transactions);
+			assertEquals(1, transactions.size());
+			assertTrue(transactions.contains(t2));
+
+			transactions = transactionDao.search("non-existent", null, null);
+			assertNotNull(transactions);
+			assertEquals(0, transactions.size());
+
+			assertEquals(2, transactionDao.count());
+			assertEquals(1, transactionDao.count("payment"));
+			assertEquals(1, transactionDao.count("notes"));
+			assertEquals(0, transactionDao.count("non-existent"));
+
 			final Date threeMonthsAgo = DateUtils.addMonths(
 					DateUtils.truncate(new Date(), Calendar.MONTH), -2);
 			final Date tomorrow = DateUtils.addDays(new Date(), 1);
