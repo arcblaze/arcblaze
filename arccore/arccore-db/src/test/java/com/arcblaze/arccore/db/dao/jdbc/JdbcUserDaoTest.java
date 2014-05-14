@@ -42,7 +42,7 @@ public class JdbcUserDaoTest {
 			companyDao.add(company);
 			assertNotNull(company.getId());
 
-			Set<User> users = userDao.getAll(null, null);
+			Set<User> users = userDao.getAll(true, null, null);
 			assertNotNull(users);
 			assertEquals(0, users.size());
 
@@ -101,18 +101,18 @@ public class JdbcUserDaoTest {
 			assertEquals(2, userDao.count(true));
 			assertEquals(1, userDao.count(false));
 
-			users = userDao.getAll(null, null);
+			users = userDao.getAll(true, null, null);
 			assertNotNull(users);
 			assertEquals(2, users.size());
 			assertTrue(users.contains(user1));
 			assertTrue(users.contains(user2));
 
-			users = userDao.getAll(1, 0);
+			users = userDao.getAll(true, 1, 0);
 			assertNotNull(users);
 			assertEquals(1, users.size());
 			assertTrue(users.contains(user1));
 
-			users = userDao.getAll(1, 1);
+			users = userDao.getAll(true, 1, 1);
 			assertNotNull(users);
 			assertEquals(1, users.size());
 			assertTrue(users.contains(user2));
@@ -132,6 +132,47 @@ public class JdbcUserDaoTest {
 			assertNotNull(users);
 			assertEquals(1, users.size());
 			assertTrue(users.contains(user2));
+
+			users = userDao.search(company.getId(), "user1", true, null, null);
+			assertNotNull(users);
+			assertEquals(1, users.size());
+			assertTrue(users.contains(user1));
+
+			users = userDao.search(company.getId(), "user", true, null, null);
+			assertNotNull(users);
+			assertEquals(2, users.size());
+			assertTrue(users.contains(user1));
+			assertTrue(users.contains(user2));
+
+			users = userDao.search(company.getId(), "user", true, 1, 0);
+			assertNotNull(users);
+			assertEquals(1, users.size());
+			assertTrue(users.contains(user1));
+
+			users = userDao.search(company.getId(), "non-existent", true, null,
+					null);
+			assertNotNull(users);
+			assertEquals(0, users.size());
+
+			users = userDao.search("user1", true, null, null);
+			assertNotNull(users);
+			assertEquals(1, users.size());
+			assertTrue(users.contains(user1));
+
+			users = userDao.search("user", true, null, null);
+			assertNotNull(users);
+			assertEquals(2, users.size());
+			assertTrue(users.contains(user1));
+			assertTrue(users.contains(user2));
+
+			users = userDao.search("user", true, 1, 0);
+			assertNotNull(users);
+			assertEquals(1, users.size());
+			assertTrue(users.contains(user1));
+
+			users = userDao.search("non-existent", true, null, null);
+			assertNotNull(users);
+			assertEquals(0, users.size());
 
 			User getUser = userDao.get(user1.getId());
 			assertEquals(user1, getUser);
@@ -182,7 +223,7 @@ public class JdbcUserDaoTest {
 			getUser = userDao.get(user1.getId());
 			assertNull(getUser);
 
-			users = userDao.getAll(null, null);
+			users = userDao.getAll(true, null, null);
 			assertNotNull(users);
 			assertEquals(0, users.size());
 			assertEquals(0, userDao.count(true));

@@ -18,6 +18,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.arcblaze.arccore.common.model.User;
 import com.arcblaze.arccore.db.ConnectionManager;
 import com.arcblaze.arccore.db.DatabaseException;
@@ -70,6 +72,43 @@ public class JdbcUserDao implements UserDao {
 			if (rs.next())
 				return rs.getInt(1);
 			return 0;
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int count(final String filter, final boolean includeInactive)
+			throws DatabaseException {
+		final StringBuilder sql = new StringBuilder();
+		sql.append("SELECT COUNT(*) FROM users");
+		if (StringUtils.isNotBlank(filter)) {
+			sql.append(" WHERE (LOWER(login) LIKE LOWER(?)");
+			sql.append(" OR LOWER(first_name) LIKE LOWER(?)");
+			sql.append(" OR LOWER(last_name) LIKE LOWER(?)");
+			sql.append(" OR LOWER(email) LIKE LOWER(?))");
+			if (!includeInactive)
+				sql.append(" AND active = TRUE");
+		} else if (!includeInactive)
+			sql.append(" WHERE active = TRUE");
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql
+						.toString())) {
+			if (StringUtils.isNotBlank(filter)) {
+				ps.setString(1, "%" + filter + "%");
+				ps.setString(2, "%" + filter + "%");
+				ps.setString(3, "%" + filter + "%");
+				ps.setString(4, "%" + filter + "%");
+			}
+			try (final ResultSet rs = ps.executeQuery()) {
+				if (rs.next())
+					return rs.getInt(1);
+				return 0;
+			}
 		} catch (final SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
@@ -239,10 +278,12 @@ public class JdbcUserDao implements UserDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<User> getAll(final Integer limit, final Integer offset)
-			throws DatabaseException {
+	public Set<User> getAll(final boolean includeInactive, final Integer limit,
+			final Integer offset) throws DatabaseException {
 		final StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * FROM users ");
+		if (!includeInactive)
+			sql.append("WHERE active = true ");
 		sql.append("ORDER BY last_name, first_name, login");
 		if (limit != null)
 			sql.append(" LIMIT ?");
@@ -253,6 +294,105 @@ public class JdbcUserDao implements UserDao {
 				final PreparedStatement ps = conn.prepareStatement(sql
 						.toString())) {
 			int index = 1;
+			if (limit != null)
+				ps.setInt(index++, limit);
+			if (offset != null)
+				ps.setInt(index++, offset);
+			try (final ResultSet rs = ps.executeQuery()) {
+				final Set<User> users = new TreeSet<>();
+				while (rs.next())
+					users.add(fromResultSet(rs, false));
+				return users;
+			}
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<User> search(final Integer companyId, final String filter,
+			final boolean includeInactive, final Integer limit,
+			final Integer offset) throws DatabaseException {
+		notNull(companyId, "Invalid null company id");
+
+		final StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM users WHERE company_id = ? ");
+		if (StringUtils.isNotBlank(filter)) {
+			sql.append("AND (LOWER(login) LIKE LOWER(?)");
+			sql.append(" OR LOWER(first_name) LIKE LOWER(?)");
+			sql.append(" OR LOWER(last_name) LIKE LOWER(?)");
+			sql.append(" OR LOWER(email) LIKE LOWER(?)) ");
+		}
+		if (!includeInactive)
+			sql.append("AND active = true ");
+		sql.append("ORDER BY last_name, first_name, login");
+		if (limit != null)
+			sql.append(" LIMIT ?");
+		if (offset != null)
+			sql.append(" OFFSET ?");
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql
+						.toString())) {
+			int index = 1;
+			ps.setInt(index++, companyId);
+			if (StringUtils.isNotBlank(filter)) {
+				ps.setString(index++, "%" + filter + "%");
+				ps.setString(index++, "%" + filter + "%");
+				ps.setString(index++, "%" + filter + "%");
+				ps.setString(index++, "%" + filter + "%");
+			}
+			if (limit != null)
+				ps.setInt(index++, limit);
+			if (offset != null)
+				ps.setInt(index++, offset);
+			try (final ResultSet rs = ps.executeQuery()) {
+				final Set<User> users = new TreeSet<>();
+				while (rs.next())
+					users.add(fromResultSet(rs, false));
+				return users;
+			}
+		} catch (final SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<User> search(final String filter, final boolean includeInactive,
+			final Integer limit, final Integer offset) throws DatabaseException {
+		final StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM users");
+		if (StringUtils.isNotBlank(filter)) {
+			sql.append(" WHERE (LOWER(login) LIKE LOWER(?)");
+			sql.append(" OR LOWER(first_name) LIKE LOWER(?)");
+			sql.append(" OR LOWER(last_name) LIKE LOWER(?)");
+			sql.append(" OR LOWER(email) LIKE LOWER(?))");
+			if (!includeInactive)
+				sql.append(" AND active = true");
+		} else if (!includeInactive)
+			sql.append(" WHERE active = true");
+		sql.append(" ORDER BY last_name, first_name, login");
+		if (limit != null)
+			sql.append(" LIMIT ?");
+		if (offset != null)
+			sql.append(" OFFSET ?");
+
+		try (final Connection conn = this.connectionManager.getConnection();
+				final PreparedStatement ps = conn.prepareStatement(sql
+						.toString())) {
+			int index = 1;
+			if (StringUtils.isNotBlank(filter)) {
+				ps.setString(index++, "%" + filter + "%");
+				ps.setString(index++, "%" + filter + "%");
+				ps.setString(index++, "%" + filter + "%");
+				ps.setString(index++, "%" + filter + "%");
+			}
 			if (limit != null)
 				ps.setInt(index++, limit);
 			if (offset != null)

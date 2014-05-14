@@ -24,6 +24,20 @@ public interface UserDao {
 	int count(final boolean includeInactive) throws DatabaseException;
 
 	/**
+	 * @param filter
+	 *            the search filter to use when restricting the result count
+	 * @param includeInactive
+	 *            whether inactive user accounts should be included in the count
+	 * 
+	 * @return the total number of user accounts in the system
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	int count(final String filter, final boolean includeInactive)
+			throws DatabaseException;
+
+	/**
 	 * @param includeInactive
 	 *            whether inactive user accounts should be included
 	 * 
@@ -111,6 +125,8 @@ public interface UserDao {
 			final Integer limit, final Integer offset) throws DatabaseException;
 
 	/**
+	 * @param includeInactive
+	 *            whether inactive users should be included in the response
 	 * @param limit
 	 *            the maximum number of items to be retrieved
 	 * @param offset
@@ -121,8 +137,47 @@ public interface UserDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	Set<User> getAll(final Integer limit, final Integer offset)
-			throws DatabaseException;
+	Set<User> getAll(final boolean includeInactive, final Integer limit,
+			final Integer offset) throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which users will be retrieved
+	 * @param filter
+	 *            the search filter to use when restricting results
+	 * @param includeInactive
+	 *            whether inactive users should be included in the response
+	 * @param limit
+	 *            the maximum number of items to be retrieved
+	 * @param offset
+	 *            the offset into the items to be retrieved
+	 * 
+	 * @return all available users, possibly empty but never {@code null}
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	Set<User> search(final Integer companyId, final String filter,
+			final boolean includeInactive, final Integer limit,
+			final Integer offset) throws DatabaseException;
+
+	/**
+	 * @param filter
+	 *            the search filter to use when restricting results
+	 * @param includeInactive
+	 *            whether inactive users should be included in the response
+	 * @param limit
+	 *            the maximum number of items to be retrieved
+	 * @param offset
+	 *            the offset into the items to be retrieved
+	 * 
+	 * @return all available users, possibly empty but never {@code null}
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	Set<User> search(final String filter, final boolean includeInactive,
+			final Integer limit, final Integer offset) throws DatabaseException;
 
 	/**
 	 * @param users

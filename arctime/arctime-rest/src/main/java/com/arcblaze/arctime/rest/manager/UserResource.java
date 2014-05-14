@@ -37,16 +37,24 @@ import com.codahale.metrics.Timer;
 @Path("/manager/user")
 public class UserResource extends BaseResource {
 	@XmlRootElement
-	static class DeleteResponse {
+	static class AllResponse {
 		@XmlElement
-		public boolean success = true;
+		public final boolean success = true;
 
 		@XmlElement
-		public String title = "User Deleted";
+		public final String msg = "The users were retrieved successfully.";
 
 		@XmlElement
-		public String msg = "The specified users have been deleted "
-				+ "successfully.";
+		public Set<User> users;
+
+		@XmlElement
+		public Integer offset;
+
+		@XmlElement
+		public Integer limit;
+
+		@XmlElement
+		public Integer total;
 	}
 
 	@XmlRootElement
@@ -91,6 +99,19 @@ public class UserResource extends BaseResource {
 		public User user;
 	}
 
+	@XmlRootElement
+	static class DeleteResponse {
+		@XmlElement
+		public boolean success = true;
+
+		@XmlElement
+		public String title = "User Deleted";
+
+		@XmlElement
+		public String msg = "The specified users have been deleted "
+				+ "successfully.";
+	}
+
 	/**
 	 * @param security
 	 *            the security information associated with the request
@@ -133,6 +154,8 @@ public class UserResource extends BaseResource {
 	 *            used to communicate with the back-end database
 	 * @param timer
 	 *            tracks performance metrics of this REST end-point
+	 * @param filter
+	 *            the search filter to use to restrict results
 	 * @param includeInactive
 	 *            whether inactive user accounts should be included in the
 	 *            response
@@ -146,20 +169,26 @@ public class UserResource extends BaseResource {
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Set<User> all(
+	public AllResponse all(
 			@Context final SecurityContext security,
 			@Context final Config config,
 			@Context final ArcTimeDaoFactory daoFactory,
 			@Context final Timer timer,
+			@QueryParam("filter") final String filter,
 			@QueryParam("includeInactive") @DefaultValue("true") final Boolean includeInactive,
 			@QueryParam("limit") @DefaultValue("100") final Integer limit,
 			@QueryParam("start") @DefaultValue("0") final Integer offset) {
 		final User currentUser = (User) security.getUserPrincipal();
 		try (final Timer.Context timerContext = timer.time()) {
-			final Set<User> users = daoFactory.getUserDao().getAll(
+			final AllResponse response = new AllResponse();
+			response.users = daoFactory.getUserDao().getAll(
 					currentUser.getCompanyId(), includeInactive, limit, offset);
-			daoFactory.getRoleDao().populateUsers(users);
-			return users;
+			daoFactory.getRoleDao().populateUsers(response.users);
+			response.total = daoFactory.getUserDao().count(filter,
+					includeInactive);
+			response.limit = limit;
+			response.offset = offset;
+			return response;
 		} catch (final DatabaseException dbException) {
 			throw dbError(config, currentUser, dbException);
 		}

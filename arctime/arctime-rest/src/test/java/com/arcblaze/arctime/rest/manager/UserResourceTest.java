@@ -22,6 +22,7 @@ import com.arcblaze.arccore.db.dao.UserDao;
 import com.arcblaze.arctime.db.ArcTimeDaoFactory;
 import com.arcblaze.arctime.db.util.TestDatabase;
 import com.arcblaze.arctime.rest.manager.UserResource.AddResponse;
+import com.arcblaze.arctime.rest.manager.UserResource.AllResponse;
 import com.arcblaze.arctime.rest.manager.UserResource.UpdateResponse;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
@@ -119,11 +120,12 @@ public class UserResourceTest {
 			final Timer timer = metricRegistry.timer("test");
 
 			final UserResource resource = new UserResource();
-			final Set<User> users = resource.all(securityContext, config,
-					daoFactory, timer, true, null, null);
+			final AllResponse response = resource.all(securityContext, config,
+					daoFactory, timer, null, true, null, null);
 
-			assertNotNull(users);
-			assertTrue(users.isEmpty());
+			assertNotNull(response);
+			assertNotNull(response.users);
+			assertTrue(response.users.isEmpty());
 		}
 	}
 
