@@ -1,5 +1,16 @@
 package com.arcblaze.arccore.server;
 
+import static com.arcblaze.arccore.server.ServerProperty.SERVER_CERTIFICATE_KEY_ALIAS;
+import static com.arcblaze.arccore.server.ServerProperty.SERVER_CONFIG_FILE;
+import static com.arcblaze.arccore.server.ServerProperty.SERVER_DEVELOPMENT_MODE;
+import static com.arcblaze.arccore.server.ServerProperty.SERVER_INSECURE_MODE;
+import static com.arcblaze.arccore.server.ServerProperty.SERVER_KEYSTORE_FILE;
+import static com.arcblaze.arccore.server.ServerProperty.SERVER_KEYSTORE_PASS;
+import static com.arcblaze.arccore.server.ServerProperty.SERVER_PORT_INSECURE;
+import static com.arcblaze.arccore.server.ServerProperty.SERVER_PORT_SECURE;
+import static com.arcblaze.arccore.server.ServerProperty.SERVER_WEBAPP_DIR;
+import static org.glassfish.jersey.servlet.ServletProperties.JAXRS_APPLICATION_CLASS;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +41,6 @@ import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.jasper.servlet.JspServlet;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
-import org.glassfish.jersey.servlet.ServletProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,12 +86,12 @@ public abstract class BaseServer {
      *             if there is a problem loading the system configuration properties
      */
     public BaseServer() throws ConfigurationException {
-        this.config = new Config(ServerProperty.SERVER_CONFIG_FILE.getDefaultValue());
+        this.config = new Config(SERVER_CONFIG_FILE.getDefaultValue());
 
         final DaoFactory daoFactory = getDaoFactory(this.config);
 
         String baseDir = ".";
-        if (this.config.getBoolean(ServerProperty.SERVER_DEVELOPMENT_MODE))
+        if (this.config.getBoolean(SERVER_DEVELOPMENT_MODE))
             baseDir = "target";
 
         this.tomcat = new Tomcat();
@@ -92,15 +102,15 @@ public abstract class BaseServer {
         final Connector insecureConnector = getInsecureConnector(this.config);
         service.addConnector(insecureConnector);
         this.tomcat.setConnector(insecureConnector);
-        if (!this.config.getBoolean(ServerProperty.SERVER_INSECURE_MODE)) {
+        if (!this.config.getBoolean(SERVER_INSECURE_MODE)) {
             service.addConnector(getSecureConnector(this.config));
-            insecureConnector.setRedirectPort(this.config.getInt(ServerProperty.SERVER_PORT_INSECURE));
+            insecureConnector.setRedirectPort(this.config.getInt(SERVER_PORT_INSECURE));
         }
 
         final SecurityRealm realm = new SecurityRealm("security", daoFactory);
         this.tomcat.getEngine().setRealm(realm);
 
-        final String webappDir = this.config.getString(ServerProperty.SERVER_WEBAPP_DIR);
+        final String webappDir = this.config.getString(SERVER_WEBAPP_DIR);
         final Context context = this.tomcat.addContext("", webappDir);
         context.addWelcomeFile("/index.jsp");
 
@@ -182,7 +192,7 @@ public abstract class BaseServer {
      */
     protected Connector getInsecureConnector(final Config config) {
         final Connector httpConnector = new Connector(Http11NioProtocol.class.getName());
-        httpConnector.setPort(config.getInt(ServerProperty.SERVER_PORT_INSECURE));
+        httpConnector.setPort(config.getInt(SERVER_PORT_INSECURE));
         httpConnector.setSecure(false);
         httpConnector.setScheme("http");
         addCompressionAttributes(config, httpConnector);
@@ -197,15 +207,15 @@ public abstract class BaseServer {
      */
     protected Connector getSecureConnector(final Config config) {
         final Connector httpsConnector = new Connector(Http11NioProtocol.class.getName());
-        httpsConnector.setPort(config.getInt(ServerProperty.SERVER_PORT_SECURE));
+        httpsConnector.setPort(config.getInt(SERVER_PORT_SECURE));
         httpsConnector.setSecure(true);
         httpsConnector.setScheme("https");
         httpsConnector.setAttribute("clientAuth", "false");
         httpsConnector.setAttribute("sslProtocol", "TLS");
         httpsConnector.setAttribute("SSLEnabled", true);
-        httpsConnector.setAttribute("keyAlias", config.getString(ServerProperty.SERVER_CERTIFICATE_KEY_ALIAS));
-        httpsConnector.setAttribute("keystorePass", config.getString(ServerProperty.SERVER_KEYSTORE_PASS));
-        httpsConnector.setAttribute("keystoreFile", config.getString(ServerProperty.SERVER_KEYSTORE_FILE));
+        httpsConnector.setAttribute("keyAlias", config.getString(SERVER_CERTIFICATE_KEY_ALIAS));
+        httpsConnector.setAttribute("keystorePass", config.getString(SERVER_KEYSTORE_PASS));
+        httpsConnector.setAttribute("keystoreFile", config.getString(SERVER_KEYSTORE_FILE));
         addCompressionAttributes(config, httpsConnector);
         return httpsConnector;
     }
@@ -293,8 +303,7 @@ public abstract class BaseServer {
         defaultServlet.setName("jsp");
         defaultServlet.setServletClass(JspServlet.class.getName());
         defaultServlet.addInitParameter("classdebuginfo", "false");
-        defaultServlet.addInitParameter("development",
-                String.valueOf(config.getBoolean(ServerProperty.SERVER_DEVELOPMENT_MODE)));
+        defaultServlet.addInitParameter("development", String.valueOf(config.getBoolean(SERVER_DEVELOPMENT_MODE)));
         defaultServlet.addInitParameter("fork", "false");
         defaultServlet.setLoadOnStartup(3);
         return defaultServlet;
@@ -321,8 +330,7 @@ public abstract class BaseServer {
         final Wrapper jerseyServlet = context.createWrapper();
         jerseyServlet.setName("jersey");
         jerseyServlet.setServletClass(ServletContainer.class.getName());
-        jerseyServlet
-                .addInitParameter(ServletProperties.JAXRS_APPLICATION_CLASS, getApplicationClass(config).getName());
+        jerseyServlet.addInitParameter(JAXRS_APPLICATION_CLASS, getApplicationClass(config).getName());
         jerseyServlet.setLoadOnStartup(1);
         return jerseyServlet;
     }
@@ -430,7 +438,7 @@ public abstract class BaseServer {
             return constraints;
 
         String userConstraint = "NONE";
-        if (!config.getBoolean(ServerProperty.SERVER_DEVELOPMENT_MODE))
+        if (!config.getBoolean(SERVER_DEVELOPMENT_MODE))
             userConstraint = "CONFIDENTIAL";
 
         for (final Map.Entry<String, List<Role>> entry : map.entrySet()) {
