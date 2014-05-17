@@ -27,46 +27,42 @@ import com.codahale.metrics.Timer;
  */
 @Path("/user/supervisors")
 public class SupervisorsResource extends BaseResource {
-	private final static Logger log = LoggerFactory
-			.getLogger(SupervisorsResource.class);
+    private final static Logger log = LoggerFactory.getLogger(SupervisorsResource.class);
 
-	@XmlRootElement
-	static class Supervisors {
-		@XmlElement
-		public Set<Supervisor> supervisors;
-	}
+    @XmlRootElement
+    static class Supervisors {
+        @XmlElement
+        public Set<Supervisor> supervisors;
+    }
 
-	/**
-	 * @param security
-	 *            the security information associated with the request
-	 * @param config
-	 *            the system configuration properties
-	 * @param daoFactory
-	 *            used to communicate with the back-end database
-	 * @param timer
-	 *            tracks performance metrics of this REST end-point
-	 * 
-	 * @return the user supervisors response
-	 */
-	@GET
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Supervisors get(@Context final SecurityContext security,
-			@Context final Config config,
-			@Context final ArcTimeDaoFactory daoFactory,
-			@Context final Timer timer) {
-		log.debug("User supervisor request");
-		final User currentUser = (User) security.getUserPrincipal();
-		try (final Timer.Context timerContext = timer.time()) {
-			final Set<Supervisor> supervisors = daoFactory.getSupervisorDao()
-					.getSupervisors(currentUser.getCompanyId(),
-							currentUser.getId());
-			log.debug("Found supervisors: {}", supervisors.size());
+    /**
+     * @param security
+     *            the security information associated with the request
+     * @param config
+     *            the system configuration properties
+     * @param daoFactory
+     *            used to communicate with the back-end database
+     * @param timer
+     *            tracks performance metrics of this REST end-point
+     * 
+     * @return the user supervisors response
+     */
+    @GET
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    public Supervisors get(@Context final SecurityContext security, @Context final Config config,
+            @Context final ArcTimeDaoFactory daoFactory, @Context final Timer timer) {
+        log.debug("User supervisor request");
+        final User currentUser = (User) security.getUserPrincipal();
+        try (final Timer.Context timerContext = timer.time()) {
+            final Set<Supervisor> supervisors = daoFactory.getSupervisorDao().getSupervisors(
+                    currentUser.getCompanyId(), currentUser.getId());
+            log.debug("Found supervisors: {}", supervisors.size());
 
-			final Supervisors response = new Supervisors();
-			response.supervisors = supervisors;
-			return response;
-		} catch (DatabaseException dbException) {
-			throw dbError(config, currentUser, dbException);
-		}
-	}
+            final Supervisors response = new Supervisors();
+            response.supervisors = supervisors;
+            return response;
+        } catch (DatabaseException dbException) {
+            throw dbError(config, currentUser, dbException);
+        }
+    }
 }

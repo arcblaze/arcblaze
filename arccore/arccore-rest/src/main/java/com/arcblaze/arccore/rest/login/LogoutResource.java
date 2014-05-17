@@ -26,42 +26,38 @@ import com.codahale.metrics.Timer;
  */
 @Path("/logout")
 public class LogoutResource extends BaseResource {
-	private final static Logger log = LoggerFactory
-			.getLogger(LogoutResource.class);
+    private final static Logger log = LoggerFactory.getLogger(LogoutResource.class);
 
-	/**
-	 * @param security
-	 *            the security information associated with the request
-	 * @param request
-	 *            the request containing the session to invalidate
-	 * @param uriInfo
-	 *            the URI information associated with this web request
-	 * @param config
-	 *            the system configuration properties
-	 * @param timer
-	 *            tracks performance metrics for this REST end-point
-	 * 
-	 * @return a redirection back to the home page
-	 * 
-	 * @throws URISyntaxException
-	 *             if there is a problem with the created URI
-	 */
-	@GET
-	public Response logout(@Context final SecurityContext security,
-			@Context final HttpServletRequest request,
-			@Context final UriInfo uriInfo, @Context final Config config,
-			@Context final Timer timer) throws URISyntaxException {
-		log.debug("User logout request");
-		try (final Timer.Context timerContext = timer.time()) {
-			request.getSession().invalidate();
-			request.logout();
+    /**
+     * @param security
+     *            the security information associated with the request
+     * @param request
+     *            the request containing the session to invalidate
+     * @param uriInfo
+     *            the URI information associated with this web request
+     * @param config
+     *            the system configuration properties
+     * @param timer
+     *            tracks performance metrics for this REST end-point
+     * 
+     * @return a redirection back to the home page
+     * 
+     * @throws URISyntaxException
+     *             if there is a problem with the created URI
+     */
+    @GET
+    public Response logout(@Context final SecurityContext security, @Context final HttpServletRequest request,
+            @Context final UriInfo uriInfo, @Context final Config config, @Context final Timer timer)
+            throws URISyntaxException {
+        log.debug("User logout request");
+        try (final Timer.Context timerContext = timer.time()) {
+            request.getSession().invalidate();
+            request.logout();
 
-			final String baseUri = StringUtils.substringBefore(uriInfo
-					.getBaseUri().toString(), "/rest");
-			return Response.seeOther(new URI(baseUri + "/")).build();
-		} catch (final ServletException servletException) {
-			throw serverError(config, (User) security.getUserPrincipal(),
-					servletException);
-		}
-	}
+            final String baseUri = StringUtils.substringBefore(uriInfo.getBaseUri().toString(), "/rest");
+            return Response.seeOther(new URI(baseUri + "/")).build();
+        } catch (final ServletException servletException) {
+            throw serverError(config, (User) security.getUserPrincipal(), servletException);
+        }
+    }
 }

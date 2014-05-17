@@ -26,69 +26,65 @@ import com.codahale.metrics.Timer;
  */
 @Path("/finance/transaction")
 public class TransactionResource extends BaseResource {
-	@XmlRootElement
-	static class AllResponse {
-		@XmlElement
-		public final boolean success = true;
+    @XmlRootElement
+    static class AllResponse {
+        @XmlElement
+        public final boolean success = true;
 
-		@XmlElement
-		public final String msg = "The transactions were retrieved successfully.";
+        @XmlElement
+        public final String msg = "The transactions were retrieved successfully.";
 
-		@XmlElement
-		public Set<Transaction> transactions;
+        @XmlElement
+        public Set<Transaction> transactions;
 
-		@XmlElement
-		public Integer offset;
+        @XmlElement
+        public Integer offset;
 
-		@XmlElement
-		public Integer limit;
+        @XmlElement
+        public Integer limit;
 
-		@XmlElement
-		public Integer total;
-	}
+        @XmlElement
+        public Integer total;
+    }
 
-	/**
-	 * @param security
-	 *            the security information associated with the request
-	 * @param config
-	 *            the system configuration information
-	 * @param daoFactory
-	 *            used to communicate with the back-end database
-	 * @param timer
-	 *            tracks performance metrics of this REST end-point
-	 * @param filter
-	 *            the search filter to use to restrict results
-	 * @param limit
-	 *            the maximum number of items to be retrieved
-	 * @param offset
-	 *            the offset into the items to be retrieved
-	 * 
-	 * @return the transactions available for the current user's company
-	 * 
-	 * @throws DatabaseException
-	 *             if there is an error communicating with the back-end
-	 */
-	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public AllResponse all(@Context final SecurityContext security,
-			@Context final Config config, @Context final DaoFactory daoFactory,
-			@Context final Timer timer,
-			@QueryParam("filter") final String filter,
-			@QueryParam("limit") @DefaultValue("100") final Integer limit,
-			@QueryParam("start") @DefaultValue("0") final Integer offset)
-			throws DatabaseException {
-		final User currentUser = (User) security.getUserPrincipal();
-		try (final Timer.Context timerContext = timer.time()) {
-			final AllResponse response = new AllResponse();
-			response.transactions = daoFactory.getTransactionDao()
-					.searchForCompany(currentUser.getCompanyId(), filter,
-							limit, offset);
-			response.total = daoFactory.getTransactionDao().count(filter);
-			response.limit = limit;
-			response.offset = offset;
-			return response;
-		} catch (final DatabaseException dbException) {
-			throw dbError(config, currentUser, dbException);
-		}
-	}
+    /**
+     * @param security
+     *            the security information associated with the request
+     * @param config
+     *            the system configuration information
+     * @param daoFactory
+     *            used to communicate with the back-end database
+     * @param timer
+     *            tracks performance metrics of this REST end-point
+     * @param filter
+     *            the search filter to use to restrict results
+     * @param limit
+     *            the maximum number of items to be retrieved
+     * @param offset
+     *            the offset into the items to be retrieved
+     * 
+     * @return the transactions available for the current user's company
+     * 
+     * @throws DatabaseException
+     *             if there is an error communicating with the back-end
+     */
+    @GET
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public AllResponse all(@Context final SecurityContext security, @Context final Config config,
+            @Context final DaoFactory daoFactory, @Context final Timer timer,
+            @QueryParam("filter") final String filter, @QueryParam("limit") @DefaultValue("100") final Integer limit,
+            @QueryParam("start") @DefaultValue("0") final Integer offset) throws DatabaseException {
+        final User currentUser = (User) security.getUserPrincipal();
+        try (final Timer.Context timerContext = timer.time()) {
+            final AllResponse response = new AllResponse();
+            response.transactions = daoFactory.getTransactionDao().searchForCompany(currentUser.getCompanyId(), filter,
+                    limit, offset);
+            response.total = daoFactory.getTransactionDao().count(filter);
+            response.limit = limit;
+            response.offset = offset;
+            return response;
+        } catch (final DatabaseException dbException) {
+            throw dbError(config, currentUser, dbException);
+        }
+    }
 }

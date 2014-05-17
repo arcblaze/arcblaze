@@ -23,110 +23,109 @@ import org.apache.commons.lang.builder.ToStringStyle;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Role implements Comparable<Role>, Principal {
-	/**
-	 * The name of this role.
-	 */
-	private String name;
+    /**
+     * The name of this role.
+     */
+    private String name;
 
-	/**
-	 * Default constructor.
-	 */
-	public Role() {
-		// Nothing to do.
-	}
+    /**
+     * Default constructor.
+     */
+    public Role() {
+        // Nothing to do.
+    }
 
-	/**
-	 * @param name
-	 *            the name of this role
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided name value is invalid
-	 */
-	public Role(final String name) {
-		setName(name);
-	}
+    /**
+     * @param name
+     *            the name of this role
+     * 
+     * @throws IllegalArgumentException
+     *             if the provided name value is invalid
+     */
+    public Role(final String name) {
+        setName(name);
+    }
 
-	/**
-	 * @param other
-	 *            the role to copy
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided role is invalid
-	 */
-	public Role(final Role other) {
-		notNull(other);
-		if (other.getName() != null)
-			setName(other.getName());
-	}
+    /**
+     * @param other
+     *            the role to copy
+     * 
+     * @throws IllegalArgumentException
+     *             if the provided role is invalid
+     */
+    public Role(final Role other) {
+        notNull(other);
+        if (other.getName() != null)
+            setName(other.getName());
+    }
 
-	/**
-	 * @return the role name value
-	 */
-	@Override
-	@XmlElement
-	public String getName() {
-		return this.name;
-	}
+    /**
+     * @return the role name value
+     */
+    @Override
+    @XmlElement
+    public String getName() {
+        return this.name;
+    }
 
-	/**
-	 * @param name
-	 *            the new name of this role
-	 * 
-	 * @return {@code this}
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided name value is invalid
-	 */
-	public Role setName(final String name) {
-		notEmpty(name, "Invalid blank name");
+    /**
+     * @param name
+     *            the new name of this role
+     * 
+     * @return {@code this}
+     * 
+     * @throws IllegalArgumentException
+     *             if the provided name value is invalid
+     */
+    public Role setName(final String name) {
+        notEmpty(name, "Invalid blank name");
 
-		this.name = StringUtils.trim(name);
-		return this;
-	}
+        this.name = StringUtils.trim(name);
+        return this;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		final ToStringBuilder builder = new ToStringBuilder(this,
-				ToStringStyle.SHORT_PREFIX_STYLE);
-		builder.append("name", getName());
-		return builder.toString();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        final ToStringBuilder builder = new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE);
+        builder.append("name", getName());
+        return builder.toString();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean equals(final Object obj) {
-		if (obj instanceof Role) {
-			final Role other = (Role) obj;
-			final EqualsBuilder builder = new EqualsBuilder();
-			builder.append(getName(), other.getName());
-			return builder.isEquals();
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj instanceof Role) {
+            final Role other = (Role) obj;
+            final EqualsBuilder builder = new EqualsBuilder();
+            builder.append(getName(), other.getName());
+            return builder.isEquals();
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int hashCode() {
-		final HashCodeBuilder builder = new HashCodeBuilder();
-		builder.append(getName());
-		return builder.toHashCode();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final HashCodeBuilder builder = new HashCodeBuilder();
+        builder.append(getName());
+        return builder.toHashCode();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int compareTo(final Role other) {
-		final CompareToBuilder builder = new CompareToBuilder();
-		builder.append(getName(), other.getName());
-		return builder.toComparison();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final Role other) {
+        final CompareToBuilder builder = new CompareToBuilder();
+        builder.append(getName(), other.getName());
+        return builder.toComparison();
+    }
 }

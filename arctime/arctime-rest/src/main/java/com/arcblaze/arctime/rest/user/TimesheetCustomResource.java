@@ -41,77 +41,69 @@ import com.arcblaze.arctime.db.dao.TimesheetDao;
 import com.codahale.metrics.Timer;
 
 /**
- * The REST end-point for retrieving the timesheet for a custom-specified pay
- * period.
+ * The REST end-point for retrieving the timesheet for a custom-specified pay period.
  */
 @Path("/user/timesheet/custom/{date}")
 public class TimesheetCustomResource extends BaseResource {
-	private final static Logger log = LoggerFactory
-			.getLogger(TimesheetCustomResource.class);
+    private final static Logger log = LoggerFactory.getLogger(TimesheetCustomResource.class);
 
-	private final static String[] FMT = { "yyyyMMdd" };
+    private final static String[] FMT = { "yyyyMMdd" };
 
-	@XmlRootElement
-	static class CustomResponse {
-		@XmlElement
-		public Timesheet timesheet = null;
-	}
+    @XmlRootElement
+    static class CustomResponse {
+        @XmlElement
+        public Timesheet timesheet = null;
+    }
 
-	/**
-	 * @param security
-	 *            the security information associated with the request
-	 * @param config
-	 *            the system configuration properties
-	 * @param daoFactory
-	 *            used to communicate with the back-end database
-	 * @param timer
-	 *            tracks performance metrics of this REST end-point
-	 * @param date
-	 *            a date within the pay period of interest (in yyyyMMdd format)
-	 * 
-	 * @return the custom timesheet response
-	 */
-	@GET
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public CustomResponse custom(@Context final SecurityContext security,
-			@Context final Config config,
-			@Context final ArcTimeDaoFactory daoFactory,
-			@Context final Timer timer, @PathParam("date") final String date) {
-		log.debug("Custom timesheet request");
-		final User currentUser = (User) security.getUserPrincipal();
-		try (final Timer.Context timerContext = timer.time()) {
-			final Set<Enrichment> timesheetEnrichments = new LinkedHashSet<>(
-					Arrays.asList(PAY_PERIODS, AUDIT_LOGS, HOLIDAYS, USERS,
-							TASKS, BILLS));
+    /**
+     * @param security
+     *            the security information associated with the request
+     * @param config
+     *            the system configuration properties
+     * @param daoFactory
+     *            used to communicate with the back-end database
+     * @param timer
+     *            tracks performance metrics of this REST end-point
+     * @param date
+     *            a date within the pay period of interest (in yyyyMMdd format)
+     * 
+     * @return the custom timesheet response
+     */
+    @GET
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    public CustomResponse custom(@Context final SecurityContext security, @Context final Config config,
+            @Context final ArcTimeDaoFactory daoFactory, @Context final Timer timer,
+            @PathParam("date") final String date) {
+        log.debug("Custom timesheet request");
+        final User currentUser = (User) security.getUserPrincipal();
+        try (final Timer.Context timerContext = timer.time()) {
+            final Set<Enrichment> timesheetEnrichments = new LinkedHashSet<>(Arrays.asList(PAY_PERIODS, AUDIT_LOGS,
+                    HOLIDAYS, USERS, TASKS, BILLS));
 
-			log.debug("Getting requested pay period");
-			final Date day = DateUtils.parseDate(date, FMT);
-			final PayPeriodDao ppdao = daoFactory.getPayPeriodDao();
-			final PayPeriod payPeriod = ppdao.getContaining(
-					currentUser.getCompanyId(), day);
-			if (payPeriod == null)
-				throw notFound("The specified pay period was not found: "
-						+ date);
+            log.debug("Getting requested pay period");
+            final Date day = DateUtils.parseDate(date, FMT);
+            final PayPeriodDao ppdao = daoFactory.getPayPeriodDao();
+            final PayPeriod payPeriod = ppdao.getContaining(currentUser.getCompanyId(), day);
+            if (payPeriod == null)
+                throw notFound("The specified pay period was not found: " + date);
 
-			log.debug("Getting timesheet");
-			final TimesheetDao dao = daoFactory.getTimesheetDao();
-			final Timesheet timesheet = dao.getForUser(currentUser.getId(),
-					payPeriod, timesheetEnrichments);
-			log.debug("Found timesheet: {}", timesheet);
+            log.debug("Getting timesheet");
+            final TimesheetDao dao = daoFactory.getTimesheetDao();
+            final Timesheet timesheet = dao.getForUser(currentUser.getId(), payPeriod, timesheetEnrichments);
+            log.debug("Found timesheet: {}", timesheet);
 
-			if (timesheet == null)
-				throw notFound("The requested timesheet was not found");
+            if (timesheet == null)
+                throw notFound("The requested timesheet was not found");
 
-			final CustomResponse response = new CustomResponse();
-			response.timesheet = timesheet;
-			return response;
-		} catch (final DatabaseException dbException) {
-			throw dbError(config, currentUser, dbException);
-		} catch (final HolidayConfigurationException badHoliday) {
-			throw serverError(config, currentUser, badHoliday);
-		} catch (final ParseException badDate) {
-			throw badRequest("The specified date is invalid: "
-					+ badDate.getMessage());
-		}
-	}
+            final CustomResponse response = new CustomResponse();
+            response.timesheet = timesheet;
+            return response;
+        } catch (final DatabaseException dbException) {
+            throw dbError(config, currentUser, dbException);
+        } catch (final HolidayConfigurationException badHoliday) {
+            throw serverError(config, currentUser, badHoliday);
+        } catch (final ParseException badDate) {
+            throw badRequest("The specified date is invalid: " + badDate.getMessage());
+        }
+    }
 }

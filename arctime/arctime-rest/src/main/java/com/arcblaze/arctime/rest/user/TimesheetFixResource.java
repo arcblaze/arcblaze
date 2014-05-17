@@ -29,66 +29,61 @@ import com.codahale.metrics.Timer;
  */
 @Path("/user/timesheet/{id}/fix")
 public class TimesheetFixResource extends BaseResource {
-	private final static Logger log = LoggerFactory
-			.getLogger(TimesheetFixResource.class);
+    private final static Logger log = LoggerFactory.getLogger(TimesheetFixResource.class);
 
-	@XmlRootElement
-	static class FixResponse {
-		@XmlElement
-		public final boolean success = true;
+    @XmlRootElement
+    static class FixResponse {
+        @XmlElement
+        public final boolean success = true;
 
-		@XmlElement
-		public final String msg = "The timesheet was reopened successfully.";
-	}
+        @XmlElement
+        public final String msg = "The timesheet was reopened successfully.";
+    }
 
-	/**
-	 * @param security
-	 *            the security information associated with the request
-	 * @param config
-	 *            the system configuration properties
-	 * @param daoFactory
-	 *            used to communicate with the back-end database
-	 * @param timer
-	 *            tracks performance metrics of this REST end-point
-	 * @param id
-	 *            the unique id of the timesheet to reopen
-	 * 
-	 * @return the fixed timesheet response
-	 */
-	@GET
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public FixResponse fix(@Context final SecurityContext security,
-			@Context final Config config,
-			@Context final ArcTimeDaoFactory daoFactory,
-			@Context final Timer timer, @PathParam("id") final Integer id) {
-		if (id == null)
-			throw badRequest("Missing id parameter");
+    /**
+     * @param security
+     *            the security information associated with the request
+     * @param config
+     *            the system configuration properties
+     * @param daoFactory
+     *            used to communicate with the back-end database
+     * @param timer
+     *            tracks performance metrics of this REST end-point
+     * @param id
+     *            the unique id of the timesheet to reopen
+     * 
+     * @return the fixed timesheet response
+     */
+    @GET
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    public FixResponse fix(@Context final SecurityContext security, @Context final Config config,
+            @Context final ArcTimeDaoFactory daoFactory, @Context final Timer timer, @PathParam("id") final Integer id) {
+        if (id == null)
+            throw badRequest("Missing id parameter");
 
-		log.debug("Timesheet fix request");
-		final User currentUser = (User) security.getUserPrincipal();
-		try (final Timer.Context timerContext = timer.time()) {
-			log.debug("Getting current timesheet");
-			final TimesheetDao dao = daoFactory.getTimesheetDao();
-			final Timesheet timesheet = dao.get(currentUser.getCompanyId(), id);
+        log.debug("Timesheet fix request");
+        final User currentUser = (User) security.getUserPrincipal();
+        try (final Timer.Context timerContext = timer.time()) {
+            log.debug("Getting current timesheet");
+            final TimesheetDao dao = daoFactory.getTimesheetDao();
+            final Timesheet timesheet = dao.get(currentUser.getCompanyId(), id);
 
-			if (timesheet == null)
-				throw notFound("The requested timesheet could not be found");
-			if (timesheet.getUserId() != currentUser.getId())
-				throw forbidden(config, currentUser, "Unable to fix timesheet "
-						+ "that you do not own.");
+            if (timesheet == null)
+                throw notFound("The requested timesheet could not be found");
+            if (timesheet.getUserId() != currentUser.getId())
+                throw forbidden(config, currentUser, "Unable to fix timesheet " + "that you do not own.");
 
-			log.debug("Reopening timesheet");
-			dao.complete(timesheet.getCompanyId(), false, timesheet.getId());
-			daoFactory.getAuditLogDao().add(
-					new AuditLog().setCompanyId(currentUser.getCompanyId())
-							.setTimesheetId(timesheet.getId())
-							.setLog("Timesheet reopened"));
+            log.debug("Reopening timesheet");
+            dao.complete(timesheet.getCompanyId(), false, timesheet.getId());
+            daoFactory.getAuditLogDao().add(
+                    new AuditLog().setCompanyId(currentUser.getCompanyId()).setTimesheetId(timesheet.getId())
+                            .setLog("Timesheet reopened"));
 
-			return new FixResponse();
-		} catch (final DatabaseException dbException) {
-			throw dbError(config, currentUser, dbException);
-		} catch (final HolidayConfigurationException badHoliday) {
-			throw serverError(config, currentUser, badHoliday);
-		}
-	}
+            return new FixResponse();
+        } catch (final DatabaseException dbException) {
+            throw dbError(config, currentUser, dbException);
+        } catch (final HolidayConfigurationException badHoliday) {
+            throw serverError(config, currentUser, badHoliday);
+        }
+    }
 }

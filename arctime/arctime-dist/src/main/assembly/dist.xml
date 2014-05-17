@@ -1,47 +1,45 @@
-<assembly
-	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
 
-	<id>dist</id>
+    <id>dist</id>
 
-	<formats>
-		<format>zip</format>
-	</formats>
+    <formats>
+        <format>zip</format>
+    </formats>
 
-	<fileSets>
-		<fileSet>
-			<directory>src/main/resources/bin</directory>
-			<outputDirectory>bin</outputDirectory>
-			<fileMode>755</fileMode>
-		</fileSet>
+    <fileSets>
+        <fileSet>
+            <directory>src/main/resources/bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <fileMode>755</fileMode>
+        </fileSet>
 
-		<!-- Create an empty logs directory. -->
-		<fileSet>
-			<directory>src/main/resources/bin</directory>
-			<outputDirectory>logs</outputDirectory>
-			<fileMode>755</fileMode>
-			<excludes>
-				<exclude>**</exclude>
-			</excludes>
-		</fileSet>
+        <!-- Create an empty logs directory. -->
+        <fileSet>
+            <directory>src/main/resources/bin</directory>
+            <outputDirectory>logs</outputDirectory>
+            <fileMode>755</fileMode>
+            <excludes>
+                <exclude>**</exclude>
+            </excludes>
+        </fileSet>
 
-		<!-- Add the webapp files. -->
-		<fileSet>
-			<directory>${project.build.directory}/arctime-web</directory>
-			<outputDirectory>webapp</outputDirectory>
-			<fileMode>644</fileMode>
-		</fileSet>
-	</fileSets>
+        <!-- Add the webapp files. -->
+        <fileSet>
+            <directory>${project.build.directory}/arctime-web</directory>
+            <outputDirectory>webapp</outputDirectory>
+            <fileMode>644</fileMode>
+        </fileSet>
+    </fileSets>
 
-	<dependencySets>
-		<dependencySet>
-			<outputDirectory>lib</outputDirectory>
-			<fileMode>644</fileMode>
-			<useTransitiveDependencies>true</useTransitiveDependencies>
-			<excludes>
-				<exclude>${project.groupId}:arctime-web</exclude>
-			</excludes>
-		</dependencySet>
-	</dependencySets>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>lib</outputDirectory>
+            <fileMode>644</fileMode>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
+            <excludes>
+                <exclude>${project.groupId}:arctime-web</exclude>
+            </excludes>
+        </dependencySet>
+    </dependencySets>
 </assembly>

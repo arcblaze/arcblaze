@@ -32,325 +32,307 @@ import com.codahale.metrics.Timer;
  */
 @Path("/admin/company")
 public class CompanyResource extends BaseResource {
-	@XmlRootElement
-	static class AllResponse {
-		@XmlElement
-		public final boolean success = true;
+    @XmlRootElement
+    static class AllResponse {
+        @XmlElement
+        public final boolean success = true;
 
-		@XmlElement
-		public final String msg = "The companies were retrieved successfully.";
+        @XmlElement
+        public final String msg = "The companies were retrieved successfully.";
 
-		@XmlElement
-		public Set<Company> companies;
+        @XmlElement
+        public Set<Company> companies;
 
-		@XmlElement
-		public Integer offset;
+        @XmlElement
+        public Integer offset;
 
-		@XmlElement
-		public Integer limit;
+        @XmlElement
+        public Integer limit;
 
-		@XmlElement
-		public Integer total;
-	}
+        @XmlElement
+        public Integer total;
+    }
 
-	@XmlRootElement
-	static class AddResponse {
-		@XmlElement
-		public final boolean success = true;
+    @XmlRootElement
+    static class AddResponse {
+        @XmlElement
+        public final boolean success = true;
 
-		@XmlElement
-		public final String msg = "The company was added successfully.";
+        @XmlElement
+        public final String msg = "The company was added successfully.";
 
-		@XmlElement
-		public Company company;
-	}
+        @XmlElement
+        public Company company;
+    }
 
-	@XmlRootElement
-	static class ActivateResponse {
-		@XmlElement
-		public final boolean success = true;
+    @XmlRootElement
+    static class ActivateResponse {
+        @XmlElement
+        public final boolean success = true;
 
-		@XmlElement
-		public final String msg = "The specified companies were activated successfully.";
-	}
+        @XmlElement
+        public final String msg = "The specified companies were activated successfully.";
+    }
 
-	@XmlRootElement
-	static class DeactivateResponse {
-		@XmlElement
-		public final boolean success = true;
+    @XmlRootElement
+    static class DeactivateResponse {
+        @XmlElement
+        public final boolean success = true;
 
-		@XmlElement
-		public final String msg = "The specified companies were deactivated successfully.";
-	}
+        @XmlElement
+        public final String msg = "The specified companies were deactivated successfully.";
+    }
 
-	@XmlRootElement
-	static class UpdateResponse {
-		@XmlElement
-		public final boolean success = true;
+    @XmlRootElement
+    static class UpdateResponse {
+        @XmlElement
+        public final boolean success = true;
 
-		@XmlElement
-		public final String msg = "The company was modified successfully.";
+        @XmlElement
+        public final String msg = "The company was modified successfully.";
 
-		@XmlElement
-		public Company company;
-	}
+        @XmlElement
+        public Company company;
+    }
 
-	@XmlRootElement
-	static class DeleteResponse {
-		@XmlElement
-		public final boolean success = true;
+    @XmlRootElement
+    static class DeleteResponse {
+        @XmlElement
+        public final boolean success = true;
 
-		@XmlElement
-		public final String title = "Company Deleted";
+        @XmlElement
+        public final String title = "Company Deleted";
 
-		@XmlElement
-		public final String msg = "The specified companies have been deleted "
-				+ "successfully.";
-	}
+        @XmlElement
+        public final String msg = "The specified companies have been deleted " + "successfully.";
+    }
 
-	/**
-	 * @param security
-	 *            the security information associated with the request
-	 * @param config
-	 *            the system configuration properties
-	 * @param daoFactory
-	 *            used to communicate with the back-end database
-	 * @param timer
-	 *            tracks performance metrics on this REST end-point
-	 * @param companyId
-	 *            the unique id of the company to retrieve
-	 * 
-	 * @return the requested company
-	 * 
-	 * @throws DatabaseException
-	 *             if there is an error communicating with the back-end
-	 */
-	@GET
-	@Path("{companyId:\\d+}")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Company get(@Context final SecurityContext security,
-			@Context final Config config, @Context final DaoFactory daoFactory,
-			@Context final Timer timer,
-			@PathParam("companyId") final Integer companyId)
-			throws DatabaseException {
-		final User currentUser = (User) security.getUserPrincipal();
-		try (Timer.Context timerContext = timer.time()) {
-			if (companyId == null)
-				throw badRequest("A company id must be provided.");
-			return daoFactory.getCompanyDao().get(companyId);
-		} catch (final DatabaseException dbException) {
-			throw dbError(config, currentUser, dbException);
-		}
-	}
+    /**
+     * @param security
+     *            the security information associated with the request
+     * @param config
+     *            the system configuration properties
+     * @param daoFactory
+     *            used to communicate with the back-end database
+     * @param timer
+     *            tracks performance metrics on this REST end-point
+     * @param companyId
+     *            the unique id of the company to retrieve
+     * 
+     * @return the requested company
+     * 
+     * @throws DatabaseException
+     *             if there is an error communicating with the back-end
+     */
+    @GET
+    @Path("{companyId:\\d+}")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public Company get(@Context final SecurityContext security, @Context final Config config,
+            @Context final DaoFactory daoFactory, @Context final Timer timer,
+            @PathParam("companyId") final Integer companyId) throws DatabaseException {
+        final User currentUser = (User) security.getUserPrincipal();
+        try (Timer.Context timerContext = timer.time()) {
+            if (companyId == null)
+                throw badRequest("A company id must be provided.");
+            return daoFactory.getCompanyDao().get(companyId);
+        } catch (final DatabaseException dbException) {
+            throw dbError(config, currentUser, dbException);
+        }
+    }
 
-	/**
-	 * @param security
-	 *            the security information associated with the request
-	 * @param config
-	 *            the system configuration properties
-	 * @param daoFactory
-	 *            used to communicate with the back-end database
-	 * @param timer
-	 *            tracks performance metrics on this REST end-point
-	 * @param filter
-	 *            the search filter to use to restrict results
-	 * @param includeInactive
-	 *            whether inactive companies should be included in the response
-	 * @param limit
-	 *            the maximum number of items to be retrieved
-	 * @param offset
-	 *            the offset into the items to be retrieved
-	 * 
-	 * @return all of the matching companies
-	 * 
-	 * @throws DatabaseException
-	 *             if there is an error communicating with the back-end
-	 */
-	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public AllResponse search(
-			@Context final SecurityContext security,
-			@Context final Config config,
-			@Context final DaoFactory daoFactory,
-			@Context final Timer timer,
-			@QueryParam("filter") final String filter,
-			@QueryParam("includeInactive") @DefaultValue("true") final Boolean includeInactive,
-			@QueryParam("limit") @DefaultValue("100") final Integer limit,
-			@QueryParam("start") @DefaultValue("0") final Integer offset)
-			throws DatabaseException {
-		final User currentUser = (User) security.getUserPrincipal();
-		try (Timer.Context timerContext = timer.time()) {
-			final AllResponse response = new AllResponse();
-			response.companies = daoFactory.getCompanyDao().search(filter,
-					includeInactive, limit, offset);
-			response.total = daoFactory.getCompanyDao().count(filter,
-					includeInactive);
-			response.limit = limit;
-			response.offset = offset;
-			return response;
-		} catch (final DatabaseException dbException) {
-			throw dbError(config, currentUser, dbException);
-		}
-	}
+    /**
+     * @param security
+     *            the security information associated with the request
+     * @param config
+     *            the system configuration properties
+     * @param daoFactory
+     *            used to communicate with the back-end database
+     * @param timer
+     *            tracks performance metrics on this REST end-point
+     * @param filter
+     *            the search filter to use to restrict results
+     * @param includeInactive
+     *            whether inactive companies should be included in the response
+     * @param limit
+     *            the maximum number of items to be retrieved
+     * @param offset
+     *            the offset into the items to be retrieved
+     * 
+     * @return all of the matching companies
+     * 
+     * @throws DatabaseException
+     *             if there is an error communicating with the back-end
+     */
+    @GET
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public AllResponse search(@Context final SecurityContext security, @Context final Config config,
+            @Context final DaoFactory daoFactory, @Context final Timer timer,
+            @QueryParam("filter") final String filter,
+            @QueryParam("includeInactive") @DefaultValue("true") final Boolean includeInactive,
+            @QueryParam("limit") @DefaultValue("100") final Integer limit,
+            @QueryParam("start") @DefaultValue("0") final Integer offset) throws DatabaseException {
+        final User currentUser = (User) security.getUserPrincipal();
+        try (Timer.Context timerContext = timer.time()) {
+            final AllResponse response = new AllResponse();
+            response.companies = daoFactory.getCompanyDao().search(filter, includeInactive, limit, offset);
+            response.total = daoFactory.getCompanyDao().count(filter, includeInactive);
+            response.limit = limit;
+            response.offset = offset;
+            return response;
+        } catch (final DatabaseException dbException) {
+            throw dbError(config, currentUser, dbException);
+        }
+    }
 
-	/**
-	 * @param security
-	 *            the security information associated with the request
-	 * @param config
-	 *            the system configuration properties
-	 * @param daoFactory
-	 *            used to communicate with the back-end database
-	 * @param timer
-	 *            tracks performance metrics of this REST end-point
-	 * @param company
-	 *            the company to add to the back-end database
-	 * 
-	 * @return the new company that was added
-	 */
-	@POST
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public AddResponse add(@Context final SecurityContext security,
-			@Context final Config config, @Context final DaoFactory daoFactory,
-			@Context final Timer timer, @Context final Company company) {
-		final User currentUser = (User) security.getUserPrincipal();
-		try (final Timer.Context timerContext = timer.time()) {
-			daoFactory.getCompanyDao().add(company);
+    /**
+     * @param security
+     *            the security information associated with the request
+     * @param config
+     *            the system configuration properties
+     * @param daoFactory
+     *            used to communicate with the back-end database
+     * @param timer
+     *            tracks performance metrics of this REST end-point
+     * @param company
+     *            the company to add to the back-end database
+     * 
+     * @return the new company that was added
+     */
+    @POST
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public AddResponse add(@Context final SecurityContext security, @Context final Config config,
+            @Context final DaoFactory daoFactory, @Context final Timer timer, @Context final Company company) {
+        final User currentUser = (User) security.getUserPrincipal();
+        try (final Timer.Context timerContext = timer.time()) {
+            daoFactory.getCompanyDao().add(company);
 
-			final AddResponse response = new AddResponse();
-			response.company = company;
-			return response;
-		} catch (final DatabaseException dbException) {
-			throw dbError(config, currentUser, dbException);
-		}
-	}
+            final AddResponse response = new AddResponse();
+            response.company = company;
+            return response;
+        } catch (final DatabaseException dbException) {
+            throw dbError(config, currentUser, dbException);
+        }
+    }
 
-	/**
-	 * @param security
-	 *            the security information associated with the request
-	 * @param config
-	 *            the system configuration properties
-	 * @param daoFactory
-	 *            used to communicate with the back-end database
-	 * @param timer
-	 *            tracks performance metrics of this REST end-point
-	 * @param companyIds
-	 *            the unique ids of the companies to make active
-	 * 
-	 * @return an activate response
-	 */
-	@PUT
-	@Path("/activate")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ActivateResponse activate(@Context final SecurityContext security,
-			@Context final Config config, @Context final DaoFactory daoFactory,
-			@Context final Timer timer,
-			@HeaderParam("ids") final IdSet companyIds) {
-		final User currentUser = (User) security.getUserPrincipal();
-		try (final Timer.Context timerContext = timer.time()) {
-			if (companyIds == null || companyIds.isEmpty())
-				throw badRequest("No company ids provided");
-			daoFactory.getCompanyDao().activate(companyIds);
-			return new ActivateResponse();
-		} catch (final DatabaseException dbException) {
-			throw dbError(config, currentUser, dbException);
-		}
-	}
+    /**
+     * @param security
+     *            the security information associated with the request
+     * @param config
+     *            the system configuration properties
+     * @param daoFactory
+     *            used to communicate with the back-end database
+     * @param timer
+     *            tracks performance metrics of this REST end-point
+     * @param companyIds
+     *            the unique ids of the companies to make active
+     * 
+     * @return an activate response
+     */
+    @PUT
+    @Path("/activate")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public ActivateResponse activate(@Context final SecurityContext security, @Context final Config config,
+            @Context final DaoFactory daoFactory, @Context final Timer timer, @HeaderParam("ids") final IdSet companyIds) {
+        final User currentUser = (User) security.getUserPrincipal();
+        try (final Timer.Context timerContext = timer.time()) {
+            if (companyIds == null || companyIds.isEmpty())
+                throw badRequest("No company ids provided");
+            daoFactory.getCompanyDao().activate(companyIds);
+            return new ActivateResponse();
+        } catch (final DatabaseException dbException) {
+            throw dbError(config, currentUser, dbException);
+        }
+    }
 
-	/**
-	 * @param security
-	 *            the security information associated with the request
-	 * @param config
-	 *            the system configuration properties
-	 * @param daoFactory
-	 *            used to communicate with the back-end database
-	 * @param timer
-	 *            tracks performance metrics of this REST end-point
-	 * @param companyIds
-	 *            the unique ids of the companies to make inactive
-	 * 
-	 * @return a deactivate response
-	 */
-	@PUT
-	@Path("/deactivate")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public DeactivateResponse deactivate(
-			@Context final SecurityContext security,
-			@Context final Config config, @Context final DaoFactory daoFactory,
-			@Context final Timer timer,
-			@HeaderParam("ids") final IdSet companyIds) {
-		final User currentUser = (User) security.getUserPrincipal();
-		try (final Timer.Context timerContext = timer.time()) {
-			if (companyIds == null || companyIds.isEmpty())
-				throw badRequest("No company ids provided");
-			daoFactory.getCompanyDao().deactivate(companyIds);
-			return new DeactivateResponse();
-		} catch (final DatabaseException dbException) {
-			throw dbError(config, currentUser, dbException);
-		}
-	}
+    /**
+     * @param security
+     *            the security information associated with the request
+     * @param config
+     *            the system configuration properties
+     * @param daoFactory
+     *            used to communicate with the back-end database
+     * @param timer
+     *            tracks performance metrics of this REST end-point
+     * @param companyIds
+     *            the unique ids of the companies to make inactive
+     * 
+     * @return a deactivate response
+     */
+    @PUT
+    @Path("/deactivate")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public DeactivateResponse deactivate(@Context final SecurityContext security, @Context final Config config,
+            @Context final DaoFactory daoFactory, @Context final Timer timer, @HeaderParam("ids") final IdSet companyIds) {
+        final User currentUser = (User) security.getUserPrincipal();
+        try (final Timer.Context timerContext = timer.time()) {
+            if (companyIds == null || companyIds.isEmpty())
+                throw badRequest("No company ids provided");
+            daoFactory.getCompanyDao().deactivate(companyIds);
+            return new DeactivateResponse();
+        } catch (final DatabaseException dbException) {
+            throw dbError(config, currentUser, dbException);
+        }
+    }
 
-	/**
-	 * @param security
-	 *            the security information associated with the request
-	 * @param config
-	 *            the system configuration properties
-	 * @param daoFactory
-	 *            used to communicate with the back-end database
-	 * @param timer
-	 *            tracks performance metrics of this REST end-point
-	 * @param company
-	 *            the company to add to the back-end database
-	 * 
-	 * @return the new company that was added
-	 */
-	@PUT
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public UpdateResponse update(@Context final SecurityContext security,
-			@Context final Config config, @Context final DaoFactory daoFactory,
-			@Context final Timer timer, @Context final Company company) {
-		final User currentUser = (User) security.getUserPrincipal();
-		try (final Timer.Context timerContext = timer.time()) {
-			if (company == null || company.getId() == null)
-				throw badRequest("A company with id must be provided.");
+    /**
+     * @param security
+     *            the security information associated with the request
+     * @param config
+     *            the system configuration properties
+     * @param daoFactory
+     *            used to communicate with the back-end database
+     * @param timer
+     *            tracks performance metrics of this REST end-point
+     * @param company
+     *            the company to add to the back-end database
+     * 
+     * @return the new company that was added
+     */
+    @PUT
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public UpdateResponse update(@Context final SecurityContext security, @Context final Config config,
+            @Context final DaoFactory daoFactory, @Context final Timer timer, @Context final Company company) {
+        final User currentUser = (User) security.getUserPrincipal();
+        try (final Timer.Context timerContext = timer.time()) {
+            if (company == null || company.getId() == null)
+                throw badRequest("A company with id must be provided.");
 
-			daoFactory.getCompanyDao().update(company);
+            daoFactory.getCompanyDao().update(company);
 
-			final UpdateResponse response = new UpdateResponse();
-			response.company = company;
-			return response;
-		} catch (final DatabaseException dbException) {
-			throw dbError(config, currentUser, dbException);
-		}
-	}
+            final UpdateResponse response = new UpdateResponse();
+            response.company = company;
+            return response;
+        } catch (final DatabaseException dbException) {
+            throw dbError(config, currentUser, dbException);
+        }
+    }
 
-	/**
-	 * @param security
-	 *            the security information associated with the request
-	 * @param config
-	 *            the system configuration properties
-	 * @param daoFactory
-	 *            used to communicate with the back-end database
-	 * @param timer
-	 *            tracks performance metrics of this REST end-point
-	 * @param companyIds
-	 *            the unique ids of the companies to delete
-	 * 
-	 * @return a delete response
-	 */
-	@DELETE
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public DeleteResponse delete(@Context final SecurityContext security,
-			@Context final Config config, @Context final DaoFactory daoFactory,
-			@Context final Timer timer,
-			@HeaderParam("ids") final IdSet companyIds) {
-		final User currentUser = (User) security.getUserPrincipal();
-		try (final Timer.Context timerContext = timer.time()) {
-			if (companyIds == null || companyIds.isEmpty())
-				throw badRequest("No company ids provided");
-			daoFactory.getCompanyDao().delete(companyIds);
-			return new DeleteResponse();
-		} catch (final DatabaseException dbException) {
-			throw dbError(config, currentUser, dbException);
-		}
-	}
+    /**
+     * @param security
+     *            the security information associated with the request
+     * @param config
+     *            the system configuration properties
+     * @param daoFactory
+     *            used to communicate with the back-end database
+     * @param timer
+     *            tracks performance metrics of this REST end-point
+     * @param companyIds
+     *            the unique ids of the companies to delete
+     * 
+     * @return a delete response
+     */
+    @DELETE
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public DeleteResponse delete(@Context final SecurityContext security, @Context final Config config,
+            @Context final DaoFactory daoFactory, @Context final Timer timer, @HeaderParam("ids") final IdSet companyIds) {
+        final User currentUser = (User) security.getUserPrincipal();
+        try (final Timer.Context timerContext = timer.time()) {
+            if (companyIds == null || companyIds.isEmpty())
+                throw badRequest("No company ids provided");
+            daoFactory.getCompanyDao().delete(companyIds);
+            return new DeleteResponse();
+        } catch (final DatabaseException dbException) {
+            throw dbError(config, currentUser, dbException);
+        }
+    }
 }

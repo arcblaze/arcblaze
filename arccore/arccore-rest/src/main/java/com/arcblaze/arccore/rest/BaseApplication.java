@@ -25,67 +25,63 @@ import com.google.common.reflect.ClassPath.ClassInfo;
  * The base REST application class.
  */
 public abstract class BaseApplication extends ResourceConfig {
-	private final static Logger log = LoggerFactory
-			.getLogger(BaseApplication.class);
+    private final static Logger log = LoggerFactory.getLogger(BaseApplication.class);
 
-	/**
-	 * Default constructor.
-	 */
-	public BaseApplication() {
-		log.info("Loading core application resources.");
+    /**
+     * Default constructor.
+     */
+    public BaseApplication() {
+        log.info("Loading core application resources.");
 
-		// Note that we use BaseApplication.class instead of getClass() to make
-		// sure we aren't using the package from a child class. We also use our
-		// own register method instead of packages since packages has trouble
-		// finding the resources when Tomcat is run as an embedded app.
-		registerPackage(BaseApplication.class.getPackage().getName());
+        // Note that we use BaseApplication.class instead of getClass() to make
+        // sure we aren't using the package from a child class. We also use our
+        // own register method instead of packages since packages has trouble
+        // finding the resources when Tomcat is run as an embedded app.
+        registerPackage(BaseApplication.class.getPackage().getName());
 
-		register(CompanyFactory.getBinder());
-		register(ConfigFactory.getBinder());
-		register(DaoFactoryFactory.getBinder());
-		register(MetricRegistryFactory.getBinder());
-		register(HealthCheckRegistryFactory.getBinder());
-		register(TimerFactory.getBinder());
-		register(PasswordFactory.getBinder());
+        register(CompanyFactory.getBinder());
+        register(ConfigFactory.getBinder());
+        register(DaoFactoryFactory.getBinder());
+        register(MetricRegistryFactory.getBinder());
+        register(HealthCheckRegistryFactory.getBinder());
+        register(TimerFactory.getBinder());
+        register(PasswordFactory.getBinder());
 
-		register(JacksonJaxbJsonProvider.class);
-	}
+        register(JacksonJaxbJsonProvider.class);
+    }
 
-	/**
-	 * @param packages
-	 *            the packages to register with resources
-	 */
-	public void registerPackage(final String... packages) {
-		if (packages != null) {
-			for (final String packageName : packages) {
-				final Set<Class<?>> classes = getClassNames(packageName);
-				for (final Class<?> clazz : classes) {
-					log.info("  Registering: {}", clazz.getName());
-					register(clazz);
-				}
-			}
-		}
-	}
+    /**
+     * @param packages
+     *            the packages to register with resources
+     */
+    public void registerPackage(final String... packages) {
+        if (packages != null) {
+            for (final String packageName : packages) {
+                final Set<Class<?>> classes = getClassNames(packageName);
+                for (final Class<?> clazz : classes) {
+                    log.info("  Registering: {}", clazz.getName());
+                    register(clazz);
+                }
+            }
+        }
+    }
 
-	protected Set<Class<?>> getClassNames(final String packageName) {
-		final Set<Class<?>> classes = new LinkedHashSet<>();
-		try {
-			final SortedSet<String> classNames = new TreeSet<>();
-			final ClassPath classPath = ClassPath.from(getClass()
-					.getClassLoader());
-			for (final ClassInfo classInfo : classPath
-					.getTopLevelClassesRecursive(packageName)) {
-				classNames.add(classInfo.getName());
-			}
-			for (final String className : classNames)
-				classes.add(Class.forName(className));
+    protected Set<Class<?>> getClassNames(final String packageName) {
+        final Set<Class<?>> classes = new LinkedHashSet<>();
+        try {
+            final SortedSet<String> classNames = new TreeSet<>();
+            final ClassPath classPath = ClassPath.from(getClass().getClassLoader());
+            for (final ClassInfo classInfo : classPath.getTopLevelClassesRecursive(packageName)) {
+                classNames.add(classInfo.getName());
+            }
+            for (final String className : classNames)
+                classes.add(Class.forName(className));
 
-		} catch (final IOException classpathIssue) {
-			log.error("Failed to retrieve resources from class path.",
-					classpathIssue);
-		} catch (final ClassNotFoundException notFound) {
-			log.error("Failed to load class.", notFound);
-		}
-		return classes;
-	}
+        } catch (final IOException classpathIssue) {
+            log.error("Failed to retrieve resources from class path.", classpathIssue);
+        } catch (final ClassNotFoundException notFound) {
+            log.error("Failed to load class.", notFound);
+        }
+        return classes;
+    }
 }

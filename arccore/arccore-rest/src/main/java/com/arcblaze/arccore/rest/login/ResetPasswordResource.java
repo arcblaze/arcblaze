@@ -34,107 +34,101 @@ import com.codahale.metrics.Timer;
  */
 @Path("/login/reset")
 public class ResetPasswordResource extends BaseResource {
-	private final static Logger log = LoggerFactory
-			.getLogger(ResetPasswordResource.class);
+    private final static Logger log = LoggerFactory.getLogger(ResetPasswordResource.class);
 
-	@XmlRootElement
-	private static class PasswordReset {
-		@XmlElement
-		public final boolean success = true;
-		@XmlElement
-		public final String title = "Password Reset";
-		@XmlElement
-		public final String msg;
+    @XmlRootElement
+    private static class PasswordReset {
+        @XmlElement
+        public final boolean success = true;
+        @XmlElement
+        public final String title = "Password Reset";
+        @XmlElement
+        public final String msg;
 
-		PasswordReset(final Config config) {
-			final String adminEmail = config
-					.getString(MailProperty.ADMIN_EMAIL);
-			this.msg = "An email with a new random password was "
-					+ "sent to the email address associated with your account. "
-					+ "Please check your email for your updated login info. "
-					+ "If you have any problems, please contact the web site "
-					+ "administrator (" + adminEmail + ")";
-		}
-	}
+        PasswordReset(final Config config) {
+            final String adminEmail = config.getString(MailProperty.ADMIN_EMAIL);
+            this.msg = "An email with a new random password was "
+                    + "sent to the email address associated with your account. "
+                    + "Please check your email for your updated login info. "
+                    + "If you have any problems, please contact the web site " + "administrator (" + adminEmail + ")";
+        }
+    }
 
-	/** Used to send the response email to the user. */
-	private MailSender mailSender = null;
+    /** Used to send the response email to the user. */
+    private MailSender mailSender = null;
 
-	/**
-	 * Default constructor.
-	 */
-	public ResetPasswordResource() {
-	}
+    /**
+     * Default constructor.
+     */
+    public ResetPasswordResource() {
+    }
 
-	/**
-	 * @param mailSender
-	 *            the object responsible for sending emails
-	 */
-	public ResetPasswordResource(final ResetPasswordMailSender mailSender) {
-		notNull(mailSender, "Invalid null mail sender");
+    /**
+     * @param mailSender
+     *            the object responsible for sending emails
+     */
+    public ResetPasswordResource(final ResetPasswordMailSender mailSender) {
+        notNull(mailSender, "Invalid null mail sender");
 
-		this.mailSender = mailSender;
-	}
+        this.mailSender = mailSender;
+    }
 
-	/**
-	 * @param security
-	 *            the security information associated with the request
-	 * @param config
-	 *            the system configuration information
-	 * @param daoFactory
-	 *            used to communicate with the system database
-	 * @param password
-	 *            used to generate new passwords
-	 * @param timer
-	 *            tracks timing information for this REST end-point
-	 * @param login
-	 *            the user login to use when resetting the password
-	 * 
-	 * @return the password reset response
-	 */
-	@POST
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public PasswordReset reset(@Context final SecurityContext security,
-			@Context final Config config, @Context final DaoFactory daoFactory,
-			@Context final Password password, @Context final Timer timer,
-			@FormParam("j_username") final String login) {
-		log.debug("Password reset request");
-		final User currentUser = (User) security.getUserPrincipal();
-		try (final Timer.Context timerContext = timer.time()) {
-			if (StringUtils.isBlank(login))
-				throw badRequest("The j_username parameter must be specified.");
+    /**
+     * @param security
+     *            the security information associated with the request
+     * @param config
+     *            the system configuration information
+     * @param daoFactory
+     *            used to communicate with the system database
+     * @param password
+     *            used to generate new passwords
+     * @param timer
+     *            tracks timing information for this REST end-point
+     * @param login
+     *            the user login to use when resetting the password
+     * 
+     * @return the password reset response
+     */
+    @POST
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    public PasswordReset reset(@Context final SecurityContext security, @Context final Config config,
+            @Context final DaoFactory daoFactory, @Context final Password password, @Context final Timer timer,
+            @FormParam("j_username") final String login) {
+        log.debug("Password reset request");
+        final User currentUser = (User) security.getUserPrincipal();
+        try (final Timer.Context timerContext = timer.time()) {
+            if (StringUtils.isBlank(login))
+                throw badRequest("The j_username parameter must be specified.");
 
-			final UserDao userDao = daoFactory.getUserDao();
-			final User user = userDao.getLogin(login);
-			log.debug("  Found user: {}", user);
+            final UserDao userDao = daoFactory.getUserDao();
+            final User user = userDao.getLogin(login);
+            log.debug("  Found user: {}", user);
 
-			if (user == null)
-				throw notFound("A user with the specified login was not found.");
+            if (user == null)
+                throw notFound("A user with the specified login was not found.");
 
-			final String salt = password.random(10);
-			final String newPassword = password.random();
-			final String hashedPass = password.hash(newPassword, salt);
-			log.debug("  New password will be: {}", newPassword);
-			log.debug("  Hashed password will be: {}", hashedPass);
+            final String salt = password.random(10);
+            final String newPassword = password.random();
+            final String hashedPass = password.hash(newPassword, salt);
+            log.debug("  New password will be: {}", newPassword);
+            log.debug("  Hashed password will be: {}", hashedPass);
 
-			userDao.setPassword(user.getId(), hashedPass, salt);
-			log.debug("  Password updated successfully");
+            userDao.setPassword(user.getId(), hashedPass, salt);
+            log.debug("  Password updated successfully");
 
-			try {
-				if (this.mailSender == null)
-					this.mailSender = new ResetPasswordMailSender(config, user,
-							newPassword);
-				this.mailSender.send();
-			} catch (final MessagingException mailException) {
-				log.debug("  Failed to send email, setting password back");
-				userDao.setPassword(user.getId(), user.getHashedPass(),
-						user.getSalt());
-				throw mailError(config, currentUser, mailException);
-			}
+            try {
+                if (this.mailSender == null)
+                    this.mailSender = new ResetPasswordMailSender(config, user, newPassword);
+                this.mailSender.send();
+            } catch (final MessagingException mailException) {
+                log.debug("  Failed to send email, setting password back");
+                userDao.setPassword(user.getId(), user.getHashedPass(), user.getSalt());
+                throw mailError(config, currentUser, mailException);
+            }
 
-			return new PasswordReset(config);
-		} catch (final DatabaseException dbException) {
-			throw dbError(config, currentUser, dbException);
-		}
-	}
+            return new PasswordReset(config);
+        } catch (final DatabaseException dbException) {
+            throw dbError(config, currentUser, dbException);
+        }
+    }
 }

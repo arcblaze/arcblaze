@@ -20,31 +20,30 @@ import com.codahale.metrics.Timer;
  */
 @Path("/manager/company")
 public class CompanyResource extends BaseResource {
-	/**
-	 * @param security
-	 *            the security information associated with the request
-	 * @param config
-	 *            the system configuration information
-	 * @param daoFactory
-	 *            used to communicate with the back-end database
-	 * @param timer
-	 *            tracks performance metrics of this REST end-point
-	 * 
-	 * @return the company in which the current user account resides
-	 * 
-	 * @throws DatabaseException
-	 *             if there is an error communicating with the back-end
-	 */
-	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Company mine(@Context final SecurityContext security,
-			@Context final Config config, @Context final DaoFactory daoFactory,
-			@Context final Timer timer) throws DatabaseException {
-		final User currentUser = (User) security.getUserPrincipal();
-		try (final Timer.Context timerContext = timer.time()) {
-			return daoFactory.getCompanyDao().get(currentUser.getCompanyId());
-		} catch (final DatabaseException dbException) {
-			throw dbError(config, currentUser, dbException);
-		}
-	}
+    /**
+     * @param security
+     *            the security information associated with the request
+     * @param config
+     *            the system configuration information
+     * @param daoFactory
+     *            used to communicate with the back-end database
+     * @param timer
+     *            tracks performance metrics of this REST end-point
+     * 
+     * @return the company in which the current user account resides
+     * 
+     * @throws DatabaseException
+     *             if there is an error communicating with the back-end
+     */
+    @GET
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public Company mine(@Context final SecurityContext security, @Context final Config config,
+            @Context final DaoFactory daoFactory, @Context final Timer timer) throws DatabaseException {
+        final User currentUser = (User) security.getUserPrincipal();
+        try (final Timer.Context timerContext = timer.time()) {
+            return daoFactory.getCompanyDao().get(currentUser.getCompanyId());
+        } catch (final DatabaseException dbException) {
+            throw dbError(config, currentUser, dbException);
+        }
+    }
 }
