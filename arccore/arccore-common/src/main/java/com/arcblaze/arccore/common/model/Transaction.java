@@ -13,7 +13,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.builder.CompareToBuilder;
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -387,21 +386,7 @@ public class Transaction implements Comparable<Transaction> {
      */
     @Override
     public boolean equals(final Object obj) {
-        if (obj instanceof Transaction) {
-            final Transaction other = (Transaction) obj;
-            final EqualsBuilder builder = new EqualsBuilder();
-            builder.append(getId(), other.getId());
-            builder.append(getCompanyId(), other.getCompanyId());
-            builder.append(getUserId(), other.getUserId());
-            builder.append(getTimestamp(), other.getTimestamp());
-            builder.append(getTransactionType(), other.getTransactionType());
-            builder.append(getDescription(), other.getDescription());
-            builder.append(getAmount(), other.getAmount());
-            builder.append(getNotes(), other.getNotes());
-            return builder.isEquals();
-        }
-
-        return false;
+        return (obj instanceof Transaction) ? compareTo((Transaction) obj) == 0 : false;
     }
 
     /**

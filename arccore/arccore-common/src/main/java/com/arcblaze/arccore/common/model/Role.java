@@ -12,7 +12,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -99,14 +98,7 @@ public class Role implements Comparable<Role>, Principal {
      */
     @Override
     public boolean equals(final Object obj) {
-        if (obj instanceof Role) {
-            final Role other = (Role) obj;
-            final EqualsBuilder builder = new EqualsBuilder();
-            builder.append(getName(), other.getName());
-            return builder.isEquals();
-        }
-
-        return false;
+        return (obj instanceof Role) ? compareTo((Role) obj) == 0 : false;
     }
 
     /**

@@ -20,7 +20,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -472,21 +471,7 @@ public class User implements Comparable<User>, Principal {
      */
     @Override
     public boolean equals(final Object obj) {
-        if (obj instanceof User) {
-            final User other = (User) obj;
-            final EqualsBuilder builder = new EqualsBuilder();
-            builder.append(getId(), other.getId());
-            builder.append(getCompanyId(), other.getCompanyId());
-            builder.append(getLogin(), other.getLogin());
-            // HashedPass and Salt specifically left out.
-            builder.append(getEmail(), other.getEmail());
-            builder.append(getFirstName(), other.getFirstName());
-            builder.append(getLastName(), other.getLastName());
-            builder.append(isActive(), other.isActive());
-            return builder.isEquals();
-        }
-
-        return false;
+        return (obj instanceof User) ? compareTo((User) obj) == 0 : false;
     }
 
     /**

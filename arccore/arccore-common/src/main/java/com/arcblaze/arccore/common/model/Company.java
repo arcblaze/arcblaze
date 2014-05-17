@@ -11,7 +11,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -151,16 +150,7 @@ public class Company implements Comparable<Company> {
      */
     @Override
     public boolean equals(final Object obj) {
-        if (obj instanceof Company) {
-            final Company other = (Company) obj;
-            final EqualsBuilder builder = new EqualsBuilder();
-            builder.append(getId(), other.getId());
-            builder.append(getName(), other.getName());
-            builder.append(isActive(), other.isActive());
-            return builder.isEquals();
-        }
-
-        return false;
+        return (obj instanceof Company) ? compareTo((Company) obj) == 0 : false;
     }
 
     /**
