@@ -40,7 +40,7 @@ public class Config {
      *             if there is a problem loading the configuration information from the specified file
      */
     public Config(final String configurationFile) throws ConfigurationException {
-        notEmpty(configurationFile);
+        notEmpty(configurationFile, "Invalid blank configuration file");
 
         final File configFile = new File(configurationFile);
         if (configFile.exists()) {
