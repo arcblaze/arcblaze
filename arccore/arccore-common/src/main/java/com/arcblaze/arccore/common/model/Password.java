@@ -1,5 +1,6 @@
 package com.arcblaze.arccore.common.model;
 
+import static org.apache.commons.lang.Validate.isTrue;
 import static org.apache.commons.lang.Validate.notEmpty;
 
 import java.security.MessageDigest;
@@ -57,8 +58,7 @@ public class Password {
      *             if the provided length is not valid
      */
     public String random(final int length) {
-        if (length < 0 || length > 255)
-            throw new IllegalArgumentException("Invalid length: " + length);
+        isTrue(length >= 0 && length <= 255, "Invalid length: " + length);
 
         final String chars = "aeuAEU23456789bdghjmnpqrstvzBDGHJLMNPQRSTVWXZ";
 
