@@ -13,7 +13,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -186,17 +185,7 @@ public class AuditLog implements Comparable<AuditLog> {
      */
     @Override
     public boolean equals(final Object obj) {
-        if (obj instanceof AuditLog) {
-            final AuditLog other = (AuditLog) obj;
-            final EqualsBuilder builder = new EqualsBuilder();
-            builder.append(getCompanyId(), other.getCompanyId());
-            builder.append(getTimesheetId(), other.getTimesheetId());
-            builder.append(getLog(), other.getLog());
-            builder.append(getTimestamp(), other.getTimestamp());
-            return builder.isEquals();
-        }
-
-        return false;
+        return (obj instanceof AuditLog) ? compareTo((AuditLog) obj) == 0 : false;
     }
 
     /**

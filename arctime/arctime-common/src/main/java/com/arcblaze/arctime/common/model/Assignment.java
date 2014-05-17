@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -606,21 +605,7 @@ public class Assignment implements Comparable<Assignment> {
      */
     @Override
     public boolean equals(final Object obj) {
-        if (obj instanceof Assignment) {
-            final Assignment other = (Assignment) obj;
-            final EqualsBuilder builder = new EqualsBuilder();
-            builder.append(getId(), other.getId());
-            builder.append(getCompanyId(), other.getCompanyId());
-            builder.append(getTaskId(), other.getTaskId());
-            builder.append(getUserId(), other.getUserId());
-            builder.append(getLaborCat(), other.getLaborCat());
-            builder.append(getItemName(), other.getItemName());
-            builder.append(getBegin(), other.getBegin());
-            builder.append(getEnd(), other.getEnd());
-            return builder.isEquals();
-        }
-
-        return false;
+        return (obj instanceof Assignment) ? compareTo((Assignment) obj) == 0 : false;
     }
 
     /**

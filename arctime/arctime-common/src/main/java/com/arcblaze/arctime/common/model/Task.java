@@ -20,7 +20,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -467,19 +466,7 @@ public class Task implements Comparable<Task> {
      */
     @Override
     public boolean equals(final Object obj) {
-        if (obj instanceof Task) {
-            final Task other = (Task) obj;
-            final EqualsBuilder builder = new EqualsBuilder();
-            builder.append(getId(), other.getId());
-            builder.append(getCompanyId(), other.getCompanyId());
-            builder.append(getDescription(), other.getDescription());
-            builder.append(getJobCode(), other.getJobCode());
-            builder.append(isAdministrative(), other.isAdministrative());
-            builder.append(isActive(), other.isActive());
-            return builder.isEquals();
-        }
-
-        return false;
+        return (obj instanceof Task) ? compareTo((Task) obj) == 0 : false;
     }
 
     /**

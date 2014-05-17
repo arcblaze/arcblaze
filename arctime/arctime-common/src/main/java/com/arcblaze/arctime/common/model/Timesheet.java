@@ -19,7 +19,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang.builder.CompareToBuilder;
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -872,24 +871,7 @@ public class Timesheet implements Comparable<Timesheet> {
      */
     @Override
     public boolean equals(final Object obj) {
-        if (obj instanceof Timesheet) {
-            final Timesheet other = (Timesheet) obj;
-            final EqualsBuilder builder = new EqualsBuilder();
-            builder.append(getId(), other.getId());
-            builder.append(getCompanyId(), other.getCompanyId());
-            builder.append(getUserId(), other.getUserId());
-            builder.append(getBegin(), other.getBegin());
-            builder.append(isCompleted(), other.isCompleted());
-            builder.append(isApproved(), other.isApproved());
-            builder.append(isVerified(), other.isVerified());
-            builder.append(isExported(), other.isExported());
-            builder.append(getApproverId(), other.getApproverId());
-            builder.append(getVerifierId(), other.getVerifierId());
-            builder.append(getExporterId(), other.getExporterId());
-            return builder.isEquals();
-        }
-
-        return false;
+        return (obj instanceof Timesheet) ? compareTo((Timesheet) obj) == 0 : false;
     }
 
     /**

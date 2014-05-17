@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.builder.CompareToBuilder;
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -92,16 +91,7 @@ public class Supervisor extends User {
      */
     @Override
     public boolean equals(final Object obj) {
-        if (obj instanceof Supervisor) {
-            final Supervisor other = (Supervisor) obj;
-            final EqualsBuilder builder = new EqualsBuilder();
-            builder.append(isPrimary(), other.isPrimary());
-            if (builder.isEquals())
-                return super.equals(obj);
-            return false;
-        }
-
-        return false;
+        return (obj instanceof Supervisor) ? compareTo((Supervisor) obj) == 0 : false;
     }
 
     /**

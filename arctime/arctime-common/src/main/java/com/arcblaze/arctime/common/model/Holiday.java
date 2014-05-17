@@ -13,7 +13,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -227,18 +226,7 @@ public class Holiday implements Comparable<Holiday> {
      */
     @Override
     public boolean equals(final Object obj) {
-        if (obj instanceof Holiday) {
-            final Holiday other = (Holiday) obj;
-            final EqualsBuilder builder = new EqualsBuilder();
-            builder.append(getId(), other.getId());
-            builder.append(getCompanyId(), other.getCompanyId());
-            builder.append(getDescription(), other.getDescription());
-            builder.append(getConfig(), other.getConfig());
-            builder.append(getDay(), other.getDay());
-            return builder.isEquals();
-        }
-
-        return false;
+        return (obj instanceof Holiday) ? compareTo((Holiday) obj) == 0 : false;
     }
 
     /**
